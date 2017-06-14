@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow, all" />
+        <title>NlpTools\Similarity\CosineSimilarity | NlpTools API</title>
+                    <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+                            </head>
+        <body id="class">
+            <div class="header">
+        <ul>
+            <li><a href="../../classes.html">Classes</a></li>
+                            <li><a href="../../namespaces.html">Namespaces</a></li>
+                        <li><a href="../../interfaces.html">Interfaces</a></li>
+            <li><a href="../../doc-index.html">Index</a></li>
+            
+        </ul>
+
+        <div id="title">NlpTools API</div>
+
+            <div class="type">Class</div>
+    <h1><a href="../Similarity.html">NlpTools\Similarity</a>\CosineSimilarity</h1>
+    </div>
+        <div class="content">
+                <p>class    <strong>CosineSimilarity</strong>        implements
+        <a href="SimilarityInterface.html"><abbr title="NlpTools\Similarity\SimilarityInterface">SimilarityInterface</abbr></a>, <a href="DistanceInterface.html"><abbr title="NlpTools\Similarity\DistanceInterface">DistanceInterface</abbr></a></p>
+
+            <div class="description">
+            <p>Given two vectors compute cos(theta) where theta is the angle between the two vectors in a N-dimensional vector space.</p>
+            <p>cos(theta) = A•B / |A||B|<br />
+ &#039;•&#039; means inner product<br />
+<br />
+ Since the vectors are meant to be feature vectors, the value of<br />
+ each vector for each dimension is simply the frequency of this<br />
+ feature. Moreover, there cannot be negative frequency of occurence so<br />
+ there cannot be negative vector coefficients and the angle will<br />
+ always be between 0 and pi/2.<br />
+<br />
+ If the current key of the passed array is not the number 0 then the feature<br />
+ vector is supposed to have been passed as a mapping between the feature name<br />
+ and a value like the following<br />
+ array(<br />
+ 	&#039;feature_1&#039;=&gt;1,<br />
+ 	&#039;feature_2&#039;=&gt;0.55,<br />
+ 	&#039;feature_3&#039;=&gt;12.7,<br />
+ 	....<br />
+ )</p>
+        </div>
+    
+    
+    
+            <h2>Methods</h2>
+
+            <table>
+                    <tr>
+                <td class="type">
+                    <abbr title="NlpTools\Similarity\float">float</abbr>
+                </td>
+                <td class="last">
+                    <a href="CosineSimilarity.html#method_similarity">similarity</a>(array $A, array $B)
+                    <p></p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="CosineSimilarity.html#method_dist">dist</a>($A, $B)
+                    <p></p>
+                </td>
+                <td></td>
+            </tr>
+            </table>
+
+
+        <h2>Details</h2>
+
+                        <h3 id="method_similarity">
+        <div class="location">at line 45</div>
+        <code>            public            <abbr title="NlpTools\Similarity\float">float</abbr>
+    <strong>similarity</strong>(array $A, array $B)</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>array</td>
+                <td>$A</td>
+                <td>Either feature vector or simply vector</td>
+            </tr>
+                    <tr>
+                <td>array</td>
+                <td>$B</td>
+                <td>Either feature vector or simply vector</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td><abbr title="NlpTools\Similarity\float">float</abbr></td>
+            <td>The cosinus of the angle between the two vectors</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_dist">
+        <div class="location">at line 84</div>
+        <code>            public            
+    <strong>dist</strong>($A, $B)</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td></td>
+                <td>$A</td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td></td>
+                <td>$B</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+    
+            </div>
+            <div id="footer">
+        Generated by <a href="http://sami.sensiolabs.org/" target="_top">Sami, the API Documentation Generator</a>.
+    </div>
+    </body>
+</html>

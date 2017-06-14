@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow, all" />
+        <title>NlpTools\Documents\TrainingDocument | NlpTools API</title>
+                    <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+                            </head>
+        <body id="class">
+            <div class="header">
+        <ul>
+            <li><a href="../../classes.html">Classes</a></li>
+                            <li><a href="../../namespaces.html">Namespaces</a></li>
+                        <li><a href="../../interfaces.html">Interfaces</a></li>
+            <li><a href="../../doc-index.html">Index</a></li>
+            
+        </ul>
+
+        <div id="title">NlpTools API</div>
+
+            <div class="type">Class</div>
+    <h1><a href="../Documents.html">NlpTools\Documents</a>\TrainingDocument</h1>
+    </div>
+        <div class="content">
+                <p>class    <strong>TrainingDocument</strong>        implements
+        <a href="DocumentInterface.html"><abbr title="NlpTools\Documents\DocumentInterface">DocumentInterface</abbr></a></p>
+
+            <div class="description">
+            <p>A TrainingDocument is a document that &quot;decorates&quot; any other document to add the real class of the document.</p>
+            <p>It is used while training<br />
+ together with the training set.</p>
+        </div>
+    
+    
+    
+            <h2>Methods</h2>
+
+            <table>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="TrainingDocument.html#method___construct">__construct</a>(string $class, <a href="DocumentInterface.html"><abbr title="NlpTools\Documents\DocumentInterface">DocumentInterface</abbr></a> $d)
+                    <p></p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    mixed
+                </td>
+                <td class="last">
+                    <a href="TrainingDocument.html#method_getDocumentData">getDocumentData</a>()
+                    <p>Return the data of what is being represented.</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="TrainingDocument.html#method_getClass">getClass</a>()
+                    <p></p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="TrainingDocument.html#method_applyTransformation">applyTransformation</a>(<a href="../Utils/TransformationInterface.html"><abbr title="NlpTools\Utils\TransformationInterface">TransformationInterface</abbr></a> $transform)
+                    <p>Pass the transformation to the decorated document</p>
+                </td>
+                <td></td>
+            </tr>
+            </table>
+
+
+        <h2>Details</h2>
+
+                        <h3 id="method___construct">
+        <div class="location">at line 21</div>
+        <code>            public            
+    <strong>__construct</strong>(string $class, <a href="DocumentInterface.html"><abbr title="NlpTools\Documents\DocumentInterface">DocumentInterface</abbr></a> $d)</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>string</td>
+                <td>$class</td>
+                <td>The actual class of the Document $d</td>
+            </tr>
+                    <tr>
+                <td><a href="DocumentInterface.html"><abbr title="NlpTools\Documents\DocumentInterface">DocumentInterface</abbr></a></td>
+                <td>$d</td>
+                <td>The document to be decorated</td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getDocumentData">
+        <div class="location">at line 26</div>
+        <code>            public            mixed
+    <strong>getDocumentData</strong>()</code>
+    </h3>
+    <div class="details">
+        <p>Return the data of what is being represented.</p>
+        <p>If it were a word<br />
+ we could return a word. If it were a blog post we could return<br />
+ an array(Title,Body,array(Comments)).</p>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>mixed</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getClass">
+        <div class="location">at line 30</div>
+        <code>            public            
+    <strong>getClass</strong>()</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_applyTransformation">
+        <div class="location">at line 40</div>
+        <code>            public            
+    <strong>applyTransformation</strong>(<a href="../Utils/TransformationInterface.html"><abbr title="NlpTools\Utils\TransformationInterface">TransformationInterface</abbr></a> $transform)</code>
+    </h3>
+    <div class="details">
+        <p>Pass the transformation to the decorated document</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td><a href="../Utils/TransformationInterface.html"><abbr title="NlpTools\Utils\TransformationInterface">TransformationInterface</abbr></a></td>
+                <td>$transform</td>
+                <td>The transformation to be applied</td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+    
+            </div>
+            <div id="footer">
+        Generated by <a href="http://sami.sensiolabs.org/" target="_top">Sami, the API Documentation Generator</a>.
+    </div>
+    </body>
+</html>

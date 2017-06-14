@@ -1,0 +1,213 @@
+<!Doctype html>
+<html>
+
+		<head>
+		<base href="" >
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
+		
+					<title>Natural language processing tools | NlpTools PHP</title>
+				<link rel="stylesheet" href="style.css" />
+		<script>
+			var themeroller = (function () {
+				var haveStyle = false,
+					expired = 'Thu, 2 Aug 2001 20:47:11 UTC',
+					unexpired = 'Mon, 2 Aug 2021 20:47:11 UTC',
+					from = '',
+					changeClasses = function (from,theme) {
+						var items = document.getElementsByTagName('pre');
+						for (var i=0;i<items.length;i++)
+						{
+							var cls_re = new RegExp('\\s?\\b'+from+'\\b\\s?|^\s*$');
+							items[i].className = items[i].className.replace(cls_re,' '+theme+' ').trim();
+						}
+					},
+					updateCookie = function (t) {
+						if (t=='')
+							document.cookie = 'theme=; expires='+expired+'; path=/';
+						else
+							document.cookie = 'theme='+t+'; expires='+unexpired+'; path=/';
+						from = t;
+					};
+					
+				return {
+					onSelectChange: function () {
+						var theme = this.options[this.selectedIndex].value;
+						themeroller.changeHighlight(theme);
+					},
+					changeHighlight: function (theme) {
+						
+						if (haveStyle)
+						{
+							changeClasses(from,theme);
+						}
+						else
+						{
+							var l = document.createElement('link');
+							l.rel = 'stylesheet';
+							l.href = 'codecolorer.css';
+							document.head.appendChild(l);
+							haveStyle = true;
+							changeClasses(from,theme);
+						}
+						updateCookie(theme);
+					}
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="container">
+				<h1 class="title"><a href="index.html">NlpTools</a></h1>
+				<h2 class="subtitle">Natural language processing in php</h2>
+				<b class="clear"></b>
+			</div>
+		</div>
+
+		<div class="container">
+
+			<div class="sidebar">
+	
+		<div class="sidebar-container">
+		<h3>Navigation</h3>
+					<a href="index.html">Home</a><br/>
+					<a href="documentation/index.html">Documentation</a><br/>
+					<a href="blog/index.html">Blog</a><br/>
+					<a href="https://github.com/angeloskath/php-nlp-tools/">Github</a><br/>
+					<a href="mailto:info@php-nlp-tools.com">Contact</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Mini nlp projects</h3>
+					<a href="blog/category/spam-detection-service/index.html">Spam detection service</a><br/>
+					<a href="blog/category/sentiment-detection.1.html">Sentiment detection</a><br/>
+					<a href="blog/category/greek-pos-tagger.1.html">Greek POS Tagger</a><br/>
+					<a href="blog/category/programming-language-detection/index.html">Programming language detection</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Syntax highlighting</h3>
+		<select id="theme-select" onchange="themeroller.onSelectChange.call(this)">
+			<option value="">Vibrant Ink</option>
+			<option value="twitlight">Twitlight</option>
+			<option value="solarized-dark">Solarized Dark</option>
+			<option value="dawn">Dawn</option>
+			<option value="blackboard">Blackboard</option>
+			<option value="mac-classic">Mac Classic</option>
+			<option value="railscasts">Railscasts</option>
+		</select>
+		<p class="x-small">
+			Style sheet provided by
+			<a href="https://github.com/kpumuk/codecolorer">Codecolorer</a>
+			and tokenizing by <a href="http://qbnz.com/highlighter/geshi-doc.html">GeSHi</a>
+		</p>
+	</div>
+</div>
+			
+			<div class="content">
+				<div class="post">
+					<h2>
+						Natural language processing tools											</h2>
+										<p>NlpTools is a library for natural language processing written in php. Its
+development is driven by my own needs for text classification,
+clustering, tokenizing, stemming etc.</p>
+
+<h3>A tiny working example</h3>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw1">include</span><span class="br0">(</span><span class="st_h">'vendor/autoload.php'</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="kw2">function</span> getWikipediaPage<span class="br0">(</span><span class="re0">$page</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <a href="http://www.php.net/ini_set"><span class="kw3">ini_set</span></a><span class="br0">(</span><span class="st_h">'user_agent'</span><span class="sy0">,</span> <span class="st_h">'NlpToolsTest/1.0 (tests@php-nlp-tools.com)'</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="re0">$page</span> <span class="sy0">=</span> <a href="http://www.php.net/json_decode"><span class="kw3">json_decode</span></a><span class="br0">(</span><a href="http://www.php.net/file_get_contents"><span class="kw3">file_get_contents</span></a><span class="br0">(</span><span class="st0">"http://en.wikipedia.org/w/api.php?format=json&amp;action=parse&amp;page="</span><span class="sy0">.</span><a href="http://www.php.net/urlencode"><span class="kw3">urlencode</span></a><span class="br0">(</span><span class="re0">$page</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">,</span><span class="kw4">true</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="kw1">return</span> <a href="http://www.php.net/preg_replace"><span class="kw3">preg_replace</span></a><span class="br0">(</span><span class="st_h">'/\s+/'</span><span class="sy0">,</span><span class="st_h">' '</span><span class="sy0">,</span><a href="http://www.php.net/strip_tags"><span class="kw3">strip_tags</span></a><span class="br0">(</span><span class="re0">$page</span><span class="br0">[</span><span class="st_h">'parse'</span><span class="br0">]</span><span class="br0">[</span><span class="st_h">'text'</span><span class="br0">]</span><span class="br0">[</span><span class="st_h">'*'</span><span class="br0">]</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Tokenizers\WhitespaceTokenizer<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Similarity\CosineSimilarity<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$tokenizer</span> <span class="sy0">=</span> <span class="kw2">new</span> WhitespaceTokenizer<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$sim</span> <span class="sy0">=</span> <span class="kw2">new</span> CosineSimilarity<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$aris</span> <span class="sy0">=</span> <span class="re0">$tokenizer</span><span class="sy0">-&gt;</span><span class="me1">tokenize</span><span class="br0">(</span>getWikipediaPage<span class="br0">(</span><span class="st_h">'Aristotle'</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$archi</span> <span class="sy0">=</span> <span class="re0">$tokenizer</span><span class="sy0">-&gt;</span><span class="me1">tokenize</span><span class="br0">(</span>getWikipediaPage<span class="br0">(</span><span class="st_h">'Archimedes'</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$einstein</span> <span class="sy0">=</span> <span class="re0">$tokenizer</span><span class="sy0">-&gt;</span><span class="me1">tokenize</span><span class="br0">(</span>getWikipediaPage<span class="br0">(</span><span class="st_h">'Albert Einstein'</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$aris_to_archi</span> <span class="sy0">=</span> <span class="re0">$sim</span><span class="sy0">-&gt;</span><span class="me1">similarity</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="re0">$aris</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <span class="re0">$archi</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$aris_to_albert</span> <span class="sy0">=</span> <span class="re0">$sim</span><span class="sy0">-&gt;</span><span class="me1">similarity</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="re0">$aris</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <span class="re0">$einstein</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><a href="http://www.php.net/var_dump"><span class="kw3">var_dump</span></a><span class="br0">(</span><span class="re0">$aris_to_archi</span><span class="sy0">,</span><span class="re0">$aris_to_albert</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h3>Get it</h3>
+
+<p>You can get it at <a href="http://github.com/angeloskath/php-nlp-tools">github</a>
+or through packagist (which I recommend).</p>
+
+<pre><code>{
+    "require": {
+        "nlp-tools/nlp-tools": "1.0.*@dev"
+    }
+}
+</code></pre>
+
+<h3>Purpose of this site</h3>
+
+<p>Besides being a space on the internet for a library I believe it is
+useful enough to be shared, I will be hosting here documentation and a
+blog that will describe step by step small nlp projects using this library.</p>
+
+<h3>License</h3>
+
+<p>NlpTools is released under the most permissive license in the world, the
+<a href="http://www.wtfpl.net/">wtfpl</a>.</p>
+
+<h3>Sum up</h3>
+
+<p>NlpTools is still under development and there could be plenty of
+features missing, if you find yourself needing something that NlpTools
+doesn't currently provide you'd have to code it yourself and I would
+be glad if you offered it back to the project.</p>					<b class="clear"></b>
+				</div>
+			</div>
+
+		</div>
+		
+		<div class="container" style="text-align: right;" id="footer">
+	<p class="x-small">
+		This website is powered by <a href="http://www.imdb.com/title/tt0198781/" title="I was thinking of putting 'cries of children' but it seemed too evil">the laughter of children</a>
+	</p>
+</div>
+<div style="display: none;" id="geo-disclaimer">
+	Αφού είσαι από <strong>Ελλάδα</strong> και σε ενδιαφέρει η επεξεργασία φυσικής γλώσσας, <a href="greek-nlp.html">συνέχισε εδώ →</a>
+</div>
+<script>
+	(function () {
+		var co=document.cookie.split(';');
+		for (var i=0;i<co.length;i++)
+		{
+			if (co[i].substr(0,6)!='theme=')
+				continue;
+			
+			var newtheme = co[i].substr(6),
+				theme_select = document.getElementById('theme-select'),
+				opts = theme_select.options;
+				
+			themeroller.changeHighlight(newtheme);
+			for (var j=0; j<opts.length; j++)
+			{
+				if (opts[j].value==newtheme)
+				{
+					theme_select.selectedIndex = j;
+					break;
+				}
+			}
+			break;
+		}
+	})();
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-9373187-5']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+	// geoip
+	(function () {
+		var geo = document.createElement("script");
+		geo.type = "text/javascript";
+		geo.async = true;
+		geo.src = "http://php-nlp-tools.com:8081/js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(geo, s)
+		geo.onload = function () {
+			if (COUNTRY == "GR") {
+				document.getElementById("footer").style.marginBottom = "60px";
+				document.getElementById("geo-disclaimer").style.display = "block";
+			}
+		};
+	})();
+</script>
+		
+	</body>
+</html>

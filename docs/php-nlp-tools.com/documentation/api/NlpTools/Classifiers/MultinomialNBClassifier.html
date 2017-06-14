@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow, all" />
+        <title>NlpTools\Classifiers\MultinomialNBClassifier | NlpTools API</title>
+                    <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+                            </head>
+        <body id="class">
+            <div class="header">
+        <ul>
+            <li><a href="../../classes.html">Classes</a></li>
+                            <li><a href="../../namespaces.html">Namespaces</a></li>
+                        <li><a href="../../interfaces.html">Interfaces</a></li>
+            <li><a href="../../doc-index.html">Index</a></li>
+            
+        </ul>
+
+        <div id="title">NlpTools API</div>
+
+            <div class="type">Class</div>
+    <h1><a href="../Classifiers.html">NlpTools\Classifiers</a>\MultinomialNBClassifier</h1>
+    </div>
+        <div class="content">
+                <p>class    <strong>MultinomialNBClassifier</strong>        implements
+        <a href="ClassifierInterface.html"><abbr title="NlpTools\Classifiers\ClassifierInterface">ClassifierInterface</abbr></a></p>
+
+            <div class="description">
+            <p>Use a multinomia NB model to classify a document</p>
+            <p></p>
+        </div>
+    
+    
+    
+            <h2>Methods</h2>
+
+            <table>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="MultinomialNBClassifier.html#method___construct">__construct</a>(<a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a> $ff, <a href="../Models/MultinomialNBModelInterface.html"><abbr title="NlpTools\Models\MultinomialNBModelInterface">MultinomialNBModelInterface</abbr></a> $m)
+                    <p></p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    string
+                </td>
+                <td class="last">
+                    <a href="MultinomialNBClassifier.html#method_classify">classify</a>(array $classes, <a href="../Documents/DocumentInterface.html"><abbr title="NlpTools\Documents\DocumentInterface">DocumentInterface</abbr></a> $d)
+                    <p>Compute the probability of $d belonging to each class successively and return that class that has the maximum probability.</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    <abbr title="NlpTools\Classifiers\float">float</abbr>
+                </td>
+                <td class="last">
+                    <a href="MultinomialNBClassifier.html#method_getScore">getScore</a>(string $class, <a href="../Documents/DocumentInterface.html"><abbr title="NlpTools\Documents\DocumentInterface">DocumentInterface</abbr></a> $d)
+                    <p>Compute the log of the probability of the Document $d belonging to class $class.</p>
+                </td>
+                <td></td>
+            </tr>
+            </table>
+
+
+        <h2>Details</h2>
+
+                        <h3 id="method___construct">
+        <div class="location">at line 19</div>
+        <code>            public            
+    <strong>__construct</strong>(<a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a> $ff, <a href="../Models/MultinomialNBModelInterface.html"><abbr title="NlpTools\Models\MultinomialNBModelInterface">MultinomialNBModelInterface</abbr></a> $m)</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td><a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a></td>
+                <td>$ff</td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td><a href="../Models/MultinomialNBModelInterface.html"><abbr title="NlpTools\Models\MultinomialNBModelInterface">MultinomialNBModelInterface</abbr></a></td>
+                <td>$m</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_classify">
+        <div class="location">at line 34</div>
+        <code>            public            string
+    <strong>classify</strong>(array $classes, <a href="../Documents/DocumentInterface.html"><abbr title="NlpTools\Documents\DocumentInterface">DocumentInterface</abbr></a> $d)</code>
+    </h3>
+    <div class="details">
+        <p>Compute the probability of $d belonging to each class successively and return that class that has the maximum probability.</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>array</td>
+                <td>$classes</td>
+                <td>The classes from which to choose</td>
+            </tr>
+                    <tr>
+                <td><a href="../Documents/DocumentInterface.html"><abbr title="NlpTools\Documents\DocumentInterface">DocumentInterface</abbr></a></td>
+                <td>$d</td>
+                <td>The document to classify</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>string</td>
+            <td>$class The class that has the maximum probability</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getScore">
+        <div class="location">at line 61</div>
+        <code>            public            <abbr title="NlpTools\Classifiers\float">float</abbr>
+    <strong>getScore</strong>(string $class, <a href="../Documents/DocumentInterface.html"><abbr title="NlpTools\Documents\DocumentInterface">DocumentInterface</abbr></a> $d)</code>
+    </h3>
+    <div class="details">
+        <p>Compute the log of the probability of the Document $d belonging to class $class.</p>
+        <p>We compute the log so that we can sum over the<br />
+ logarithms instead of multiplying each probability.</p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>string</td>
+                <td>$class</td>
+                <td>The class for which we are getting a score</td>
+            </tr>
+                    <tr>
+                <td><a href="../Documents/DocumentInterface.html"><abbr title="NlpTools\Documents\DocumentInterface">DocumentInterface</abbr></a></td>
+                <td>$d</td>
+                <td>The document whose score we are getting</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td><abbr title="NlpTools\Classifiers\float">float</abbr></td>
+            <td>The log of the probability of $d belonging to $class</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+    
+            </div>
+            <div id="footer">
+        Generated by <a href="http://sami.sensiolabs.org/" target="_top">Sami, the API Documentation Generator</a>.
+    </div>
+    </body>
+</html>

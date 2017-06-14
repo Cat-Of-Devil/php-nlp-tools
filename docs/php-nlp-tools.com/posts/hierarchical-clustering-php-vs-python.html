@@ -1,0 +1,265 @@
+<!Doctype html>
+<html>
+
+		<head>
+		<base href="" >
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
+		
+					<title>Hierarchical Clustering - NlpTools vs NLTK | NlpTools PHP</title>
+				<link rel="stylesheet" href="../style.css" />
+		<script>
+			var themeroller = (function () {
+				var haveStyle = false,
+					expired = 'Thu, 2 Aug 2001 20:47:11 UTC',
+					unexpired = 'Mon, 2 Aug 2021 20:47:11 UTC',
+					from = '',
+					changeClasses = function (from,theme) {
+						var items = document.getElementsByTagName('pre');
+						for (var i=0;i<items.length;i++)
+						{
+							var cls_re = new RegExp('\\s?\\b'+from+'\\b\\s?|^\s*$');
+							items[i].className = items[i].className.replace(cls_re,' '+theme+' ').trim();
+						}
+					},
+					updateCookie = function (t) {
+						if (t=='')
+							document.cookie = 'theme=; expires='+expired+'; path=/';
+						else
+							document.cookie = 'theme='+t+'; expires='+unexpired+'; path=/';
+						from = t;
+					};
+					
+				return {
+					onSelectChange: function () {
+						var theme = this.options[this.selectedIndex].value;
+						themeroller.changeHighlight(theme);
+					},
+					changeHighlight: function (theme) {
+						
+						if (haveStyle)
+						{
+							changeClasses(from,theme);
+						}
+						else
+						{
+							var l = document.createElement('link');
+							l.rel = 'stylesheet';
+							l.href = 'codecolorer.css';
+							document.head.appendChild(l);
+							haveStyle = true;
+							changeClasses(from,theme);
+						}
+						updateCookie(theme);
+					}
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="container">
+				<h1 class="title"><a href="../index.html">NlpTools</a></h1>
+				<h2 class="subtitle">Natural language processing in php</h2>
+				<b class="clear"></b>
+			</div>
+		</div>
+
+		<div class="container">
+
+			<div class="sidebar">
+	
+		<div class="sidebar-container">
+		<h3>Navigation</h3>
+					<a href="../index.html">Home</a><br/>
+					<a href="../documentation/index.html">Documentation</a><br/>
+					<a href="../blog/index.html">Blog</a><br/>
+					<a href="https://github.com/angeloskath/php-nlp-tools/">Github</a><br/>
+					<a href="mailto:info@php-nlp-tools.com">Contact</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Mini nlp projects</h3>
+					<a href="../blog/category/spam-detection-service/index.html">Spam detection service</a><br/>
+					<a href="../blog/category/sentiment-detection.1.html">Sentiment detection</a><br/>
+					<a href="../blog/category/greek-pos-tagger.1.html">Greek POS Tagger</a><br/>
+					<a href="../blog/category/programming-language-detection/index.html">Programming language detection</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Syntax highlighting</h3>
+		<select id="theme-select" onchange="themeroller.onSelectChange.call(this)">
+			<option value="">Vibrant Ink</option>
+			<option value="twitlight">Twitlight</option>
+			<option value="solarized-dark">Solarized Dark</option>
+			<option value="dawn">Dawn</option>
+			<option value="blackboard">Blackboard</option>
+			<option value="mac-classic">Mac Classic</option>
+			<option value="railscasts">Railscasts</option>
+		</select>
+		<p class="x-small">
+			Style sheet provided by
+			<a href="https://github.com/kpumuk/codecolorer">Codecolorer</a>
+			and tokenizing by <a href="http://qbnz.com/highlighter/geshi-doc.html">GeSHi</a>
+		</p>
+	</div>
+</div>
+			
+			<div class="content">
+				<div class="post">
+					<h2>
+						Hierarchical Clustering - NlpTools vs NLTK													<span class="date">Jun 15th, 2013</span>
+											</h2>
+										<p>First of all, I want to clarify that this post is not about bashing NLTK or even implying that NlpTools can be a
+replacement for the great tool NLTK is. It is simply a comment on a bad implementation of an algorithm that
+is probably not considered important by the NLTK developers.</p>
+
+<p>In the rest of the post I will assume that you have read the <a href="faster-hierarchical-clustering.html">previous post</a> regarding hierarchical
+clustering algorithms, their asymptotic time complexities and what I have chosen to implement so far in NlpTools.</p>
+
+<h3>Introduction</h3>
+
+<p>I wanted to test the output of the hierarchical clustering implementation in NlpTools so I decided to run a
+comparison of the resulting dendrograms with an already established and tested library. I browsed NLTK and
+read through the <a href="http://nltk.org/api/nltk.cluster.html#module-nltk.cluster.gaac">clustering package's documentation page</a>. Based on the information there
+I went on to look at the implementation at <a href="https://github.com/nltk/nltk/blob/master/nltk/cluster/gaac.py">github</a>.</p>
+
+<h3>Naive implementation</h3>
+
+<p>NLTK's implementation is the one described in the previous post as naive. It has time complexity O(n<sup>3</sup>).
+According to the docs, they chose to support only the cosine similarity distance metric and the group average
+linkage method because thus they could do some optimizations and gain a speed up, so there must be something I
+am missing. In addition, NLTK uses numpy for efficient computation of matrix operations.</p>
+
+<p>Considering the above, I still thought php would be slower since I did not even use the native heap implementation
+(<a href="http://www.php.net/manual/en/class.splheap.php">SplHeap</a>) for the linkage method. I created a dataset of two-dimensional random points and decided to
+run and compare the times. The code that I used to run the clustering and get the times can be found in this
+<a href="https://gist.github.com/angeloskath/5768035">gist</a> (I wrote the gist before I decided to write this post).</p>
+
+<p><img src="../files/clustering/nltk-vs-nlptools.png" width="600" class="border"/></p>
+
+<h3>How bad the implementation actually is</h3>
+
+<p>As I have mentioned already the implementation is asymptotically worse than the one in NlpTools. But does this
+really account for the huge difference shown on the above graph. Actually it doesn't. NLTK does not use a
+dissimilarity matrix at all in this implementation. It recomputes the pairwise cluster similarity again for each
+merge. That means, besides the unnecessary function call, that the asymptotic complexity of the algorithm is even
+worse (something not shown by this sample dataset). The complexity of the algorithm is actually O(n<sup>3</sup>•M)
+where M is the number of dimensions that our points have.</p>
+
+<p>Keep in mind that this dataset's points only have two dimensions which means that the difference we see here is
+mostly due to the function call overhead and not due to the data dimensionality problem (which can be huge especially
+when dealing with text data).</p>
+
+<h3>Assumptions about why</h3>
+
+<h4>Saving memory</h4>
+
+<p>Using a matrix of pairwise similarities or dissimilarities requires O(n<sup>2</sup>) memory space while computing
+the similarities each time only requires O(n) for the clusters. Thus NlpTools would exhaust a computers memory
+before NLTK ever reached to 50%. On the other hand, if it ever reached 50% there is no way it would finish computing
+the clusters in our life time, so there is not much point in saving memory (except if the computer had really small memory, about 100MB).</p>
+
+<h4>Relying too much on numpy</h4>
+
+<p>Numpy is a great library for fast matrix operations in python, that doesn't mean that numpy operations are O(1)
+constant time. Accessing lists and dicts in python, on the other hand, is. One thing one can assume is that NLTK
+developers got a bit carried away by the greatness of numpy and thought it to be the tool for every job. The
+"<a href="http://nltk.org/api/nltk.cluster.html#module-nltk.cluster.gaac">efficient speed up</a>" is actually what makes this implementation that slow.</p>
+
+<h3>10+ times speed up with 46 lines of code</h3>
+
+<p>The following changes are a quick and dirty addition of a similarity matrix to the algorithm. Asymptotic time
+complexity still remains O(n<sup>3</sup>) and memory usage is now O(n<sup>2</sup>). The code is a drop in replacement
+for the lines <a href="https://github.com/nltk/nltk/blob/master/nltk/cluster/gaac.py#L45">46 to 73 of nltk/cluster/gaac.py</a>
+that doesn't require changes in any other part of the nltk cluster module. Moreover, by making a small change in the
+11th line below this implementation could accept any function as a distance metric.</p>
+
+<pre class="python"><ol><li class="li1"><div class="de1"><span class="co1"># variables describing the initial situation</span></div></li><li class="li1"><div class="de1">N <span class="sy0">=</span> <span class="kw2">len</span><span class="br0">(</span>vectors<span class="br0">)</span></div></li><li class="li1"><div class="de1">cluster_len <span class="sy0">=</span> <span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>*N</div></li><li class="li1"><div class="de1">cluster_count <span class="sy0">=</span> N</div></li><li class="li1"><div class="de1">index_map <span class="sy0">=</span> <span class="kw2">range</span><span class="br0">(</span>N<span class="br0">)</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1"># construct the similarity matrix</span></div></li><li class="li1"><div class="de1">sim<span class="sy0">=</span> <span class="br0">{</span><span class="br0">}</span></div></li><li class="li1"><div class="de1"><span class="kw1">for</span> i <span class="kw1">in</span> <span class="kw2">xrange</span><span class="br0">(</span>N<span class="br0">)</span>:</div></li><li class="li1"><div class="de1">    <span class="kw1">for</span> j <span class="kw1">in</span> <span class="kw2">xrange</span><span class="br0">(</span>i+<span class="nu0">1</span><span class="sy0">,</span>N<span class="br0">)</span>:</div></li><li class="li1"><div class="de1">        sim<span class="br0">[</span> <span class="br0">(</span>i<span class="sy0">,</span>j<span class="br0">)</span> <span class="br0">]</span> <span class="sy0">=</span> <span class="kw2">self</span>._average_similarity<span class="br0">(</span>vectors<span class="br0">[</span>i<span class="br0">]</span><span class="sy0">,</span><span class="nu0">1</span><span class="sy0">,</span>vectors<span class="br0">[</span>j<span class="br0">]</span><span class="sy0">,</span><span class="nu0">1</span><span class="br0">)</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="kw1">while</span> cluster_count <span class="sy0">&gt;</span> <span class="kw2">max</span><span class="br0">(</span><span class="kw2">self</span>._num_clusters<span class="sy0">,</span> <span class="nu0">1</span><span class="br0">)</span>:</div></li><li class="li1"><div class="de1">    <span class="br0">(</span>i<span class="sy0">,</span>j<span class="br0">)</span><span class="sy0">,</span>_sim <span class="sy0">=</span> <span class="kw2">max</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">        sim.<span class="me1">iteritems</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">        key<span class="sy0">=</span><span class="kw1">lambda</span> x: x<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="br0">)</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="co1"># update similarities</span></div></li><li class="li1"><div class="de1">    cli <span class="sy0">=</span> cluster_len<span class="br0">[</span>i<span class="br0">]</span></div></li><li class="li1"><div class="de1">    clj <span class="sy0">=</span> cluster_len<span class="br0">[</span>j<span class="br0">]</span></div></li><li class="li1"><div class="de1">    cl <span class="sy0">=</span> cli+clj</div></li><li class="li1"><div class="de1">    <span class="kw1">del</span> sim<span class="br0">[</span> <span class="br0">(</span>i<span class="sy0">,</span>j<span class="br0">)</span> <span class="br0">]</span></div></li><li class="li1"><div class="de1">    <span class="kw1">for</span> x <span class="kw1">in</span> <span class="kw2">xrange</span><span class="br0">(</span>i<span class="br0">)</span>:</div></li><li class="li1"><div class="de1">        <span class="kw1">if</span> <span class="br0">(</span>x<span class="sy0">,</span>i<span class="br0">)</span> <span class="kw1">not</span> <span class="kw1">in</span> sim: <span class="kw1">continue</span></div></li><li class="li1"><div class="de1">        sim<span class="br0">[</span> <span class="br0">(</span>x<span class="sy0">,</span>i<span class="br0">)</span> <span class="br0">]</span> <span class="sy0">=</span> <span class="br0">(</span>sim<span class="br0">[</span> <span class="br0">(</span>x<span class="sy0">,</span>i<span class="br0">)</span> <span class="br0">]</span>*cli + sim<span class="br0">[</span> <span class="br0">(</span>x<span class="sy0">,</span>j<span class="br0">)</span> <span class="br0">]</span>*clj<span class="br0">)</span>/cl</div></li><li class="li1"><div class="de1">        <span class="kw1">del</span> sim<span class="br0">[</span> <span class="br0">(</span>x<span class="sy0">,</span>j<span class="br0">)</span> <span class="br0">]</span></div></li><li class="li1"><div class="de1">    <span class="kw1">for</span> x <span class="kw1">in</span> <span class="kw2">xrange</span><span class="br0">(</span>i+<span class="nu0">1</span><span class="sy0">,</span>j<span class="br0">)</span>:</div></li><li class="li1"><div class="de1">        <span class="kw1">if</span> <span class="br0">(</span>i<span class="sy0">,</span>x<span class="br0">)</span> <span class="kw1">not</span> <span class="kw1">in</span> sim: <span class="kw1">continue</span></div></li><li class="li1"><div class="de1">        sim<span class="br0">[</span> <span class="br0">(</span>i<span class="sy0">,</span>x<span class="br0">)</span> <span class="br0">]</span> <span class="sy0">=</span> <span class="br0">(</span>sim<span class="br0">[</span> <span class="br0">(</span>i<span class="sy0">,</span>x<span class="br0">)</span> <span class="br0">]</span>*cli + sim<span class="br0">[</span> <span class="br0">(</span>x<span class="sy0">,</span>j<span class="br0">)</span> <span class="br0">]</span>*clj<span class="br0">)</span>/cl</div></li><li class="li1"><div class="de1">        <span class="kw1">del</span> sim<span class="br0">[</span> <span class="br0">(</span>x<span class="sy0">,</span>j<span class="br0">)</span> <span class="br0">]</span></div></li><li class="li1"><div class="de1">    <span class="kw1">for</span> x <span class="kw1">in</span> <span class="kw2">xrange</span><span class="br0">(</span>j+<span class="nu0">1</span><span class="sy0">,</span>N<span class="br0">)</span>:</div></li><li class="li1"><div class="de1">        <span class="kw1">if</span> <span class="br0">(</span>i<span class="sy0">,</span>x<span class="br0">)</span> <span class="kw1">not</span> <span class="kw1">in</span> sim: <span class="kw1">continue</span></div></li><li class="li1"><div class="de1">        sim<span class="br0">[</span> <span class="br0">(</span>i<span class="sy0">,</span>x<span class="br0">)</span> <span class="br0">]</span> <span class="sy0">=</span> <span class="br0">(</span>sim<span class="br0">[</span> <span class="br0">(</span>i<span class="sy0">,</span>x<span class="br0">)</span> <span class="br0">]</span>*cli + sim<span class="br0">[</span> <span class="br0">(</span>j<span class="sy0">,</span>x<span class="br0">)</span> <span class="br0">]</span>*clj<span class="br0">)</span>/cl</div></li><li class="li1"><div class="de1">        <span class="kw1">del</span> sim<span class="br0">[</span> <span class="br0">(</span>j<span class="sy0">,</span>x<span class="br0">)</span> <span class="br0">]</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="co1"># merge the clusters</span></div></li><li class="li1"><div class="de1">    cluster_len<span class="br0">[</span>i<span class="br0">]</span> <span class="sy0">=</span> cl</div></li><li class="li1"><div class="de1">    <span class="kw2">self</span>._dendrogram.<span class="me1">merge</span><span class="br0">(</span>index_map<span class="br0">[</span>i<span class="br0">]</span><span class="sy0">,</span>index_map<span class="br0">[</span>j<span class="br0">]</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">    cluster_count -<span class="sy0">=</span> <span class="nu0">1</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="co1"># update the index map to reflect the indexes if we</span></div></li><li class="li1"><div class="de1">    <span class="co1"># had removed j</span></div></li><li class="li1"><div class="de1">    <span class="kw1">for</span> x <span class="kw1">in</span> <span class="kw2">xrange</span><span class="br0">(</span>j+<span class="nu0">1</span><span class="sy0">,</span>N<span class="br0">)</span>:</div></li><li class="li1"><div class="de1">        index_map<span class="br0">[</span>x<span class="br0">]</span> -<span class="sy0">=</span> <span class="nu0">1</span></div></li><li class="li1"><div class="de1">    index_map<span class="br0">[</span>j<span class="br0">]</span> <span class="sy0">=</span> -<span class="nu0">1</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h3>Graph running times</h3>
+
+<p>For the following graphs each algorithm was run 10 times and the average is plotted. I would also plot the standard
+deviation but it was insignificant. The data can be found <a href="../files/clustering/nlptools-vs-nltk.csv">here as csv</a> and <a href="../files/clustering/nlptools-vs-nltk.gnumeric">here as a gnumeric
+document</a>.</p>
+
+<h4>Comparison of every implementation</h4>
+
+<p><img src="../files/clustering/nltk-vs-nltk-vs-nlptools.png" width="600" class="border"/></p>
+
+<p>NLTK series is incomplete because it took too much time to run the tests. You can interpolate that it would take
+more than 8 hours to actually cluster 1200 points ten times.</p>
+
+<h4>Relative performance</h4>
+
+<p>The following graph is actually the most interesting. It shows that with this improvement we have not actually solved
+any problem, we have simply made the algorithm 13 times faster. The execution time still increases by the cube of
+the number of points which means that the NlpTools implementation will always be incrementally faster as the number
+of points increases.</p>
+
+<p><img src="../files/clustering/relative-performance-nltk-nlptools.png" width="600" class="border"/></p>					<b class="clear"></b>
+				</div>
+			</div>
+
+		</div>
+		
+		<div class="container" style="text-align: right;" id="footer">
+	<p class="x-small">
+		This website is powered by <a href="http://www.imdb.com/title/tt0198781/" title="I was thinking of putting 'cries of children' but it seemed too evil">the laughter of children</a>
+	</p>
+</div>
+<div style="display: none;" id="geo-disclaimer">
+	Αφού είσαι από <strong>Ελλάδα</strong> και σε ενδιαφέρει η επεξεργασία φυσικής γλώσσας, <a href="../greek-nlp.html">συνέχισε εδώ →</a>
+</div>
+<script>
+	(function () {
+		var co=document.cookie.split(';');
+		for (var i=0;i<co.length;i++)
+		{
+			if (co[i].substr(0,6)!='theme=')
+				continue;
+			
+			var newtheme = co[i].substr(6),
+				theme_select = document.getElementById('theme-select'),
+				opts = theme_select.options;
+				
+			themeroller.changeHighlight(newtheme);
+			for (var j=0; j<opts.length; j++)
+			{
+				if (opts[j].value==newtheme)
+				{
+					theme_select.selectedIndex = j;
+					break;
+				}
+			}
+			break;
+		}
+	})();
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-9373187-5']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+	// geoip
+	(function () {
+		var geo = document.createElement("script");
+		geo.type = "text/javascript";
+		geo.async = true;
+		geo.src = "http://php-nlp-tools.com:8081/js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(geo, s)
+		geo.onload = function () {
+			if (COUNTRY == "GR") {
+				document.getElementById("footer").style.marginBottom = "60px";
+				document.getElementById("geo-disclaimer").style.display = "block";
+			}
+		};
+	})();
+</script>
+		
+	</body>
+</html>

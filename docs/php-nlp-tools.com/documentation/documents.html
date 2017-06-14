@@ -1,0 +1,280 @@
+<!Doctype html>
+<html>
+
+		<head>
+		<base href="" >
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
+		
+					<title>Documents | NlpTools PHP</title>
+				<link rel="stylesheet" href="../style.css" />
+		<script>
+			var themeroller = (function () {
+				var haveStyle = false,
+					expired = 'Thu, 2 Aug 2001 20:47:11 UTC',
+					unexpired = 'Mon, 2 Aug 2021 20:47:11 UTC',
+					from = '',
+					changeClasses = function (from,theme) {
+						var items = document.getElementsByTagName('pre');
+						for (var i=0;i<items.length;i++)
+						{
+							var cls_re = new RegExp('\\s?\\b'+from+'\\b\\s?|^\s*$');
+							items[i].className = items[i].className.replace(cls_re,' '+theme+' ').trim();
+						}
+					},
+					updateCookie = function (t) {
+						if (t=='')
+							document.cookie = 'theme=; expires='+expired+'; path=/';
+						else
+							document.cookie = 'theme='+t+'; expires='+unexpired+'; path=/';
+						from = t;
+					};
+					
+				return {
+					onSelectChange: function () {
+						var theme = this.options[this.selectedIndex].value;
+						themeroller.changeHighlight(theme);
+					},
+					changeHighlight: function (theme) {
+						
+						if (haveStyle)
+						{
+							changeClasses(from,theme);
+						}
+						else
+						{
+							var l = document.createElement('link');
+							l.rel = 'stylesheet';
+							l.href = 'codecolorer.css';
+							document.head.appendChild(l);
+							haveStyle = true;
+							changeClasses(from,theme);
+						}
+						updateCookie(theme);
+					}
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="container">
+				<h1 class="title"><a href="../index.html">NlpTools</a></h1>
+				<h2 class="subtitle">Natural language processing in php</h2>
+				<b class="clear"></b>
+			</div>
+		</div>
+
+		<div class="container">
+
+			<div class="sidebar">
+	
+		<div class="sidebar-container">
+		<h3>Api Docs</h3>
+					<a href="api/index.html">Api Documentation</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Documentation</h3>
+					<a href="index.html">Get Started</a><br/>
+					<a href="tokenizers.html">Tokenizers</a><br/>
+					<a href="documents.html">Documents</a><br/>
+					<a href="feature-factories.html">Feature Factories</a><br/>
+					<a href="classifiers.html">Classifiers</a><br/>
+					<a href="bayesian-model.html">Bayesian Model</a><br/>
+					<a href="maximum-entropy-model.html">Maximum Entropy Model</a><br/>
+					<a href="similarity.html">Similarity</a><br/>
+					<a href="clustering.html">Clustering</a><br/>
+					<a href="transformations.html">Transformations</a><br/>
+					<a href="other.html">Other</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Navigation</h3>
+					<a href="../index.html">Home</a><br/>
+					<a href="index.html">Documentation</a><br/>
+					<a href="../blog/index.html">Blog</a><br/>
+					<a href="https://github.com/angeloskath/php-nlp-tools/">Github</a><br/>
+					<a href="mailto:info@php-nlp-tools.com">Contact</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Mini nlp projects</h3>
+					<a href="../blog/category/spam-detection-service/index.html">Spam detection service</a><br/>
+					<a href="../blog/category/sentiment-detection.1.html">Sentiment detection</a><br/>
+					<a href="../blog/category/greek-pos-tagger.1.html">Greek POS Tagger</a><br/>
+					<a href="../blog/category/programming-language-detection/index.html">Programming language detection</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Syntax highlighting</h3>
+		<select id="theme-select" onchange="themeroller.onSelectChange.call(this)">
+			<option value="">Vibrant Ink</option>
+			<option value="twitlight">Twitlight</option>
+			<option value="solarized-dark">Solarized Dark</option>
+			<option value="dawn">Dawn</option>
+			<option value="blackboard">Blackboard</option>
+			<option value="mac-classic">Mac Classic</option>
+			<option value="railscasts">Railscasts</option>
+		</select>
+		<p class="x-small">
+			Style sheet provided by
+			<a href="https://github.com/kpumuk/codecolorer">Codecolorer</a>
+			and tokenizing by <a href="http://qbnz.com/highlighter/geshi-doc.html">GeSHi</a>
+		</p>
+	</div>
+</div>
+			
+			<div class="content">
+				<div class="post">
+					<h2>
+						Documents											</h2>
+										<p>Documents wrap the actual document that gets classified (whatever that
+may be). A document can be anything from a single word to a word with
+context or maybe a whole email with metadata about previous conversations.</p>
+
+<h3>The Document interface</h3>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">interface</span> DocumentInterface</div></li><li class="li1"><div class="de1"><span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="coMULTI">/*</span></div></li><li class="li1"><div class="de1"><span class="coMULTI">     * Return the data of what is being represented. If it were a word</span></div></li><li class="li1"><div class="de1"><span class="coMULTI">     * we could return a word. If it were a blog post we could return</span></div></li><li class="li1"><div class="de1"><span class="coMULTI">     * an array(Title,Body,array(Comments)).</span></div></li><li class="li1"><div class="de1"><span class="coMULTI">     * </span></div></li><li class="li1"><div class="de1"><span class="coMULTI">     * @return mixed</span></div></li><li class="li1"><div class="de1"><span class="coMULTI">     */</span></div></li><li class="li1"><div class="de1">     <span class="kw2">public</span> <span class="kw2">function</span> getDocumentData<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>Document is very generic and it can return anything as its data. It
+is, though, useful to design generic document classes that can be used
+by purpose-specific <a href="feature-factories.html">feature factories</a>.</p>
+
+<p>With the mindset expressed above, NlpTools contains three generic
+document types that could be used for many applications.</p>
+
+<ol><li>TokensDocument</li>
+<li>WordDocument</li>
+<li>RawDocument</li>
+</ol><p>Documents also get to decide how to apply a <a href="transformations.html">transformation</a>.
+For instance to apply a stemmer to a document one need not know
+how is the data structured in the document but can simply delegate
+the that to the document instance.</p>
+
+<h3>TokensDocument</h3>
+
+<p>TokensDocument is useful for feature factories and algorithms that use
+the <a href="../index.html">"Bag of words"</a> model for representing a large group of text.
+It wraps an array of tokens and simply returns this array as the data.</p>
+
+<p>When applying a transformation it applies it to every single token removing
+the ones which are transformed to null.</p>
+
+<p>To continue the tokenizers' example.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">use</span> \NlpTools\Tokenizers\WhitespaceTokenizer<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> \NlpTools\Documents\TokensDocument<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$s1</span> <span class="sy0">=</span> <span class="st0">"Please allow me to introduce myself</span></div></li><li class="li1"><div class="de1"><span class="st0">        I'm a man of wealth and taste"</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$s2</span> <span class="sy0">=</span> <span class="st0">"Hello, I love you, won't you tell me your name</span></div></li><li class="li1"><div class="de1"><span class="st0">        Hello, I love you, let me jump in your game"</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$tok</span> <span class="sy0">=</span> <span class="kw2">new</span> WhitespaceTokenizer<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$stones</span> <span class="sy0">=</span> <span class="kw2">new</span> TokensDocument<span class="br0">(</span><span class="re0">$tok</span><span class="sy0">-&gt;</span><span class="me1">tokenize</span><span class="br0">(</span><span class="re0">$s1</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span> <span class="co1">// $stones now represents the "Sympathy for the devil" song</span></div></li><li class="li1"><div class="de1"><span class="re0">$doors</span> <span class="sy0">=</span> <span class="kw2">new</span> TokensDocument<span class="br0">(</span><span class="re0">$tok</span><span class="sy0">-&gt;</span><span class="me1">tokenize</span><span class="br0">(</span><span class="re0">$s2</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span> <span class="co1">// $doors now represents the "Hello, I love you" song</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h3>WordDocument</h3>
+
+<p>WordDocument represents a single token (usually a word) surrounded by a
+token context of some length. It is useful for representing certain
+elements, like person names, places, etc, in the context of a larger
+piece of text.</p>
+
+<p>Also as the TokensDocument this document applies a transformation to
+each token separately and removes the nulls.</p>
+
+<p>To illustrate the difference from above.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">use</span> \NlpTools\Tokenizers\WhitespaceTokenizer<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> \NlpTools\Documents\WordDocument<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$s1</span> <span class="sy0">=</span> <span class="st0">"Please allow me to introduce myself</span></div></li><li class="li1"><div class="de1"><span class="st0">        I'm a man of wealth and taste"</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$s2</span> <span class="sy0">=</span> <span class="st0">"Hello, I love you, won't you tell me your name</span></div></li><li class="li1"><div class="de1"><span class="st0">        Hello, I love you, let me jump in your game"</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$tok</span> <span class="sy0">=</span> <span class="kw2">new</span> WhitespaceTokenizer<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$stones</span> <span class="sy0">=</span> <span class="kw2">new</span> WordDocument<span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="re0">$tok</span><span class="sy0">-&gt;</span><span class="me1">tokenize</span><span class="br0">(</span><span class="re0">$s1</span><span class="br0">)</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <span class="nu0">2</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <span class="nu0">4</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span> <span class="co1">// $stones now represents the word 'me' in the context of 4</span></div></li><li class="li1"><div class="de1">   <span class="co1">// surrounding words in any direction</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$doors</span> <span class="sy0">=</span> <span class="kw2">new</span> WordDocument<span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="re0">$tok</span><span class="sy0">-&gt;</span><span class="me1">tokenize</span><span class="br0">(</span><span class="re0">$s2</span><span class="br0">)</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <span class="nu0">7</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <span class="nu0">4</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span> <span class="co1">// $doors now also represents the word 'me' in the context of 4</span></div></li><li class="li1"><div class="de1">   <span class="co1">// surrounding words in any direction</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>Because we have also captured the context of those words, above, we can
+distinguish them and produce different features.</p>
+
+<h3>RawDocument</h3>
+
+<p>RawDocument wraps a single php variable. The transformations are, as is
+expected, applied to the variable.</p>
+
+<h3>Training document and Training set</h3>
+
+<p>In the Documents namespace there exist two more classes created to make
+working with documents a lot easier.</p>
+
+<p><em>TrainingDocument</em> is a simple wrapper for any Document class that
+also contains the label (or class) information regarding that specific
+Document instance. Thus, TrainingDocument is useful for supervised
+learning where the model is trained on documents whose labels are known
+beforehand.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="co1">// $d is a Document instance</span></div></li><li class="li1"><div class="de1"><span class="re0">$td</span> <span class="sy0">=</span> <span class="kw2">new</span> TrainingDocument<span class="br0">(</span><span class="st_h">'CLASS 1'</span><span class="sy0">,</span><span class="re0">$d</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><a href="http://www.php.net/var_dump"><span class="kw3">var_dump</span></a><span class="br0">(</span><span class="re0">$td</span><span class="sy0">-&gt;</span><span class="me1">getClass</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span> <span class="co1">// CLASS 1</span></div></li><li class="li1"><div class="de1"><a href="http://www.php.net/var_dump"><span class="kw3">var_dump</span></a><span class="br0">(</span><span class="re0">$td</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span> <span class="co1">// $d-&gt;getDocumentData()</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p><em>TrainingSet</em> is a TrainingDocument container. Besides adding an easier
+way of instanciating TrainingDocuments it also provides the useful
+\Iterator, \ArrayAccess and \Countable interfaces for manipulating many
+TrainingDocuments and it allows for an easy way to apply a transformation
+to every single document.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="re0">$tset</span> <span class="sy0">=</span> <span class="kw2">new</span> TrainingSet<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$tset</span><span class="sy0">-&gt;</span><span class="me1">addDocument</span><span class="br0">(</span><span class="st_h">'CLASS 1'</span><span class="sy0">,</span><span class="re0">$a</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw1">foreach</span> <span class="br0">(</span><span class="re0">$tset</span> <span class="kw1">as</span> <span class="re0">$class</span><span class="sy0">=&gt;</span><span class="re0">$d</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="sy0">...</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"><span class="re0">$tset</span><span class="sy0">-&gt;</span><span class="me1">applyTransformations</span><span class="br0">(</span><a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span><span class="re0">$transform1</span><span class="sy0">,</span> <span class="re0">$transform2</span><span class="sy0">,</span> <span class="sy0">...</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<div style="text-align: center;">
+
+<p><a href="tokenizers.html">« Tokenizers</a>
+/
+<a href="feature-factories.html">Feature Factories »</a></p>
+
+</div>					<b class="clear"></b>
+				</div>
+			</div>
+
+		</div>
+		
+		<div class="container" style="text-align: right;" id="footer">
+	<p class="x-small">
+		This website is powered by <a href="http://www.imdb.com/title/tt0198781/" title="I was thinking of putting 'cries of children' but it seemed too evil">the laughter of children</a>
+	</p>
+</div>
+<div style="display: none;" id="geo-disclaimer">
+	Αφού είσαι από <strong>Ελλάδα</strong> και σε ενδιαφέρει η επεξεργασία φυσικής γλώσσας, <a href="../greek-nlp.html">συνέχισε εδώ →</a>
+</div>
+<script>
+	(function () {
+		var co=document.cookie.split(';');
+		for (var i=0;i<co.length;i++)
+		{
+			if (co[i].substr(0,6)!='theme=')
+				continue;
+			
+			var newtheme = co[i].substr(6),
+				theme_select = document.getElementById('theme-select'),
+				opts = theme_select.options;
+				
+			themeroller.changeHighlight(newtheme);
+			for (var j=0; j<opts.length; j++)
+			{
+				if (opts[j].value==newtheme)
+				{
+					theme_select.selectedIndex = j;
+					break;
+				}
+			}
+			break;
+		}
+	})();
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-9373187-5']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+	// geoip
+	(function () {
+		var geo = document.createElement("script");
+		geo.type = "text/javascript";
+		geo.async = true;
+		geo.src = "http://php-nlp-tools.com:8081/js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(geo, s)
+		geo.onload = function () {
+			if (COUNTRY == "GR") {
+				document.getElementById("footer").style.marginBottom = "60px";
+				document.getElementById("geo-disclaimer").style.display = "block";
+			}
+		};
+	})();
+</script>
+		
+	</body>
+</html>

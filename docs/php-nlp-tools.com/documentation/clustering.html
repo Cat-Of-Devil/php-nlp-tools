@@ -1,0 +1,287 @@
+<!Doctype html>
+<html>
+
+		<head>
+		<base href="" >
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
+		
+					<title>Clustering | NlpTools PHP</title>
+				<link rel="stylesheet" href="../style.css" />
+		<script>
+			var themeroller = (function () {
+				var haveStyle = false,
+					expired = 'Thu, 2 Aug 2001 20:47:11 UTC',
+					unexpired = 'Mon, 2 Aug 2021 20:47:11 UTC',
+					from = '',
+					changeClasses = function (from,theme) {
+						var items = document.getElementsByTagName('pre');
+						for (var i=0;i<items.length;i++)
+						{
+							var cls_re = new RegExp('\\s?\\b'+from+'\\b\\s?|^\s*$');
+							items[i].className = items[i].className.replace(cls_re,' '+theme+' ').trim();
+						}
+					},
+					updateCookie = function (t) {
+						if (t=='')
+							document.cookie = 'theme=; expires='+expired+'; path=/';
+						else
+							document.cookie = 'theme='+t+'; expires='+unexpired+'; path=/';
+						from = t;
+					};
+					
+				return {
+					onSelectChange: function () {
+						var theme = this.options[this.selectedIndex].value;
+						themeroller.changeHighlight(theme);
+					},
+					changeHighlight: function (theme) {
+						
+						if (haveStyle)
+						{
+							changeClasses(from,theme);
+						}
+						else
+						{
+							var l = document.createElement('link');
+							l.rel = 'stylesheet';
+							l.href = 'codecolorer.css';
+							document.head.appendChild(l);
+							haveStyle = true;
+							changeClasses(from,theme);
+						}
+						updateCookie(theme);
+					}
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="container">
+				<h1 class="title"><a href="../index.html">NlpTools</a></h1>
+				<h2 class="subtitle">Natural language processing in php</h2>
+				<b class="clear"></b>
+			</div>
+		</div>
+
+		<div class="container">
+
+			<div class="sidebar">
+	
+		<div class="sidebar-container">
+		<h3>Api Docs</h3>
+					<a href="api/index.html">Api Documentation</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Documentation</h3>
+					<a href="index.html">Get Started</a><br/>
+					<a href="tokenizers.html">Tokenizers</a><br/>
+					<a href="documents.html">Documents</a><br/>
+					<a href="feature-factories.html">Feature Factories</a><br/>
+					<a href="classifiers.html">Classifiers</a><br/>
+					<a href="bayesian-model.html">Bayesian Model</a><br/>
+					<a href="maximum-entropy-model.html">Maximum Entropy Model</a><br/>
+					<a href="similarity.html">Similarity</a><br/>
+					<a href="clustering.html">Clustering</a><br/>
+					<a href="transformations.html">Transformations</a><br/>
+					<a href="other.html">Other</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Navigation</h3>
+					<a href="../index.html">Home</a><br/>
+					<a href="index.html">Documentation</a><br/>
+					<a href="../blog/index.html">Blog</a><br/>
+					<a href="https://github.com/angeloskath/php-nlp-tools/">Github</a><br/>
+					<a href="mailto:info@php-nlp-tools.com">Contact</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Mini nlp projects</h3>
+					<a href="../blog/category/spam-detection-service/index.html">Spam detection service</a><br/>
+					<a href="../blog/category/sentiment-detection.1.html">Sentiment detection</a><br/>
+					<a href="../blog/category/greek-pos-tagger.1.html">Greek POS Tagger</a><br/>
+					<a href="../blog/category/programming-language-detection/index.html">Programming language detection</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Syntax highlighting</h3>
+		<select id="theme-select" onchange="themeroller.onSelectChange.call(this)">
+			<option value="">Vibrant Ink</option>
+			<option value="twitlight">Twitlight</option>
+			<option value="solarized-dark">Solarized Dark</option>
+			<option value="dawn">Dawn</option>
+			<option value="blackboard">Blackboard</option>
+			<option value="mac-classic">Mac Classic</option>
+			<option value="railscasts">Railscasts</option>
+		</select>
+		<p class="x-small">
+			Style sheet provided by
+			<a href="https://github.com/kpumuk/codecolorer">Codecolorer</a>
+			and tokenizing by <a href="http://qbnz.com/highlighter/geshi-doc.html">GeSHi</a>
+		</p>
+	</div>
+</div>
+			
+			<div class="content">
+				<div class="post">
+					<h2>
+						Clustering											</h2>
+										<blockquote>
+  <p>Cluster analysis or clustering is the task of grouping a set of objects in such a 
+  way that objects in the same group (called cluster) are more similar (in some sense
+  or another) to each other than to those in other groups (clusters).
+  <cite>Wikipedia</cite></p>
+</blockquote>
+
+<p>The <a href="api/index.html#NlpTools\Clustering">NlpTools\Clustering</a> namespace will contain a number of clustering
+algorithms to be used with the library. Currently it contains:</p>
+
+<ol><li>K-Means</li>
+<li>Hierarchical Agglomerative Clustering</li>
+</ol><h3>Interfaces</h3>
+
+<p>All clustering classes extend the abstract class <a href="api/index.html#NlpTools\Clustering\Clusterer">Clusterer</a> and implement the following
+abstract method.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">abstract</span> <span class="kw2">class</span> Clusterer</div></li><li class="li1"><div class="de1"><span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="sy0">...</span></div></li><li class="li1"><div class="de1">    <span class="kw2">abstract</span> <span class="kw2">public</span> <span class="kw2">function</span> cluster<span class="br0">(</span>TrainingSet <span class="re0">$tset</span><span class="sy0">,</span> FeatureFactory <span class="re0">$ff</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="sy0">...</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>The clusterers should return an array containing as a first element the clusters (an array
+with grouped document indices) and any other data produced by the clustering (ex.: centroids and
+distances for K-Means).</p>
+
+<h3>KMeans</h3>
+
+<p><a href="http://en.wikipedia.org/wiki/Kmeans">KMeans</a> is a very popular, simple and fast clustering algorithm. It minimizes the within
+cluster sum of square distances from each point to the corresponding centroid. It can be implemented
+with any metric of distance coupled with a centroid generation strategy. In NlpTools this means that
+the KMeans instance receives a <a href="similarity.html">Distance </a> instance and a new class, a
+<a href="http://php-nlp-tools.local/documentation/api/#NlpTools\Clustering\CentroidFactories">CentroidFactory</a>.</p>
+
+<h4>Centroid Factories</h4>
+
+<p>The centroid factories are usually coupled with a distance metric and simply produce a new data point,
+given a set of points, such that the sum of the distances of this point to every point in the set is
+minimized. In NlpTools there are a number of CentroidFactories already defined:</p>
+
+<dl><dt><a href="http://php-nlp-tools.local/documentation/api/#NlpTools\Clustering\CentroidFactories\Euclidean">Euclidean</a></dt>
+    <dd>Simply the centroid of the points in the euclidean space (x_1 + x_2 + ...)/n</dd>
+    <dt><a href="http://php-nlp-tools.local/documentation/api/#NlpTools\Clustering\CentroidFactories\Hamming">Hamming</a></dt>
+    <dd>
+        A new number that the sum of the hamming distance from every number in
+        the provided set is minimized
+    </dd>
+    <dt><a href="http://php-nlp-tools.local/documentation/api/#NlpTools\Clustering\CentroidFactories\MeanAngle">MeanAngle</a></dt>
+    <dd>
+        Compute a unit vector in the euclidean space such that the sum of the cosine similarities
+        between the centroid and every other vector in the set is maximized
+        (cosine distance minimized)
+    </dd>
+</dl><p>You can see a very simple <a href="https://github.com/angeloskath/php-nlp-tools/blob/develop/tests/NlpTools/Clustering/KmeansTest.php">example</a> (with semi decent visualization if you have gd)
+in the tests of NlpTools and a very simple one that follows.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Clustering\KMeans<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Similarity\Euclidean<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Clustering\CentroidFactories\Euclidean <span class="kw1">as</span> EuclideanCF<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Documents\TrainingSet<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Documents\TokensDocument<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\FeatureFactories\DataAsFeatures<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$tset</span> <span class="sy0">=</span> <span class="kw2">new</span> TrainingSet<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$tset</span><span class="sy0">-&gt;</span><span class="me1">addDocument</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="st_h">''</span><span class="sy0">,</span> <span class="co1">//class is not used so it can be empty</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> TokensDocument<span class="br0">(</span><a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span><span class="st_h">'x'</span><span class="sy0">=&gt;</span><span class="nu0">0</span><span class="sy0">,</span><span class="st_h">'y'</span><span class="sy0">=&gt;</span><span class="nu0">0</span><span class="br0">)</span><span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$tset</span><span class="sy0">-&gt;</span><span class="me1">addDocument</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="st_h">''</span><span class="sy0">,</span> <span class="co1">//class is not used so it can be empty</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> TokensDocument<span class="br0">(</span><a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span><span class="st_h">'x'</span><span class="sy0">=&gt;</span><span class="nu0">1</span><span class="sy0">,</span><span class="st_h">'y'</span><span class="sy0">=&gt;</span><span class="nu0">0</span><span class="br0">)</span><span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$tset</span><span class="sy0">-&gt;</span><span class="me1">addDocument</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="st_h">''</span><span class="sy0">,</span> <span class="co1">//class is not used so it can be empty</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> TokensDocument<span class="br0">(</span><a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span><span class="st_h">'x'</span><span class="sy0">=&gt;</span><span class="nu0">0</span><span class="sy0">,</span><span class="st_h">'y'</span><span class="sy0">=&gt;</span><span class="nu0">1</span><span class="br0">)</span><span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$tset</span><span class="sy0">-&gt;</span><span class="me1">addDocument</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="st_h">''</span><span class="sy0">,</span> <span class="co1">//class is not used so it can be empty</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> TokensDocument<span class="br0">(</span><a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span><span class="st_h">'x'</span><span class="sy0">=&gt;</span><span class="nu0">3</span><span class="sy0">,</span><span class="st_h">'y'</span><span class="sy0">=&gt;</span><span class="nu0">3</span><span class="br0">)</span><span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$tset</span><span class="sy0">-&gt;</span><span class="me1">addDocument</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="st_h">''</span><span class="sy0">,</span> <span class="co1">//class is not used so it can be empty</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> TokensDocument<span class="br0">(</span><a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span><span class="st_h">'x'</span><span class="sy0">=&gt;</span><span class="nu0">2</span><span class="sy0">,</span><span class="st_h">'y'</span><span class="sy0">=&gt;</span><span class="nu0">3</span><span class="br0">)</span><span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$tset</span><span class="sy0">-&gt;</span><span class="me1">addDocument</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="st_h">''</span><span class="sy0">,</span> <span class="co1">//class is not used so it can be empty</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> TokensDocument<span class="br0">(</span><a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span><span class="st_h">'x'</span><span class="sy0">=&gt;</span><span class="nu0">3</span><span class="sy0">,</span><span class="st_h">'y'</span><span class="sy0">=&gt;</span><span class="nu0">2</span><span class="br0">)</span><span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$clust</span> <span class="sy0">=</span> <span class="kw2">new</span> KMeans<span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="nu0">2</span><span class="sy0">,</span> <span class="co1">// two clusters</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> Euclidean<span class="br0">(</span><span class="br0">)</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> EuclideanCF<span class="br0">(</span><span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><a href="http://www.php.net/print_r"><span class="kw3">print_r</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="re0">$clust</span><span class="sy0">-&gt;</span><span class="me1">cluster</span><span class="br0">(</span><span class="re0">$tset</span><span class="sy0">,</span> <span class="kw2">new</span> DataAsFeatures<span class="br0">(</span><span class="br0">)</span><span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h3>Hierarchical Clustering</h3>
+
+<p>NlpTools implements hierarchical agglomerative clustering. This clustering method
+works in the following steps. Each datapoint starts at its own cluster. Then
+a merging strategy is initialized (usually this initialization includes computing
+a dis-/similarity matrix). Then iteratively two clusters are merged until only one
+cluster remains.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">class</span> Hierarchical <span class="kw2">extends</span> Clusterer</div></li><li class="li1"><div class="de1"><span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> __construct<span class="br0">(</span></div></li><li class="li1"><div class="de1">        MergeStrategyInterface <span class="re0">$ms</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">        DistanceInterface <span class="re0">$d</span></div></li><li class="li1"><div class="de1">    <span class="br0">)</span></div></li><li class="li1"><div class="de1">    <span class="br0">{</span></div></li><li class="li1"><div class="de1">        <span class="sy0">...</span></div></li><li class="li1"><div class="de1">    <span class="br0">}</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>The cluster method does not return grouped indices of the training set's documents but
+instead it returns a <a href="http://en.wikipedia.org/wiki/Dendrogram">dendrogram</a> which can be
+easily cut into any number of clusters using the static method
+<code>dendrogramToClusters($tree, $clustercount)</code>.</p>
+
+<h4>Merge Strategies</h4>
+
+<p>The merge strategies need to implement the following interface.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">interface</span> MergeStrategyInterface</div></li><li class="li1"><div class="de1"><span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="co4">/**</span></div></li><li class="li1"><div class="de1"><span class="co4">     * Study the docs and preprocess anything required for</span></div></li><li class="li1"><div class="de1"><span class="co4">     * computing the merges</span></div></li><li class="li1"><div class="de1"><span class="co4">     */</span></div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> initializeStrategy<span class="br0">(</span>DistanceInterface <span class="re0">$d</span><span class="sy0">,</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a> <span class="sy0">&amp;</span><span class="re0">$docs</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="co4">/**</span></div></li><li class="li1"><div class="de1"><span class="co4">     * Return the next two clusters for merging and assume</span></div></li><li class="li1"><div class="de1"><span class="co4">     * they are merged (ex. update a similarity matrix)</span></div></li><li class="li1"><div class="de1"><span class="co4">     *</span></div></li><li class="li1"><div class="de1"><span class="co4">     * @return array An array with two numbers which are the cluster ids</span></div></li><li class="li1"><div class="de1"><span class="co4">     */</span></div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> getNextMerge<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>The merge strategies available in NlpTools are the following.</p>
+
+<ul><li>SingleLink</li>
+<li>CompleteLink</li>
+<li>GroupAverage</li>
+</ul><p>You can see examples of using hierarchical clustering in 
+<a href="https://github.com/angeloskath/php-nlp-tools/blob/develop/tests/NlpTools/Clustering/HierarchicalTest.php">NlpTools' tests</a> or the following small example.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Clustering\Hierarchical<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Clustering\MergeStrategies\SingleLink<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Similarity\Euclidean<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\FeatureFactories\DataAsFeatures<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$clust</span> <span class="sy0">=</span> <span class="kw2">new</span> Hierarchical<span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> SingleLink<span class="br0">(</span><span class="br0">)</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> Euclidean<span class="br0">(</span><span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1">// Assuming $tset is the same from the above example in K-Means</span></div></li><li class="li1"><div class="de1"><span class="re0">$dendrogram</span> <span class="sy0">=</span> <span class="re0">$clust</span><span class="sy0">-&gt;</span><span class="me1">cluster</span><span class="br0">(</span><span class="re0">$tset</span><span class="sy0">,</span> <span class="kw2">new</span> DataAsFeatures<span class="br0">(</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><a href="http://www.php.net/print_r"><span class="kw3">print_r</span></a><span class="br0">(</span><span class="re0">$dendrogram</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><a href="http://www.php.net/print_r"><span class="kw3">print_r</span></a><span class="br0">(</span>Hierarchical<span class="sy0">::</span><span class="me2">dendrogramToClusters</span><span class="br0">(</span><span class="re0">$dendrogram</span><span class="sy0">,</span> <span class="nu0">2</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<div style="text-align: center;">
+
+<p><a href="similarity.html">« Similarity</a>
+/
+<a href="transformations.html">Transformations »</a></p>
+
+</div>					<b class="clear"></b>
+				</div>
+			</div>
+
+		</div>
+		
+		<div class="container" style="text-align: right;" id="footer">
+	<p class="x-small">
+		This website is powered by <a href="http://www.imdb.com/title/tt0198781/" title="I was thinking of putting 'cries of children' but it seemed too evil">the laughter of children</a>
+	</p>
+</div>
+<div style="display: none;" id="geo-disclaimer">
+	Αφού είσαι από <strong>Ελλάδα</strong> και σε ενδιαφέρει η επεξεργασία φυσικής γλώσσας, <a href="../greek-nlp.html">συνέχισε εδώ →</a>
+</div>
+<script>
+	(function () {
+		var co=document.cookie.split(';');
+		for (var i=0;i<co.length;i++)
+		{
+			if (co[i].substr(0,6)!='theme=')
+				continue;
+			
+			var newtheme = co[i].substr(6),
+				theme_select = document.getElementById('theme-select'),
+				opts = theme_select.options;
+				
+			themeroller.changeHighlight(newtheme);
+			for (var j=0; j<opts.length; j++)
+			{
+				if (opts[j].value==newtheme)
+				{
+					theme_select.selectedIndex = j;
+					break;
+				}
+			}
+			break;
+		}
+	})();
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-9373187-5']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+	// geoip
+	(function () {
+		var geo = document.createElement("script");
+		geo.type = "text/javascript";
+		geo.async = true;
+		geo.src = "http://php-nlp-tools.com:8081/js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(geo, s)
+		geo.onload = function () {
+			if (COUNTRY == "GR") {
+				document.getElementById("footer").style.marginBottom = "60px";
+				document.getElementById("geo-disclaimer").style.display = "block";
+			}
+		};
+	})();
+</script>
+		
+	</body>
+</html>

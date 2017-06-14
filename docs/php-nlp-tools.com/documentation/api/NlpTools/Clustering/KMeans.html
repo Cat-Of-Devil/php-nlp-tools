@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow, all" />
+        <title>NlpTools\Clustering\KMeans | NlpTools API</title>
+                    <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+                            </head>
+        <body id="class">
+            <div class="header">
+        <ul>
+            <li><a href="../../classes.html">Classes</a></li>
+                            <li><a href="../../namespaces.html">Namespaces</a></li>
+                        <li><a href="../../interfaces.html">Interfaces</a></li>
+            <li><a href="../../doc-index.html">Index</a></li>
+            
+        </ul>
+
+        <div id="title">NlpTools API</div>
+
+            <div class="type">Class</div>
+    <h1><a href="../Clustering.html">NlpTools\Clustering</a>\KMeans</h1>
+    </div>
+        <div class="content">
+                <p>class    <strong>KMeans</strong>        extends <a href="Clusterer.html"><abbr title="NlpTools\Clustering\Clusterer">Clusterer</abbr></a></p>
+
+            <div class="description">
+            <p>This clusterer uses the KMeans algorithm for clustering documents.</p>
+            <p>It accepts as parameters the number of clusters and the distance metric<br />
+ as well as the methodology for computing the new centroids (thus it<br />
+ can be used to cluster documents in spaces other than the euclidean<br />
+ vector space).<br />
+ A description of this algorithm can be found at<br />
+ http://en.wikipedia.org/wiki/K-means_clustering</p>
+        </div>
+    
+    
+    
+            <h2>Methods</h2>
+
+            <table>
+                    <tr>
+                <td class="type">
+                    array
+                </td>
+                <td class="last">
+                    <a href="KMeans.html#method_cluster">cluster</a>(<a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a> $documents, <a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a> $ff)
+                    <p>Apply the feature factory to the documents and then cluster the resulting array using the provided distance metric and centroid factory.</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="KMeans.html#method___construct">__construct</a>(int $n, <a href="../Similarity/DistanceInterface.html"><abbr title="NlpTools\Similarity\DistanceInterface">DistanceInterface</abbr></a> $d, <a href="CentroidFactories/CentroidFactoryInterface.html"><abbr title="NlpTools\Clustering\CentroidFactories\CentroidFactoryInterface">CentroidFactoryInterface</abbr></a> $cf, <abbr title="NlpTools\Clustering\float">float</abbr> $cutoff = 1.0E-5)
+                    <p>Initialize the K Means clusterer</p>
+                </td>
+                <td></td>
+            </tr>
+            </table>
+
+
+        <h2>Details</h2>
+
+                        <h3 id="method_cluster">
+        <div class="location">at line 46</div>
+        <code>            public            array
+    <strong>cluster</strong>(<a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a> $documents, <a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a> $ff)</code>
+    </h3>
+    <div class="details">
+        <p>Apply the feature factory to the documents and then cluster the resulting array using the provided distance metric and centroid factory.</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td><a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a></td>
+                <td>$documents</td>
+                <td>The documents to be clustered</td>
+            </tr>
+                    <tr>
+                <td><a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a></td>
+                <td>$ff</td>
+                <td>A feature factory to transform the documents given</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>array</td>
+            <td>The clusters, an array containing arrays of offsets for the documents</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method___construct">
+        <div class="location">at line 34</div>
+        <code>            public            
+    <strong>__construct</strong>(int $n, <a href="../Similarity/DistanceInterface.html"><abbr title="NlpTools\Similarity\DistanceInterface">DistanceInterface</abbr></a> $d, <a href="CentroidFactories/CentroidFactoryInterface.html"><abbr title="NlpTools\Clustering\CentroidFactories\CentroidFactoryInterface">CentroidFactoryInterface</abbr></a> $cf, <abbr title="NlpTools\Clustering\float">float</abbr> $cutoff = 1.0E-5)</code>
+    </h3>
+    <div class="details">
+        <p>Initialize the K Means clusterer</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>int</td>
+                <td>$n</td>
+                <td>The number of clusters to compute</td>
+            </tr>
+                    <tr>
+                <td><a href="../Similarity/DistanceInterface.html"><abbr title="NlpTools\Similarity\DistanceInterface">DistanceInterface</abbr></a></td>
+                <td>$d</td>
+                <td>The distance metric to be used (Euclidean, Hamming, ...)</td>
+            </tr>
+                    <tr>
+                <td><a href="CentroidFactories/CentroidFactoryInterface.html"><abbr title="NlpTools\Clustering\CentroidFactories\CentroidFactoryInterface">CentroidFactoryInterface</abbr></a></td>
+                <td>$cf</td>
+                <td>This parameter will be used to create the new centroids from a set of documents</td>
+            </tr>
+                    <tr>
+                <td><abbr title="NlpTools\Clustering\float">float</abbr></td>
+                <td>$cutoff</td>
+                <td>When the maximum change of the centroids is smaller than that stop iterating</td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+    
+            </div>
+            <div id="footer">
+        Generated by <a href="http://sami.sensiolabs.org/" target="_top">Sami, the API Documentation Generator</a>.
+    </div>
+    </body>
+</html>

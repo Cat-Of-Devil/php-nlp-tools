@@ -1,0 +1,223 @@
+<!Doctype html>
+<html>
+
+		<head>
+		<base href="" >
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
+		
+					<title>Text clustering | NlpTools PHP</title>
+				<link rel="stylesheet" href="../style.css" />
+		<script>
+			var themeroller = (function () {
+				var haveStyle = false,
+					expired = 'Thu, 2 Aug 2001 20:47:11 UTC',
+					unexpired = 'Mon, 2 Aug 2021 20:47:11 UTC',
+					from = '',
+					changeClasses = function (from,theme) {
+						var items = document.getElementsByTagName('pre');
+						for (var i=0;i<items.length;i++)
+						{
+							var cls_re = new RegExp('\\s?\\b'+from+'\\b\\s?|^\s*$');
+							items[i].className = items[i].className.replace(cls_re,' '+theme+' ').trim();
+						}
+					},
+					updateCookie = function (t) {
+						if (t=='')
+							document.cookie = 'theme=; expires='+expired+'; path=/';
+						else
+							document.cookie = 'theme='+t+'; expires='+unexpired+'; path=/';
+						from = t;
+					};
+					
+				return {
+					onSelectChange: function () {
+						var theme = this.options[this.selectedIndex].value;
+						themeroller.changeHighlight(theme);
+					},
+					changeHighlight: function (theme) {
+						
+						if (haveStyle)
+						{
+							changeClasses(from,theme);
+						}
+						else
+						{
+							var l = document.createElement('link');
+							l.rel = 'stylesheet';
+							l.href = 'codecolorer.css';
+							document.head.appendChild(l);
+							haveStyle = true;
+							changeClasses(from,theme);
+						}
+						updateCookie(theme);
+					}
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="container">
+				<h1 class="title"><a href="../index.html">NlpTools</a></h1>
+				<h2 class="subtitle">Natural language processing in php</h2>
+				<b class="clear"></b>
+			</div>
+		</div>
+
+		<div class="container">
+
+			<div class="sidebar">
+	
+		<div class="sidebar-container">
+		<h3>Navigation</h3>
+					<a href="../index.html">Home</a><br/>
+					<a href="../documentation/index.html">Documentation</a><br/>
+					<a href="../blog/index.html">Blog</a><br/>
+					<a href="https://github.com/angeloskath/php-nlp-tools/">Github</a><br/>
+					<a href="mailto:info@php-nlp-tools.com">Contact</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Mini nlp projects</h3>
+					<a href="../blog/category/spam-detection-service/index.html">Spam detection service</a><br/>
+					<a href="../blog/category/sentiment-detection.1.html">Sentiment detection</a><br/>
+					<a href="../blog/category/greek-pos-tagger.1.html">Greek POS Tagger</a><br/>
+					<a href="../blog/category/programming-language-detection/index.html">Programming language detection</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Syntax highlighting</h3>
+		<select id="theme-select" onchange="themeroller.onSelectChange.call(this)">
+			<option value="">Vibrant Ink</option>
+			<option value="twitlight">Twitlight</option>
+			<option value="solarized-dark">Solarized Dark</option>
+			<option value="dawn">Dawn</option>
+			<option value="blackboard">Blackboard</option>
+			<option value="mac-classic">Mac Classic</option>
+			<option value="railscasts">Railscasts</option>
+		</select>
+		<p class="x-small">
+			Style sheet provided by
+			<a href="https://github.com/kpumuk/codecolorer">Codecolorer</a>
+			and tokenizing by <a href="http://qbnz.com/highlighter/geshi-doc.html">GeSHi</a>
+		</p>
+	</div>
+</div>
+			
+			<div class="content">
+				<div class="post">
+					<h2>
+						Text clustering													<span class="date">May 10th, 2013</span>
+											</h2>
+										<p>In this article I will introduce one thing that has been missing from
+NlpTools, clustering. The base similarity concepts have long been included
+in NlpTools and it was a matter of time to implement some clustering methods.</p>
+
+<h3>Current status</h3>
+
+<p>So far only KMeans has been implemented and I have not yet published it.
+KMeans is, probably, the simplest clustering algorithm and one of the
+fastest. It allows for clustering with many distance metrics (euclidean,
+cosine similarity, hamming, etc). Combined with <a href="http://www.php-nlp-tools.local/documentation/api/#NlpTools\Similarity\Simhash">simhash</a>
+it can be used to cluster big corpuses even in php.</p>
+
+<h3>Examples</h3>
+
+<p>Simple euclidean clustering at two dimensions.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Clustering\KMeans<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Clustering\CentroidFactories\Euclidean <span class="kw1">as</span> EuclideanCF<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Similarity\Euclidean<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$clust</span> <span class="sy0">=</span> <span class="kw2">new</span> KMeans<span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="nu0">2</span><span class="sy0">,</span> <span class="co1">// 2 clusters</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> Euclidean<span class="br0">(</span><span class="br0">)</span><span class="sy0">,</span> <span class="co1">// the distance metric</span></div></li><li class="li1"><div class="de1">                     <span class="co1">// must implement Distance interface</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> EuclideanCF<span class="br0">(</span><span class="br0">)</span><span class="sy0">,</span> <span class="co1">// how we will be creating centroids</span></div></li><li class="li1"><div class="de1">    <span class="nu19">0.001</span> <span class="co1">// the cutoff value (can be ommited)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$clust</span><span class="sy0">-&gt;</span><span class="me1">cluster</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="re0">$tset</span><span class="sy0">,</span> <span class="co1">// a training set</span></div></li><li class="li1"><div class="de1">    <span class="re0">$ff</span> <span class="co1">// a feature factory that will transform the document data</span></div></li><li class="li1"><div class="de1">        <span class="co1">// to data compatible with the distance metric and the</span></div></li><li class="li1"><div class="de1">        <span class="co1">// centroid factory</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p><img src="../files/clustering/euclidean_2.png" class="border"/></p>
+
+<p>The only thing that needs to change, in order to cluster using cosine
+similarity at two dimensions, is the parameters at the initialization
+of the KMeans class.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Clustering\KMeans<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Clustering\CentroidFactories\MeanAngle<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Similarity\CosineSimilarity<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$clust</span> <span class="sy0">=</span> <span class="kw2">new</span> KMeans<span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="nu0">4</span><span class="sy0">,</span> <span class="co1">// 4 clusters</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> CosineSimilarity<span class="br0">(</span><span class="br0">)</span><span class="sy0">,</span> <span class="co1">// the distance metric</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> MeanAngle<span class="br0">(</span><span class="br0">)</span><span class="sy0">,</span> <span class="co1">// how we will be creating centroids</span></div></li><li class="li1"><div class="de1">    <span class="nu19">0.001</span> <span class="co1">// the cutoff value (can be ommited)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p><img src="../files/clustering/cosine_4.png" class="border"/></p>
+
+<h3>Future</h3>
+
+<p>NlpTools will also contain the following clustering methods</p>
+
+<ul><li>Hierarchical clustering</li>
+<li>Expectation Maximization clustering (probably with Naive Bayes model)</li>
+</ul><p>Moreover I plan to add some tools for internal evaluation of clusters (silhouette, SSE, Correlation).</p>
+
+<h3>Backwards incompatible changes</h3>
+
+<p>When the clustering branch is merged with the master branch the following backwards incompatible changes will take place.</p>
+
+<ul><li>SetDistance and SetSimilarity, the similarity and distance interfaces
+accordingly are renamed to Distance and Similarity</li>
+<li>The above interfaces no longer require arrays as parameters, thus we
+could even define the distance between two strings without the need to
+split those strings in character sets</li>
+</ul>					<b class="clear"></b>
+				</div>
+			</div>
+
+		</div>
+		
+		<div class="container" style="text-align: right;" id="footer">
+	<p class="x-small">
+		This website is powered by <a href="http://www.imdb.com/title/tt0198781/" title="I was thinking of putting 'cries of children' but it seemed too evil">the laughter of children</a>
+	</p>
+</div>
+<div style="display: none;" id="geo-disclaimer">
+	Αφού είσαι από <strong>Ελλάδα</strong> και σε ενδιαφέρει η επεξεργασία φυσικής γλώσσας, <a href="../greek-nlp.html">συνέχισε εδώ →</a>
+</div>
+<script>
+	(function () {
+		var co=document.cookie.split(';');
+		for (var i=0;i<co.length;i++)
+		{
+			if (co[i].substr(0,6)!='theme=')
+				continue;
+			
+			var newtheme = co[i].substr(6),
+				theme_select = document.getElementById('theme-select'),
+				opts = theme_select.options;
+				
+			themeroller.changeHighlight(newtheme);
+			for (var j=0; j<opts.length; j++)
+			{
+				if (opts[j].value==newtheme)
+				{
+					theme_select.selectedIndex = j;
+					break;
+				}
+			}
+			break;
+		}
+	})();
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-9373187-5']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+	// geoip
+	(function () {
+		var geo = document.createElement("script");
+		geo.type = "text/javascript";
+		geo.async = true;
+		geo.src = "http://php-nlp-tools.com:8081/js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(geo, s)
+		geo.onload = function () {
+			if (COUNTRY == "GR") {
+				document.getElementById("footer").style.marginBottom = "60px";
+				document.getElementById("geo-disclaimer").style.display = "block";
+			}
+		};
+	})();
+</script>
+		
+	</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow, all" />
+        <title>NlpTools\Stemmers\PorterStemmer | NlpTools API</title>
+                    <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+                            </head>
+        <body id="class">
+            <div class="header">
+        <ul>
+            <li><a href="../../classes.html">Classes</a></li>
+                            <li><a href="../../namespaces.html">Namespaces</a></li>
+                        <li><a href="../../interfaces.html">Interfaces</a></li>
+            <li><a href="../../doc-index.html">Index</a></li>
+            
+        </ul>
+
+        <div id="title">NlpTools API</div>
+
+            <div class="type">Class</div>
+    <h1><a href="../Stemmers.html">NlpTools\Stemmers</a>\PorterStemmer</h1>
+    </div>
+        <div class="content">
+                <p>class    <strong>PorterStemmer</strong>        extends <a href="Stemmer.html"><abbr title="NlpTools\Stemmers\Stemmer">Stemmer</abbr></a></p>
+
+            <div class="description">
+            <p>Copyright 2013 Katharopoulos Angelos &lt;katharas@gmail.com&gt;</p>
+            <p>This class implements the Porter stemming algorithm. It is almost a<br />
+ one to one conversion from Porter&#039;s ANSI C implementation and can<br />
+ thus be regarded as canonical as the C implementation found at<br />
+ http://www.tartarus.org/~martin/PorterStemmer<br />
+<br />
+ The rewrite instead of using Richard Heyes&#039;s implementation has<br />
+ been to improve performance. I tried to keep as close to the C<br />
+ implementation, minimize string creations (change in place) and<br />
+ avoid regexes.<br />
+<br />
+ The result is a bit more than 25% faster algorithm with php 5.3 (not<br />
+ that much but since I wrote I thought I&#039;d keep it).</p>
+        </div>
+    
+    
+    
+            <h2>Methods</h2>
+
+            <table>
+                    <tr>
+                <td class="type">
+                    string
+                </td>
+                <td class="last">
+                    <a href="PorterStemmer.html#method_stem">stem</a>($word)
+                    <p>Remove the suffix from $word</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    array
+                </td>
+                <td class="last">
+                    <a href="PorterStemmer.html#method_stemAll">stemAll</a>(array $tokens)
+                    <p>Apply the stemmer to every single token.</p>
+                </td>
+                <td><small>from&nbsp;<a href="Stemmer.html#method_stemAll"><abbr title="NlpTools\Stemmers\Stemmer">Stemmer</abbr></a></small></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    mixed
+                </td>
+                <td class="last">
+                    <a href="PorterStemmer.html#method_transform">transform</a>($word)
+                    <p>Return the value transformed.</p>
+                </td>
+                <td><small>from&nbsp;<a href="Stemmer.html#method_transform"><abbr title="NlpTools\Stemmers\Stemmer">Stemmer</abbr></a></small></td>
+            </tr>
+            </table>
+
+
+        <h2>Details</h2>
+
+                        <h3 id="method_stem">
+        <div class="location">at line 437</div>
+        <code>            public            string
+    <strong>stem</strong>($word)</code>
+    </h3>
+    <div class="details">
+        <p>Remove the suffix from $word</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td></td>
+                <td>$word</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>string</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_stemAll">
+        <div class="location">in <a href="Stemmer.html#method_stemAll"><abbr title="NlpTools\Stemmers\Stemmer">Stemmer</abbr></a> at line 25</div>
+        <code>            public            array
+    <strong>stemAll</strong>(array $tokens)</code>
+    </h3>
+    <div class="details">
+        <p>Apply the stemmer to every single token.</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>array</td>
+                <td>$tokens</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>array</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_transform">
+        <div class="location">in <a href="Stemmer.html#method_transform"><abbr title="NlpTools\Stemmers\Stemmer">Stemmer</abbr></a> at line 34</div>
+        <code>            public            mixed
+    <strong>transform</strong>($word)</code>
+    </h3>
+    <div class="details">
+        <p>Return the value transformed.</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td></td>
+                <td>$word</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>mixed</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+    
+            </div>
+            <div id="footer">
+        Generated by <a href="http://sami.sensiolabs.org/" target="_top">Sami, the API Documentation Generator</a>.
+    </div>
+    </body>
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow, all" />
+        <title>NlpTools\Models\FeatureBasedNB | NlpTools API</title>
+                    <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+                            </head>
+        <body id="class">
+            <div class="header">
+        <ul>
+            <li><a href="../../classes.html">Classes</a></li>
+                            <li><a href="../../namespaces.html">Namespaces</a></li>
+                        <li><a href="../../interfaces.html">Interfaces</a></li>
+            <li><a href="../../doc-index.html">Index</a></li>
+            
+        </ul>
+
+        <div id="title">NlpTools API</div>
+
+            <div class="type">Class</div>
+    <h1><a href="../Models.html">NlpTools\Models</a>\FeatureBasedNB</h1>
+    </div>
+        <div class="content">
+                <p>class    <strong>FeatureBasedNB</strong>        implements
+        <a href="MultinomialNBModelInterface.html"><abbr title="NlpTools\Models\MultinomialNBModelInterface">MultinomialNBModelInterface</abbr></a></p>
+
+            <div class="description">
+            <p>Implement a MultinomialNBModel by training on a TrainingSet with a FeatureFactoryInterface and additive smoothing.</p>
+            <p></p>
+        </div>
+    
+    
+    
+            <h2>Methods</h2>
+
+            <table>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="FeatureBasedNB.html#method___construct">__construct</a>()
+                    <p></p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    <abbr title="NlpTools\Models\float">float</abbr>
+                </td>
+                <td class="last">
+                    <a href="FeatureBasedNB.html#method_getPrior">getPrior</a>(string $class)
+                    <p>Return the prior probability of class $class P(c) as computed by the training data</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    <abbr title="NlpTools\Models\float">float</abbr>
+                </td>
+                <td class="last">
+                    <a href="FeatureBasedNB.html#method_getCondProb">getCondProb</a>(string $term, string $class)
+                    <p>Return the conditional probability of a term for a given class.</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    array
+                </td>
+                <td class="last">
+                    <a href="FeatureBasedNB.html#method_train_with_context">train_with_context</a>(array $train_ctx, <a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a> $ff, <a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a> $tset, integer $a_smoothing = 1)
+                    <p>Train on the given set and fill the model&#039;s variables.</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    array
+                </td>
+                <td class="last">
+                    <a href="FeatureBasedNB.html#method_train">train</a>(<a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a> $ff, <a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a> $tset, integer $a_smoothing = 1)
+                    <p>Train on the given set and fill the models variables</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="FeatureBasedNB.html#method___sleep">__sleep</a>()
+                    <p>Just save the probabilities for reuse</p>
+                </td>
+                <td></td>
+            </tr>
+            </table>
+
+
+        <h2>Details</h2>
+
+                        <h3 id="method___construct">
+        <div class="location">at line 21</div>
+        <code>            public            
+    <strong>__construct</strong>()</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getPrior">
+        <div class="location">at line 35</div>
+        <code>            public            <abbr title="NlpTools\Models\float">float</abbr>
+    <strong>getPrior</strong>(string $class)</code>
+    </h3>
+    <div class="details">
+        <p>Return the prior probability of class $class P(c) as computed by the training data</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>string</td>
+                <td>$class</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td><abbr title="NlpTools\Models\float">float</abbr></td>
+            <td>prior probability</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getCondProb">
+        <div class="location">at line 47</div>
+        <code>            public            <abbr title="NlpTools\Models\float">float</abbr>
+    <strong>getCondProb</strong>(string $term, string $class)</code>
+    </h3>
+    <div class="details">
+        <p>Return the conditional probability of a term for a given class.</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>string</td>
+                <td>$term</td>
+                <td>The term (word, feature id, ...)</td>
+            </tr>
+                    <tr>
+                <td>string</td>
+                <td>$class</td>
+                <td>The class</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td><abbr title="NlpTools\Models\float">float</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_train_with_context">
+        <div class="location">at line 70</div>
+        <code>            public            array
+    <strong>train_with_context</strong>(array $train_ctx, <a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a> $ff, <a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a> $tset, integer $a_smoothing = 1)</code>
+    </h3>
+    <div class="details">
+        <p>Train on the given set and fill the model&#039;s variables.</p>
+        <p>Use the<br />
+ training context provided to update the counts as if the training<br />
+ set was appended to the previous one that provided the context.<br />
+<br />
+ It can be used for incremental training. It is not meant to be used<br />
+ with the same training set twice.</p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>array</td>
+                <td>$train_ctx</td>
+                <td>The previous training context</td>
+            </tr>
+                    <tr>
+                <td><a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a></td>
+                <td>$ff</td>
+                <td>A feature factory to compute features from a training document</td>
+            </tr>
+                    <tr>
+                <td><a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a></td>
+                <td>$tset</td>
+                <td>The training set</td>
+            </tr>
+                    <tr>
+                <td>integer</td>
+                <td>$a_smoothing</td>
+                <td>The parameter for additive smoothing. Defaults to add-one smoothing.</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>array</td>
+            <td>Return a training context to be used for further incremental training, although this is not necessary since the changes also happen in place</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_train">
+        <div class="location">at line 112</div>
+        <code>            public            array
+    <strong>train</strong>(<a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a> $ff, <a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a> $tset, integer $a_smoothing = 1)</code>
+    </h3>
+    <div class="details">
+        <p>Train on the given set and fill the models variables</p>
+        <p>priors[c] = NDocs[c]/NDocs<br />
+ condprob[t][c] = count( t in c) + 1 / sum( count( t&#039; in c ) + 1 , for every t&#039; )<br />
+ unknown[c] = condbrob[&#039;word that doesnt exist in c&#039;][c] ( so that count(t in c)==0 )<br />
+<br />
+ More information on the algorithm can be found at<br />
+ http://nlp.stanford.edu/IR-book/html/htmledition/naive-bayes-text-classification-1.html</p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td><a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a></td>
+                <td>$ff</td>
+                <td>A feature factory to compute features from a training document</td>
+            </tr>
+                    <tr>
+                <td><a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a></td>
+                <td>$tset</td>
+                <td>The training set</td>
+            </tr>
+                    <tr>
+                <td>integer</td>
+                <td>$a_smoothing</td>
+                <td>The parameter for additive smoothing. Defaults to add-one smoothing.</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>array</td>
+            <td>Return a training context to be used for incremental training</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method___sleep">
+        <div class="location">at line 192</div>
+        <code>            public            
+    <strong>__sleep</strong>()</code>
+    </h3>
+    <div class="details">
+        <p>Just save the probabilities for reuse</p>
+        <p></p>
+        <div class="tags">
+            
+            
+            
+                    </div>
+    </div>
+
+    
+            </div>
+            <div id="footer">
+        Generated by <a href="http://sami.sensiolabs.org/" target="_top">Sami, the API Documentation Generator</a>.
+    </div>
+    </body>
+</html>

@@ -1,0 +1,222 @@
+<!Doctype html>
+<html>
+
+		<head>
+		<base href="" >
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
+		
+					<title>Other | NlpTools PHP</title>
+				<link rel="stylesheet" href="../style.css" />
+		<script>
+			var themeroller = (function () {
+				var haveStyle = false,
+					expired = 'Thu, 2 Aug 2001 20:47:11 UTC',
+					unexpired = 'Mon, 2 Aug 2021 20:47:11 UTC',
+					from = '',
+					changeClasses = function (from,theme) {
+						var items = document.getElementsByTagName('pre');
+						for (var i=0;i<items.length;i++)
+						{
+							var cls_re = new RegExp('\\s?\\b'+from+'\\b\\s?|^\s*$');
+							items[i].className = items[i].className.replace(cls_re,' '+theme+' ').trim();
+						}
+					},
+					updateCookie = function (t) {
+						if (t=='')
+							document.cookie = 'theme=; expires='+expired+'; path=/';
+						else
+							document.cookie = 'theme='+t+'; expires='+unexpired+'; path=/';
+						from = t;
+					};
+					
+				return {
+					onSelectChange: function () {
+						var theme = this.options[this.selectedIndex].value;
+						themeroller.changeHighlight(theme);
+					},
+					changeHighlight: function (theme) {
+						
+						if (haveStyle)
+						{
+							changeClasses(from,theme);
+						}
+						else
+						{
+							var l = document.createElement('link');
+							l.rel = 'stylesheet';
+							l.href = 'codecolorer.css';
+							document.head.appendChild(l);
+							haveStyle = true;
+							changeClasses(from,theme);
+						}
+						updateCookie(theme);
+					}
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="container">
+				<h1 class="title"><a href="../index.html">NlpTools</a></h1>
+				<h2 class="subtitle">Natural language processing in php</h2>
+				<b class="clear"></b>
+			</div>
+		</div>
+
+		<div class="container">
+
+			<div class="sidebar">
+	
+		<div class="sidebar-container">
+		<h3>Api Docs</h3>
+					<a href="api/index.html">Api Documentation</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Documentation</h3>
+					<a href="index.html">Get Started</a><br/>
+					<a href="tokenizers.html">Tokenizers</a><br/>
+					<a href="documents.html">Documents</a><br/>
+					<a href="feature-factories.html">Feature Factories</a><br/>
+					<a href="classifiers.html">Classifiers</a><br/>
+					<a href="bayesian-model.html">Bayesian Model</a><br/>
+					<a href="maximum-entropy-model.html">Maximum Entropy Model</a><br/>
+					<a href="similarity.html">Similarity</a><br/>
+					<a href="clustering.html">Clustering</a><br/>
+					<a href="transformations.html">Transformations</a><br/>
+					<a href="other.html">Other</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Navigation</h3>
+					<a href="../index.html">Home</a><br/>
+					<a href="index.html">Documentation</a><br/>
+					<a href="../blog/index.html">Blog</a><br/>
+					<a href="https://github.com/angeloskath/php-nlp-tools/">Github</a><br/>
+					<a href="mailto:info@php-nlp-tools.com">Contact</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Mini nlp projects</h3>
+					<a href="../blog/category/spam-detection-service/index.html">Spam detection service</a><br/>
+					<a href="../blog/category/sentiment-detection.1.html">Sentiment detection</a><br/>
+					<a href="../blog/category/greek-pos-tagger.1.html">Greek POS Tagger</a><br/>
+					<a href="../blog/category/programming-language-detection/index.html">Programming language detection</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Syntax highlighting</h3>
+		<select id="theme-select" onchange="themeroller.onSelectChange.call(this)">
+			<option value="">Vibrant Ink</option>
+			<option value="twitlight">Twitlight</option>
+			<option value="solarized-dark">Solarized Dark</option>
+			<option value="dawn">Dawn</option>
+			<option value="blackboard">Blackboard</option>
+			<option value="mac-classic">Mac Classic</option>
+			<option value="railscasts">Railscasts</option>
+		</select>
+		<p class="x-small">
+			Style sheet provided by
+			<a href="https://github.com/kpumuk/codecolorer">Codecolorer</a>
+			and tokenizing by <a href="http://qbnz.com/highlighter/geshi-doc.html">GeSHi</a>
+		</p>
+	</div>
+</div>
+			
+			<div class="content">
+				<div class="post">
+					<h2>
+						Other											</h2>
+										<p>In this page there will be documentation that is either incomplete or the part
+of the library being documented does not require a complete separate section.</p>
+
+<h3><a href="api/index.html#NlpTools\Analysis\Idf">Inverse document frequency</a></h3>
+
+<p>NlpTools\Analysis\Idf is a class that implements the inverse document frequency
+measure. The inverse document frequency is a measure of how common or rare a
+term T is inside a collection of documents. Terms that are rare tend to be more
+important for some tasks, especially for information retrieval.</p>
+
+<p>Idf requires a TrainingSet (and a FeatureFactory to translate the document data
+to feature vectors) upon construction and afterwards it can be used as an array
+via the ArrayAccess php interface. The values of the array return the inverse
+document frequency of the term (feature). It can be used in another feature
+factory to create weighted feature vectors.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Documents\DocumentInterface<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Documents\TrainingSet<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Documents\TokensDocument<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\FeatureFactories\FunctionFeatures<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Analysis\Idf<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="kw2">class</span> TfIdfFeatureFactory <span class="kw2">extends</span> FunctionFeatures</div></li><li class="li1"><div class="de1"><span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="kw2">protected</span> <span class="re0">$idf</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> __construct<span class="br0">(</span>Idf <span class="re0">$idf</span><span class="sy0">,</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a> <span class="re0">$functions</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">    <span class="br0">{</span></div></li><li class="li1"><div class="de1">        parent<span class="sy0">::</span>__construct<span class="br0">(</span><span class="re0">$functions</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">modelFrequency</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">idf</span> <span class="sy0">=</span> <span class="re0">$idf</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> getFeatureArray<span class="br0">(</span><span class="re0">$class</span><span class="sy0">,</span> DocumentInterface <span class="re0">$doc</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">    <span class="br0">{</span></div></li><li class="li1"><div class="de1">        <span class="re0">$frequencies</span> <span class="sy0">=</span> parent<span class="sy0">::</span><span class="me2">getFeatureArray</span><span class="br0">(</span><span class="re0">$class</span><span class="sy0">,</span> <span class="re0">$doc</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="kw1">foreach</span> <span class="br0">(</span><span class="re0">$frequencies</span> <span class="kw1">as</span> <span class="re0">$term</span><span class="sy0">=&gt;&amp;</span><span class="re0">$value</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">            <span class="re0">$value</span> <span class="sy0">=</span> <span class="re0">$value</span><span class="sy0">*</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">idf</span><span class="br0">[</span><span class="re0">$term</span><span class="br0">]</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="br0">}</span></div></li><li class="li1"><div class="de1">        <span class="kw1">return</span> <span class="re0">$frequencies</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="br0">}</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$tset</span> <span class="sy0">=</span> <span class="kw2">new</span> TrainingSet<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$tset</span><span class="sy0">-&gt;</span><span class="me1">addDocument</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="st0">""</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> TokensDocument<span class="br0">(</span></div></li><li class="li1"><div class="de1">        <a href="http://www.php.net/explode"><span class="kw3">explode</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">            <span class="st0">" "</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">            <span class="st0">"Don't go around saying the world owes you a living . The world owes you nothing . It was here first ."</span></div></li><li class="li1"><div class="de1">        <span class="br0">)</span></div></li><li class="li1"><div class="de1">    <span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$tset</span><span class="sy0">-&gt;</span><span class="me1">addDocument</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="st0">""</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> TokensDocument<span class="br0">(</span></div></li><li class="li1"><div class="de1">        <a href="http://www.php.net/explode"><span class="kw3">explode</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">            <span class="st0">" "</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">            <span class="st0">"Go to Heaven for the climate , Hell for the company ."</span></div></li><li class="li1"><div class="de1">        <span class="br0">)</span></div></li><li class="li1"><div class="de1">    <span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$tset</span><span class="sy0">-&gt;</span><span class="me1">addDocument</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="st0">""</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> TokensDocument<span class="br0">(</span></div></li><li class="li1"><div class="de1">        <a href="http://www.php.net/explode"><span class="kw3">explode</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">            <span class="st0">" "</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">            <span class="st0">"If you tell the truth , you don't have to remember anything ."</span></div></li><li class="li1"><div class="de1">        <span class="br0">)</span></div></li><li class="li1"><div class="de1">    <span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$idf</span> <span class="sy0">=</span> <span class="kw2">new</span> Idf<span class="br0">(</span><span class="re0">$tset</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$ff</span> <span class="sy0">=</span> <span class="kw2">new</span> TfIdfFeatureFactory<span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="re0">$idf</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">        <span class="kw2">function</span> <span class="br0">(</span><span class="re0">$c</span><span class="sy0">,</span> <span class="re0">$d</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">            <span class="kw1">return</span> <span class="re0">$d</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="br0">}</span></div></li><li class="li1"><div class="de1">    <span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><a href="http://www.php.net/print_r"><span class="kw3">print_r</span></a><span class="br0">(</span><span class="re0">$ff</span><span class="sy0">-&gt;</span><span class="me1">getFeatureArray</span><span class="br0">(</span><span class="st0">""</span><span class="sy0">,</span> <span class="re0">$tset</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h3><a href="api/index.html#NlpTools\Models\Lda">Latent Dirichlet Allocation</a></h3>
+
+<p>Latent dirichlet allocation is a topic model that aims to identify
+distributions over words as topics and then distributions over topics for the
+documents. It is a very useful and relatively new model that deserves a
+separate mention in the documentation similar to the mention for the Bayesian
+model and the Maxent model.</p>
+
+<p>The best resource for examples is the <a href="https://github.com/angeloskath/php-nlp-tools/blob/develop/tests/NlpTools/Models/LdaTest.php">functional test</a> and the
+<a href="../posts/introducing-latent-dirichlet-allocation.html">blog post</a> written when the model was first coded.</p>					<b class="clear"></b>
+				</div>
+			</div>
+
+		</div>
+		
+		<div class="container" style="text-align: right;" id="footer">
+	<p class="x-small">
+		This website is powered by <a href="http://www.imdb.com/title/tt0198781/" title="I was thinking of putting 'cries of children' but it seemed too evil">the laughter of children</a>
+	</p>
+</div>
+<div style="display: none;" id="geo-disclaimer">
+	Αφού είσαι από <strong>Ελλάδα</strong> και σε ενδιαφέρει η επεξεργασία φυσικής γλώσσας, <a href="../greek-nlp.html">συνέχισε εδώ →</a>
+</div>
+<script>
+	(function () {
+		var co=document.cookie.split(';');
+		for (var i=0;i<co.length;i++)
+		{
+			if (co[i].substr(0,6)!='theme=')
+				continue;
+			
+			var newtheme = co[i].substr(6),
+				theme_select = document.getElementById('theme-select'),
+				opts = theme_select.options;
+				
+			themeroller.changeHighlight(newtheme);
+			for (var j=0; j<opts.length; j++)
+			{
+				if (opts[j].value==newtheme)
+				{
+					theme_select.selectedIndex = j;
+					break;
+				}
+			}
+			break;
+		}
+	})();
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-9373187-5']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+	// geoip
+	(function () {
+		var geo = document.createElement("script");
+		geo.type = "text/javascript";
+		geo.async = true;
+		geo.src = "http://php-nlp-tools.com:8081/js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(geo, s)
+		geo.onload = function () {
+			if (COUNTRY == "GR") {
+				document.getElementById("footer").style.marginBottom = "60px";
+				document.getElementById("geo-disclaimer").style.display = "block";
+			}
+		};
+	})();
+</script>
+		
+	</body>
+</html>

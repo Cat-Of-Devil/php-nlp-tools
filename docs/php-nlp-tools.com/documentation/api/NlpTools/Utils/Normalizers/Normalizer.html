@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow, all" />
+        <title>NlpTools\Utils\Normalizers\Normalizer | NlpTools API</title>
+                    <link rel="stylesheet" type="text/css" href="../../../stylesheet.css">
+                            </head>
+        <body id="class">
+            <div class="header">
+        <ul>
+            <li><a href="../../../classes.html">Classes</a></li>
+                            <li><a href="../../../namespaces.html">Namespaces</a></li>
+                        <li><a href="../../../interfaces.html">Interfaces</a></li>
+            <li><a href="../../../doc-index.html">Index</a></li>
+            
+        </ul>
+
+        <div id="title">NlpTools API</div>
+
+            <div class="type">Class</div>
+    <h1><a href="../Normalizers.html">NlpTools\Utils\Normalizers</a>\Normalizer</h1>
+    </div>
+        <div class="content">
+                <p>abstract class    <strong>Normalizer</strong>        implements
+        <a href="../TransformationInterface.html"><abbr title="NlpTools\Utils\TransformationInterface">TransformationInterface</abbr></a></p>
+
+            <div class="description">
+            <p>The Normalizer&#039;s purpose is to transform any word from any one of the possible writings to a single writing consistently.</p>
+            <p>A lot of algorithms for stemming already expect normalized text.<br />
+<br />
+ The most common normalization would be to transform the words to<br />
+ lower case. There are languages though that this is not enough<br />
+ since there maybe other diacritics that need to be removed.<br />
+<br />
+ E.g.: The         -&gt; the<br />
+       I           -&gt; i<br />
+       WhAtEvEr    -&gt; whatever<br />
+       Άγγελος     -&gt; αγγελοσ<br />
+       Αριστοτέλης -&gt; αριστοτελησ</p>
+        </div>
+    
+    
+    
+            <h2>Methods</h2>
+
+            <table>
+                    <tr>
+                <td class="type">
+                    string
+                </td>
+                <td class="last">
+                    <a href="Normalizer.html#method_normalize">normalize</a>(string $w)
+                    <p>Transform the word according to the class description</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    mixed
+                </td>
+                <td class="last">
+                    <a href="Normalizer.html#method_transform">transform</a>($w)
+                    <p>Return the value transformed.</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    array
+                </td>
+                <td class="last">
+                    <a href="Normalizer.html#method_normalizeAll">normalizeAll</a>(array $items)
+                    <p>Apply the normalize function to all the items in the array</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    static&nbsp;
+                </td>
+                <td class="last">
+                    <a href="Normalizer.html#method_factory">factory</a>(string $language = &#039;English&#039;)
+                    <p>Just instantiate the normalizer using a factory method.</p>
+                </td>
+                <td></td>
+            </tr>
+            </table>
+
+
+        <h2>Details</h2>
+
+                        <h3 id="method_normalize">
+        <div class="location">at line 30</div>
+        <code>    abstract        public            string
+    <strong>normalize</strong>(string $w)</code>
+    </h3>
+    <div class="details">
+        <p>Transform the word according to the class description</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>string</td>
+                <td>$w</td>
+                <td>The word to normalize</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>string</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_transform">
+        <div class="location">at line 35</div>
+        <code>            public            mixed
+    <strong>transform</strong>($w)</code>
+    </h3>
+    <div class="details">
+        <p>Return the value transformed.</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td></td>
+                <td>$w</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>mixed</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_normalizeAll">
+        <div class="location">at line 45</div>
+        <code>            public            array
+    <strong>normalizeAll</strong>(array $items)</code>
+    </h3>
+    <div class="details">
+        <p>Apply the normalize function to all the items in the array</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>array</td>
+                <td>$items</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>array</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_factory">
+        <div class="location">at line 60</div>
+        <code>        static    public            
+    <strong>factory</strong>(string $language = &#039;English&#039;)</code>
+    </h3>
+    <div class="details">
+        <p>Just instantiate the normalizer using a factory method.</p>
+        <p>Keep in mind that this is NOT required. The constructor IS<br />
+ visible.</p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>string</td>
+                <td>$language</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+    
+            </div>
+            <div id="footer">
+        Generated by <a href="http://sami.sensiolabs.org/" target="_top">Sami, the API Documentation Generator</a>.
+    </div>
+    </body>
+</html>

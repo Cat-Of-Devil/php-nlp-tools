@@ -1,0 +1,975 @@
+<!Doctype html>
+<html>
+
+		<head>
+		<base href="" >
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
+		
+					<title>Blog | NlpTools PHP</title>
+				<link rel="stylesheet" href="../style.css" />
+		<script>
+			var themeroller = (function () {
+				var haveStyle = false,
+					expired = 'Thu, 2 Aug 2001 20:47:11 UTC',
+					unexpired = 'Mon, 2 Aug 2021 20:47:11 UTC',
+					from = '',
+					changeClasses = function (from,theme) {
+						var items = document.getElementsByTagName('pre');
+						for (var i=0;i<items.length;i++)
+						{
+							var cls_re = new RegExp('\\s?\\b'+from+'\\b\\s?|^\s*$');
+							items[i].className = items[i].className.replace(cls_re,' '+theme+' ').trim();
+						}
+					},
+					updateCookie = function (t) {
+						if (t=='')
+							document.cookie = 'theme=; expires='+expired+'; path=/';
+						else
+							document.cookie = 'theme='+t+'; expires='+unexpired+'; path=/';
+						from = t;
+					};
+					
+				return {
+					onSelectChange: function () {
+						var theme = this.options[this.selectedIndex].value;
+						themeroller.changeHighlight(theme);
+					},
+					changeHighlight: function (theme) {
+						
+						if (haveStyle)
+						{
+							changeClasses(from,theme);
+						}
+						else
+						{
+							var l = document.createElement('link');
+							l.rel = 'stylesheet';
+							l.href = 'codecolorer.css';
+							document.head.appendChild(l);
+							haveStyle = true;
+							changeClasses(from,theme);
+						}
+						updateCookie(theme);
+					}
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="container">
+				<h1 class="title"><a href="../index.html">NlpTools</a></h1>
+				<h2 class="subtitle">Natural language processing in php</h2>
+				<b class="clear"></b>
+			</div>
+		</div>
+
+		<div class="container">
+
+			<div class="sidebar">
+	
+		<div class="sidebar-container">
+		<h3>Navigation</h3>
+					<a href="../index.html">Home</a><br/>
+					<a href="../documentation/index.html">Documentation</a><br/>
+					<a href="index.html">Blog</a><br/>
+					<a href="https://github.com/angeloskath/php-nlp-tools/">Github</a><br/>
+					<a href="mailto:info@php-nlp-tools.com">Contact</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Mini nlp projects</h3>
+					<a href="category/spam-detection-service/index.html">Spam detection service</a><br/>
+					<a href="category/sentiment-detection.1.html">Sentiment detection</a><br/>
+					<a href="category/greek-pos-tagger.1.html">Greek POS Tagger</a><br/>
+					<a href="category/programming-language-detection/index.html">Programming language detection</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Syntax highlighting</h3>
+		<select id="theme-select" onchange="themeroller.onSelectChange.call(this)">
+			<option value="">Vibrant Ink</option>
+			<option value="twitlight">Twitlight</option>
+			<option value="solarized-dark">Solarized Dark</option>
+			<option value="dawn">Dawn</option>
+			<option value="blackboard">Blackboard</option>
+			<option value="mac-classic">Mac Classic</option>
+			<option value="railscasts">Railscasts</option>
+		</select>
+		<p class="x-small">
+			Style sheet provided by
+			<a href="https://github.com/kpumuk/codecolorer">Codecolorer</a>
+			and tokenizing by <a href="http://qbnz.com/highlighter/geshi-doc.html">GeSHi</a>
+		</p>
+	</div>
+</div>
+			
+			<div class="content">
+								<div class="post">
+					<h2>
+						<a href="../posts/programming-language-detection.html">
+							Source classifier in PHP						</a>
+						<span class="date">Nov 13th, 2013</span>
+					</h2>
+										<p class="meta">
+						Project: <a href="category/programming-language-detection/index.html">Programming language detection</a>
+					</p>
+										<p>Recently I had the need to identify the programming language of several snippets of
+code without relying on the file extension. I originally thought that it would be trivial
+to find code that does exactly that but as it turns out I have only found one
+<a href="https://github.com/chrislo/sourceclassifier">implementation in Ruby</a>. Thus, I decided to write my own <a href="https://github.com/angeloskath/php-sourceclassifier">source classifier
+in php</a>.</p>
+
+<h3>Finding a dataset</h3>
+
+<p>The hardest part was to find and download a dataset for use with the classifier. I decided
+to download sources from Google code jam 2013 solutions. This decision was made for the following
+two simple reasons, firstly I would use the model to classify similar types of source code
+(small solutions to programming problems) and secondly it provides easy access to many different
+programming languages.</p>
+
+<p>The quality of the produced classifier heavily depends on the dataset so one could improve
+the performance of the provided model by training on a different dataset.</p>
+
+<h3>Classification model and Features</h3>
+
+<p>Since it seemed to work well for <a href="https://github.com/chrislo">Mr Chris Lowis</a> I decided to use the same
+simple Naive Bayes model. The sources are read as is, they are <strong>not</strong> normalized. I use
+the <a href="../documentation/tokenizers.html">WhitespaceAndPunctuationTokenizer</a> to split the sources
+into tokens.</p>
+
+<p>The feature factory is a simple frequency feature factory that cuts off the maximum frequency
+at 4 occurences.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">class</span> CodeFeatures implements FeatureFactoryInterface</div></li><li class="li1"><div class="de1"><span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> getFeatureArray<span class="br0">(</span><span class="re0">$class</span><span class="sy0">,</span> DocumentInterface <span class="re0">$doc</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">    <span class="br0">{</span></div></li><li class="li1"><div class="de1">        <span class="re0">$tokens</span> <span class="sy0">=</span> <span class="re0">$doc</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="re0">$tokens</span> <span class="sy0">=</span> <a href="http://www.php.net/array_count_values"><span class="kw3">array_count_values</span></a><span class="br0">(</span><span class="re0">$tokens</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">        <span class="kw1">foreach</span> <span class="br0">(</span><span class="re0">$tokens</span> <span class="kw1">as</span> <span class="re0">$tok</span><span class="sy0">=&gt;&amp;</span><span class="re0">$v</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">            <span class="re0">$v</span> <span class="sy0">=</span> <a href="http://www.php.net/min"><span class="kw3">min</span></a><span class="br0">(</span><span class="re0">$v</span><span class="sy0">,</span> <span class="nu0">4</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">        <span class="kw1">return</span> <span class="re0">$tokens</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="br0">}</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h3>Using the LanguageDetector</h3>
+
+<p>I have wrapped the <a href="../documentation/classifiers.html">MultinomialNBClassifier</a> in a class
+to ease its use, its training and its serialization.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="re0">$detector</span> <span class="sy0">=</span> LanguageDetector<span class="sy0">::</span><span class="me2">loadFromFile</span><span class="br0">(</span><span class="st0">"/path/to/model"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$lang</span> <span class="sy0">=</span> <span class="re0">$detector</span><span class="sy0">-&gt;</span><span class="me1">classify</span><span class="br0">(</span><span class="co3">&lt;&lt;&lt;CODE</span></div></li><li class="li1"><div class="de1"><span class="co3">#include &lt;stdio.h&gt;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co3">int main() {</span></div></li><li class="li1"><div class="de1"><span class="co3">    printf("Hello world!");</span></div></li><li class="li1"><div class="de1"><span class="co3">}</span></div></li><li class="li1"><div class="de1"><span class="co3">CODE</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw1">echo</span> <span class="re0">$lang</span><span class="sy0">,</span> PHP_EOL<span class="sy0">;</span> <span class="co1">// C</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>In the <a href="https://github.com/angeloskath/php-sourceclassifier">github repository</a> there is already a pretrained model that
+classifies among the following languages (the popular ones according to Google code jam):</p>
+
+<ul><li>C</li>
+<li>C#</li>
+<li>C++</li>
+<li>Clojure</li>
+<li>Go</li>
+<li>Haskell</li>
+<li>Java</li>
+<li>Javascript</li>
+<li>MATLAB</li>
+<li>Pascal</li>
+<li>Perl</li>
+<li>PHP</li>
+<li>Python</li>
+<li>Ruby</li>
+<li>Scala</li>
+<li>Visual Basic</li>
+</ul><h3>Train on your own files</h3>
+
+<p>In the repo there is also a bin directory that provides a <em>lang-detect</em> script. It is a simple
+script that allows training of new models on new datasets, evaluation of models and using a model
+to classify a file as a source code.</p>
+
+<p>Examples:</p>
+
+<pre class="bash"><ol><li class="li1"><div class="de1"><span class="co0"># retrain the provided model</span></div></li><li class="li1"><div class="de1">bin<span class="sy0">/</span>lang-detect train <span class="st0">"data/train"</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co0"># evaluate the trained model</span></div></li><li class="li1"><div class="de1">bin<span class="sy0">/</span>lang-detect evaluate <span class="st0">"data/test"</span> <span class="co0"># should print 0.98</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co0"># classify some code</span></div></li><li class="li1"><div class="de1">bin<span class="sy0">/</span>lang-detect classify <span class="st0">"some/path/code.cpp"</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>The structure of the directories for training and evaluating should be one subdirectory
+per class and each subdirectory should contain one file per document (one source file).
+You can see an example of the above structure in the data/train and data/test directories.</p>
+
+<h3>Future work</h3>
+
+<p>Since it is a much less interesting and unimportant problem than the ones I usually like to
+battle with in my free time I have left a lot of concepts unexplored and went for the fastest
+half good solution (although it turned out better than half good).</p>
+
+<p>One should be able to get much better results by changing both the feature factory and the tokenizer.</p>
+
+<h4>Tokenizer</h4>
+
+<p>The tokenizer should probably be able to understand different types of strings and ignore them or mark
+them as "string". Maybe the same should apply to comments as well. Operators, parentheses and brackets
+should be parsed as separate tokens but not every single punctuation character. Some could be grouped
+like -&gt; or =&gt;.</p>
+
+<h4>Feature factory</h4>
+
+<p>As far as the feature factory is concerned, document frequency dictionaries could be used to emphasize
+to the keywords per class and differentiate them from the identifiers. Words at the beginning and ending
+of the document should be weighted differently as they are intuitively more important in
+differentiating the programming languages (imports, opening/closing tags, etc). Finally statistics about
+the identifiers could be collected, for instance whether camel casing or underscores are preferred.</p>					<b class="clear"></b>
+				</div>
+								<div class="post">
+					<h2>
+						<a href="../posts/dbscan-clustering.html">
+							Dbscan text clustering						</a>
+						<span class="date">Sep 3rd, 2013</span>
+					</h2>
+										<p>In this article I will be introducing <em>Density Based Spatial Clustering of Applications with Noise</em>, known as DBSCAN.
+DBSCAN is the latest addition to the Clustering namespace of php (it is still under development and not merged into
+master).</p>
+
+<blockquote>
+  <p>DBSCAN is a density based clustering algorithm because
+  it finds a number of clusters starting from the estimated
+  density distribution of corresponding nodes</p>
+  
+  <p><cite>Wikipedia</cite></p>
+</blockquote>
+
+<h3>Dbscan Implementation</h3>
+
+<p>The current implementation in NlpTools takes as a parameter an object that implements SpatialIndexInterface.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="co1">// comments stripped</span></div></li><li class="li1"><div class="de1"><span class="kw2">interface</span> SpatialIndexInterface</div></li><li class="li1"><div class="de1"><span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> setDistanceMetric<span class="br0">(</span>Distance <span class="re0">$d</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> index<span class="br0">(</span><a href="http://www.php.net/array"><span class="kw3">array</span></a> <span class="sy0">&amp;</span><span class="re0">$docs</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> add<span class="br0">(</span><span class="re0">$doc</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> regionQuery<span class="br0">(</span><span class="re0">$doc</span><span class="sy0">,</span> <span class="re0">$e</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> kNearestNeighbors<span class="br0">(</span><span class="re0">$doc</span><span class="sy0">,</span> <span class="re0">$k</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>This is used to abstract away the logic of searching a set of points for neighbors so that this process can be
+optimized. For instance we could implement <a href="http://en.wikipedia.org/wiki/K-d_tree">k-d trees</a> or ball trees for
+faster neighbor searching. The current implementation uses naive linear search and has complexity <em>O(n<sup>2</sup>)</em>.</p>
+
+<h3>Examples</h3>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Clustering\Dbscan<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Similarity\Euclidean<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Documents\TrainingSet<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\FeatureFactories\DataAsFeatures<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$tset</span> <span class="sy0">=</span> <span class="kw2">new</span> TrainingSet<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="co1">// load the training set with documents</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1">// create a large outer circle of points</span></div></li><li class="li1"><div class="de1"><span class="kw1">for</span> <span class="br0">(</span><span class="re0">$i</span><span class="sy0">=</span><span class="nu19">0.0</span><span class="sy0">;</span><span class="re0">$i</span><span class="sy0">&lt;</span><span class="nu0">2</span><span class="sy0">*</span>M_PI<span class="sy0">;</span><span class="re0">$i</span><span class="sy0">+=</span>M_PI<span class="sy0">/</span><span class="nu0">20</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="re0">$tset</span><span class="sy0">-&gt;</span><span class="me1">addDocument</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">        <span class="st_h">'A'</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">        EuclideanPoint<span class="sy0">::</span><span class="me2">getRandomPointAround</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">            <span class="nu0">150</span><span class="sy0">+</span><span class="nu0">70</span><span class="sy0">*</span><a href="http://www.php.net/cos"><span class="kw3">cos</span></a><span class="br0">(</span><span class="re0">$i</span><span class="br0">)</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">            <span class="nu0">100</span><span class="sy0">+</span><span class="nu0">70</span><span class="sy0">*</span><a href="http://www.php.net/sin"><span class="kw3">sin</span></a><span class="br0">(</span><span class="re0">$i</span><span class="br0">)</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">            <span class="nu0">8</span></div></li><li class="li1"><div class="de1">        <span class="br0">)</span></div></li><li class="li1"><div class="de1">    <span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="re0">$tset</span><span class="sy0">-&gt;</span><span class="me1">addDocument</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">        <span class="st_h">'A'</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">        EuclideanPoint<span class="sy0">::</span><span class="me2">getRandomPointAround</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">            <span class="nu0">150</span><span class="sy0">+</span><span class="nu0">70</span><span class="sy0">*</span><a href="http://www.php.net/cos"><span class="kw3">cos</span></a><span class="br0">(</span><span class="re0">$i</span><span class="br0">)</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">            <span class="nu0">100</span><span class="sy0">+</span><span class="nu0">70</span><span class="sy0">*</span><a href="http://www.php.net/sin"><span class="kw3">sin</span></a><span class="br0">(</span><span class="re0">$i</span><span class="br0">)</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">            <span class="nu0">8</span></div></li><li class="li1"><div class="de1">        <span class="br0">)</span></div></li><li class="li1"><div class="de1">    <span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1">// create an inner smaller circle of points</span></div></li><li class="li1"><div class="de1"><span class="kw1">for</span> <span class="br0">(</span><span class="re0">$i</span><span class="sy0">=</span><span class="nu19">0.0</span><span class="sy0">;</span><span class="re0">$i</span><span class="sy0">&lt;</span><span class="nu0">2</span><span class="sy0">*</span>M_PI<span class="sy0">;</span><span class="re0">$i</span><span class="sy0">+=</span>M_PI<span class="sy0">/</span><span class="nu0">10</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="re0">$tset</span><span class="sy0">-&gt;</span><span class="me1">addDocument</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">        <span class="st_h">'B'</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">        EuclideanPoint<span class="sy0">::</span><span class="me2">getRandomPointAround</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">            <span class="nu0">150</span><span class="sy0">+</span><span class="nu0">20</span><span class="sy0">*</span><a href="http://www.php.net/cos"><span class="kw3">cos</span></a><span class="br0">(</span><span class="re0">$i</span><span class="br0">)</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">            <span class="nu0">100</span><span class="sy0">+</span><span class="nu0">20</span><span class="sy0">*</span><a href="http://www.php.net/sin"><span class="kw3">sin</span></a><span class="br0">(</span><span class="re0">$i</span><span class="br0">)</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">            <span class="nu0">8</span></div></li><li class="li1"><div class="de1">        <span class="br0">)</span></div></li><li class="li1"><div class="de1">    <span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="re0">$tset</span><span class="sy0">-&gt;</span><span class="me1">addDocument</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">        <span class="st_h">'B'</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">        EuclideanPoint<span class="sy0">::</span><span class="me2">getRandomPointAround</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">            <span class="nu0">150</span><span class="sy0">+</span><span class="nu0">20</span><span class="sy0">*</span><a href="http://www.php.net/cos"><span class="kw3">cos</span></a><span class="br0">(</span><span class="re0">$i</span><span class="br0">)</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">            <span class="nu0">100</span><span class="sy0">+</span><span class="nu0">20</span><span class="sy0">*</span><a href="http://www.php.net/sin"><span class="kw3">sin</span></a><span class="br0">(</span><span class="re0">$i</span><span class="br0">)</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">            <span class="nu0">8</span></div></li><li class="li1"><div class="de1">        <span class="br0">)</span></div></li><li class="li1"><div class="de1">    <span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1">// we are stating that we consider a region to be dense</span></div></li><li class="li1"><div class="de1"><span class="co1">// if it has at least 4 points in a circle of radius 20</span></div></li><li class="li1"><div class="de1"><span class="re0">$clust</span> <span class="sy0">=</span> <span class="kw2">new</span> Dbscan<span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="nu0">4</span><span class="sy0">,</span>              <span class="co1">// the minimum number of points needed</span></div></li><li class="li1"><div class="de1">    <span class="nu0">20</span><span class="sy0">,</span>             <span class="co1">// the radius in which we are looking for points</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> Euclidean<span class="br0">(</span><span class="br0">)</span> <span class="co1">// we will use the Euclidean distance</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1">// do the actual clustering</span></div></li><li class="li1"><div class="de1"><a href="http://www.php.net/list"><span class="kw3">list</span></a><span class="br0">(</span><span class="re0">$clusters</span><span class="sy0">,</span><span class="re0">$noise</span><span class="br0">)</span> <span class="sy0">=</span> <span class="re0">$clust</span><span class="sy0">-&gt;</span><span class="me1">cluster</span><span class="br0">(</span><span class="re0">$tset</span><span class="sy0">,</span> <span class="kw2">new</span> DataAsFeatures<span class="br0">(</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>The above code creates a very simple dataset with two distinct clusters in the two-dimensional euclidean space.
+This simple dataset is often used as an example to illustrate the differences between DBSCAN and K-Means.</p>
+
+<p><span title="K-Means" class="with-caption">
+    <img src="../files/clustering/kmeans_circles.png" class="border" alt="K-Means"/></span>
+<span title="DBSCAN" class="with-caption">
+    <img src="../files/clustering/dbscan_circles.png" class="border" alt="DBSCAN"/></span>
+<b class="clear">
+     
+</b></p>
+
+<p>The second example that follows illustrates the property of DBSCAN to identify noise points and determine the
+number of clusters in the datatset. The dark blue points are noise. The points to be clustered are uniformly random.</p>
+
+<p><img src="../files/clustering/dbscan_1.png" class="border"/><img src="../files/clustering/dbscan_2.png" class="border"/></p>					<b class="clear"></b>
+				</div>
+								<div class="post">
+					<h2>
+						<a href="../posts/pos-tag-application.html">
+							Tagging parts of speech in Greek						</a>
+						<span class="date">Jul 21st, 2013</span>
+					</h2>
+										<p class="meta">
+						Project: <a href="category/greek-pos-tagger.1.html">Greek POS Tagger</a>
+					</p>
+										<p>In this final post I will present a usable pos tagger model and cli application with <strong>93.2%</strong> accuracy in
+tagging parts of speech on the held out test set (improving noticeably on the results of the thesis
+I base my work on).</p>
+
+<h3>Features</h3>
+
+<ol><li>The word</li>
+<li>One, Two and Three letter suffixes</li>
+<li>The word without the above suffixes</li>
+<li>The previous word</li>
+<li>The next word</li>
+<li>If the word contains a number</li>
+<li>If the word is one letter</li>
+</ol><pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">function</span> <span class="br0">(</span><span class="re0">$class</span><span class="sy0">,</span> <span class="re0">$doc</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <a href="http://www.php.net/list"><span class="kw3">list</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span> <span class="re0">$prev</span><span class="sy0">,</span> <span class="re0">$next</span><span class="br0">)</span> <span class="sy0">=</span> <span class="re0">$doc</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="re0">$features</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="re0">$len</span> <span class="sy0">=</span> <a href="http://www.php.net/mb_strlen"><span class="kw3">mb_strlen</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="co1">// the actual word in lower case</span></div></li><li class="li1"><div class="de1">    <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st0">"<span class="es4">$class</span> ^ "</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span><span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="kw1">if</span> <span class="br0">(</span><span class="re0">$len</span><span class="sy0">&gt;</span><span class="nu0">3</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">        <span class="co1">// the word's suffixes</span></div></li><li class="li1"><div class="de1">        <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span><span class="sy0">=</span><span class="st0">"<span class="es4">$class</span> ^ sub(-1)="</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,-</span><span class="nu0">1</span><span class="sy0">,</span> <span class="nu0">3</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span><span class="sy0">=</span><span class="st0">"<span class="es4">$class</span> ^ sub(-2)="</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,-</span><span class="nu0">2</span><span class="sy0">,</span> <span class="nu0">3</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span><span class="sy0">=</span><span class="st0">"<span class="es4">$class</span> ^ sub(-3)="</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,-</span><span class="nu0">3</span><span class="sy0">,</span> <span class="nu0">3</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="co1">// the words without the suffixes</span></div></li><li class="li1"><div class="de1">    <span class="kw1">if</span> <span class="br0">(</span><span class="re0">$len</span><span class="sy0">&gt;</span><span class="nu0">5</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">        <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st0">"<span class="es4">$class</span> ^ pre(-3)="</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span> <span class="nu0">0</span><span class="sy0">,</span> <span class="sy0">-</span><span class="nu0">3</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="kw1">if</span> <span class="br0">(</span><span class="re0">$len</span><span class="sy0">&gt;</span><span class="nu0">4</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">        <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st0">"<span class="es4">$class</span> ^ pre(-2)="</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span> <span class="nu0">0</span><span class="sy0">,</span> <span class="sy0">-</span><span class="nu0">2</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="kw1">if</span> <span class="br0">(</span><span class="re0">$len</span><span class="sy0">&gt;</span><span class="nu0">3</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">        <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st0">"<span class="es4">$class</span> ^ pre(-1)="</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span> <span class="nu0">0</span><span class="sy0">,</span> <span class="sy0">-</span><span class="nu0">1</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="co1">// the previous word</span></div></li><li class="li1"><div class="de1">    <span class="kw1">if</span> <span class="br0">(</span><a href="http://www.php.net/isset"><span class="kw3">isset</span></a><span class="br0">(</span><span class="re0">$prev</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="br0">)</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">        <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st0">"<span class="es4">$class</span> ^ ctx(-1)="</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><span class="re0">$prev</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="sy0">,</span><span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="co1">// the next word</span></div></li><li class="li1"><div class="de1">    <span class="kw1">if</span> <span class="br0">(</span><a href="http://www.php.net/isset"><span class="kw3">isset</span></a><span class="br0">(</span><span class="re0">$next</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="br0">)</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">        <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st0">"<span class="es4">$class</span> ^ ctx(1)="</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><span class="re0">$next</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="sy0">,</span><span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="kw1">if</span> <span class="br0">(</span><a href="http://www.php.net/preg_match"><span class="kw3">preg_match</span></a><span class="br0">(</span><span class="st0">"/\d/u"</span><span class="sy0">,</span><span class="re0">$w</span><span class="br0">)</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">        <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st0">"<span class="es4">$class</span> ^ has_number"</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="kw1">if</span> <span class="br0">(</span><a href="http://www.php.net/mb_strlen"><span class="kw3">mb_strlen</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span><span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">==</span><span class="nu0">1</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">        <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st0">"<span class="es4">$class</span> ^ one_letter"</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="kw1">return</span> <span class="re0">$features</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h3>Code</h3>
+
+<p>The code (not the models) can be found <a href="https://github.com/angeloskath/pos-tag/">at github</a>. Most
+of the contents of the repository are for the console application. There are two files that might
+interest anyone who wants to extend the tagger,
+ <a href="https://github.com/angeloskath/pos-tag/blob/master/src/PosTagger.php">PosTagger.php</a>
+and <a href="https://github.com/angeloskath/pos-tag/blob/master/src/PosTrainingSet.php">PosTrainingSet.php</a>.</p>
+
+<h3>Models</h3>
+
+<p>I am publishing one model trained on both the test set and the training set, on a total of 31554 tokens.
+The complete model is <strong>77MB</strong> serialized and contains more than <strong>half a million</strong> features. Although it contains
+all the information learned from the training it is impractical to use and with a little bit of pruning
+we can keep the same level of accuracy with one fifth the model size and startup time.</p>
+
+<p>Thus, I will publish here 4 different files. 'model.bin' is the complete model. Each one of the others
+named 'model_thre_{num}.bin' with num being a variable number is simply produced from model.bin after
+removing all features with value less than or equal to {num}.</p>
+
+<table class="small-table" style="width: 550px; margin: 0 auto;"><tr><td><strong>File</strong></td>
+        <td><strong>Size in bytes</strong></td>
+        <td><strong>Size in features</strong></td>
+        <td><strong>Accuracy in training set</strong></td>
+    </tr><tr><td><a href="../files/pos-tag/models/model.bin">model.bin</a></td>
+        <td>77M</td>
+        <td>~ 500K</td>
+        <td>99.974%</td>
+    </tr><tr><td><a href="../files/pos-tag/models/model_thre_0.09.bin">model_thre_0.09.bin</a></td>
+        <td>17M</td>
+        <td>~ 132K</td>
+        <td>99.974%</td>
+    </tr><tr><td><a href="../files/pos-tag/models/model_thre_0.49.bin">model_thre_0.49.bin</a></td>
+        <td>6.2M</td>
+        <td>~ 52K</td>
+        <td>99.974%</td>
+    </tr><tr><td><a href="../files/pos-tag/models/model_thre_0.99.bin">model_thre_0.99.bin</a></td>
+        <td>3.2M</td>
+        <td>~ 31K</td>
+        <td>99.822%</td>
+    </tr></table><p>-</p>
+
+<h3>Usage</h3>
+
+<p>You can dowload the code from github and run composer install or download a usable (and executable)
+<a href="../files/pos-tag/pos-tag.phar">phar archive</a>.</p>
+
+<pre class="bash"><ol><li class="li1"><div class="de1"><span class="kw2">git clone</span> https:<span class="sy0">//</span>github.com<span class="sy0">/</span>angeloskath<span class="sy0">/</span>pos-tag.git</div></li><li class="li1"><div class="de1"><span class="kw3">cd</span> pos-tag<span class="sy0">/</span></div></li><li class="li1"><div class="de1">composer <span class="kw2">install</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h4>With code</h4>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="co1">// require("phar://pos-tag.phar/vendor/autoload.php");</span></div></li><li class="li1"><div class="de1"><span class="kw1">require</span><span class="br0">(</span><span class="st0">"vendor/autoload.php"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$tagger</span> <span class="sy0">=</span> <span class="kw2">new</span> \PosTagger<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$tagger</span><span class="sy0">-&gt;</span><span class="me1">loadModelFromFile</span><span class="br0">(</span><span class="st0">"path/to/model.bin"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1">// $tok = new NlpTools\Tokenizers\WhitespaceTokenizer();</span></div></li><li class="li1"><div class="de1"><span class="co1">// $tokens = $tok-&gt;tokenize("Η καλή μας αγελάδα βόσκει κάτω στην λιακάδα");</span></div></li><li class="li1"><div class="de1"><span class="co1">// $tokens = $tok-&gt;tokenize("The quick brown fox jumped over the lazy dog");</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$tokens</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span><span class="st0">"Η"</span><span class="sy0">,</span><span class="st0">"καλή"</span><span class="sy0">,</span><span class="st0">"μας"</span><span class="sy0">,</span><span class="st0">"αγελάδα"</span><span class="sy0">,</span><span class="st0">"βόσκει"</span><span class="sy0">,</span><span class="st0">"κάτω"</span><span class="sy0">,</span><span class="st0">"στην"</span><span class="sy0">,</span><span class="st0">"λιακάδα"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$tags</span> <span class="sy0">=</span> <span class="re0">$tagger</span><span class="sy0">-&gt;</span><span class="me1">tag</span><span class="br0">(</span><span class="re0">$tokens</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="kw1">echo</span> <a href="http://www.php.net/implode"><span class="kw3">implode</span></a><span class="br0">(</span><span class="st0">" "</span><span class="sy0">,</span><span class="re0">$tags</span><span class="br0">)</span><span class="sy0">,</span> PHP_EOL<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="co1">// article adjective pronoun noun verb adverb article noun</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h4>With the console app</h4>
+
+<p>Download the console application and the models.</p>
+
+<pre class="bash"><ol><li class="li1"><div class="de1"><span class="co0"># download the console app</span></div></li><li class="li1"><div class="de1"><span class="kw2">wget</span> http:<span class="sy0">//</span>php-nlp-tools.com<span class="sy0">/</span>files<span class="sy0">/</span>pos-tag<span class="sy0">/</span>pos-tag.phar <span class="re5">-O</span> pos-tag</div></li><li class="li1"><div class="de1"><span class="kw2">chmod</span> +x pos-tag</div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co0"># download the model</span></div></li><li class="li1"><div class="de1"><span class="kw2">wget</span> http:<span class="sy0">//</span>php-nlp-tools.com<span class="sy0">/</span>files<span class="sy0">/</span>pos-tag<span class="sy0">/</span>models<span class="sy0">/</span>model_thre_0.49.bin <span class="re5">-O</span> model.bin</div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>Now you can tag plain text in Greek. Examples:</p>
+
+<pre class="bash"><ol><li class="li1"><div class="de1"><span class="co0"># -m model.bin is not necessary because model.bin is the default</span></div></li><li class="li1"><div class="de1">.<span class="sy0">/</span>pos-tag tag <span class="re5">-m</span> model.bin <span class="st0">"Η καλή μας αγελάδα βόσκει κάτω στην λιακάδα"</span></div></li><li class="li1"><div class="de1"><span class="co0"># Assuming greek_text is a file containing some text in greek.</span></div></li><li class="li1"><div class="de1">.<span class="sy0">/</span>pos-tag tag <span class="sy0">&lt;</span>greek_text</div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co0"># You can see a pretty useful help message for every command</span></div></li><li class="li1"><div class="de1">.<span class="sy0">/</span>pos-tag <span class="kw3">help</span> tag</div></li><li class="li1"><div class="de1">.<span class="sy0">/</span>pos-tag <span class="kw3">help</span> features</div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co0"># and of course you will see a list of available commands if</span></div></li><li class="li1"><div class="de1"><span class="co0"># you simply run the app</span></div></li><li class="li1"><div class="de1">.<span class="sy0">/</span>pos-tag</div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co0"># now follows an example tagging the first greek text that</span></div></li><li class="li1"><div class="de1"><span class="co0"># I found in one of the open tabs in my browser</span></div></li><li class="li1"><div class="de1">.<span class="sy0">/</span>pos-tag tag <span class="re5">-o</span> <span class="st0">"&lt;w&gt; &lt;info&gt;&lt;t&gt;&lt;/info&gt;&lt;n&gt;"</span> <span class="st0">"Το σώμα κειμένων του Ινστιτούτου Επεξεργασίας του Λόγου αναπτύχθηκε επί σειρά ετών και σήμερα περιλαμβάνει περισσότερες από 47.000.000 λέξεις"</span></div></li><li class="li1"><div class="de1">Το article</div></li><li class="li1"><div class="de1">σώμα noun</div></li><li class="li1"><div class="de1">κειμένων noun</div></li><li class="li1"><div class="de1">του article</div></li><li class="li1"><div class="de1">Ινστιτούτου noun</div></li><li class="li1"><div class="de1">Επεξεργασίας noun</div></li><li class="li1"><div class="de1">του article</div></li><li class="li1"><div class="de1">Λόγου noun</div></li><li class="li1"><div class="de1">αναπτύχθηκε verb</div></li><li class="li1"><div class="de1">επί preposition</div></li><li class="li1"><div class="de1">σειρά noun</div></li><li class="li1"><div class="de1">ετών noun</div></li><li class="li1"><div class="de1">και conjunction</div></li><li class="li1"><div class="de1">σήμερα adverb</div></li><li class="li1"><div class="de1">περιλαμβάνει verb</div></li><li class="li1"><div class="de1">περισσότερες adjective</div></li><li class="li1"><div class="de1">από preposition</div></li><li class="li1"><div class="de1">47.000.000 numeral</div></li><li class="li1"><div class="de1">λέξεις noun</div></li><li class="li1"><div class="de1"> </div></li></ol></pre>					<b class="clear"></b>
+				</div>
+								<div class="post">
+					<h2>
+						<a href="../posts/improving-the-baseline.html">
+							Evaluating features with Naive Bayes						</a>
+						<span class="date">Jul 21st, 2013</span>
+					</h2>
+										<p class="meta">
+						Project: <a href="category/greek-pos-tagger.1.html">Greek POS Tagger</a>
+					</p>
+										<p>Following Evangelia's paper  we will be using a Maxent model for our final prediction model.
+But training Maxent models is an order of magnitude slower than training a Naive Bayes model. We could simply
+implement the features defined in the paper and train one final model, but because I want to gain a better
+understanding of the POS tagger I will be implementing them one at a time and evaluating each time the improvement.
+To avoid waiting, I will be using a simple Naive Bayes model.</p>
+
+<h3>Only the data as features</h3>
+
+<p>If we simply train a Naive Bayes model with the only features the presence of the words themselves then we have a model
+that does not differ much from our baseline. Only one feature fires for each word and for the unknown words the prior
+gets to decide the class (actually the results would be identical if it were not for smoothing the model).</p>
+
+<p>Consequently the results are a model with a bit worse accuracy than the baseline but with much the same behaviour (it
+still mistakes half the verbs for nouns).</p>
+
+<h3>Options at hand</h3>
+
+<p>Up until now the features do not rely at all on our knowledge as a linguist or even on our knowledge of the greek
+language. As a matter of fact we could create such a baseline parser in any language just by feeding it a big
+pre-annotated corpus.</p>
+
+<p>To improve further we will have to add features that more or less depend on our knowledge of the task of recognizing
+parts of speech. For instance the knowldge that the ending of verbs is an important characteristic of the greek
+language or that if the previous word is "την" (an article) it is very unlikely that an article will follow.</p>
+
+<p>We can separate the features in two categories.</p>
+
+<ul><li>Contextual</li>
+<li>Language based</li>
+</ul><p>We will of course add features of both types in the end, but I would like to discuss the differences of those two
+categories. I believe they deserve to be in different categories because they rely on different knowledge of the
+language.</p>
+
+<p>The contextual features are features that try to exploit the fact that combinations of words have meaning
+e.g. "from the house" and "to the house" have exactly the opposite meaning. Contextual features can be generic, they
+will always carry information about the current word, regardless the language.</p>
+
+<p>Language based methods rely on our knowledge of the specific language (or family of languages) that we are targeting.
+e.g. The fact that if the suffix of the word is 'ω' the word is probably a verb.</p>
+
+<p>Contemplating on the Brill Tagger, what I have been describing above are rules that could be used in such a tagger.
+For this machine learning based tagger we will describe (in code) the way of coming up with rules and then the model,
+through the training process, will evaluate which rules are successful and should be relied upon and which are not.</p>
+
+<p>For instance we will <em>not</em> be using as a feature the following function 'ends_in_omega' but the function 'last_char'.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="co1">// not a good feature that only checks one possible</span></div></li><li class="li1"><div class="de1"><span class="co1">// suffix and relies on our expert knowledge that this</span></div></li><li class="li1"><div class="de1"><span class="co1">// suffix is important</span></div></li><li class="li1"><div class="de1"><span class="kw2">function</span> ends_in_omega<span class="br0">(</span><span class="re0">$w</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="kw1">return</span> <a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,-</span><span class="nu0">1</span><span class="sy0">,</span><span class="nu0">1</span><span class="sy0">,</span><span class="st_h">'utf-8'</span><span class="br0">)</span><span class="sy0">==</span><span class="st_h">'ω'</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1">// a good feature. It does not rely at all on our</span></div></li><li class="li1"><div class="de1"><span class="co1">// knowledge of a specific suffix. It simply asks for</span></div></li><li class="li1"><div class="de1"><span class="co1">// the model to evaluate if a suffix is important for</span></div></li><li class="li1"><div class="de1"><span class="co1">// a specific part of speech</span></div></li><li class="li1"><div class="de1"><span class="kw2">function</span> last_char<span class="br0">(</span><span class="re0">$w</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="kw1">return</span> <a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,-</span><span class="nu0">1</span><span class="sy0">,</span><span class="nu0">1</span><span class="sy0">,</span><span class="st_h">'utf-8'</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h3>Actually trying out features</h3>
+
+<h4>Data</h4>
+
+<p>I have already mentioned that having only the data as features results in
+a slightly worse result than our baseline due to model smoothing.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">function</span> <span class="br0">(</span><span class="re0">$class</span><span class="sy0">,</span> <span class="re0">$doc</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <a href="http://www.php.net/list"><span class="kw3">list</span></a><span class="br0">(</span><span class="re0">$w</span><span class="br0">)</span> <span class="sy0">=</span> <span class="re0">$doc</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="kw1">return</span> <a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span><span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h4>Suffixes</h4>
+
+<p>Using the last three letters of the word should drastically improve the
+performance of our tagger because it shall now recognize the common suffixes
+produced by the greek grammatical conjugation, thus it shall improve upon the
+most important flaw of our tagger, the huge misclassification of verbs.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">function</span> <span class="br0">(</span><span class="re0">$class</span><span class="sy0">,</span> <span class="re0">$doc</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <a href="http://www.php.net/list"><span class="kw3">list</span></a><span class="br0">(</span><span class="re0">$w</span><span class="br0">)</span> <span class="sy0">=</span> <span class="re0">$doc</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="kw1">if</span> <span class="br0">(</span><a href="http://www.php.net/mb_strlen"><span class="kw3">mb_strlen</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span><span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">&lt;=</span><span class="nu0">3</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">        <span class="kw1">return</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="re0">$suffixes</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="re0">$suffixes</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st_h">'substr(-1) = '</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,-</span><span class="nu0">1</span><span class="sy0">,</span> <span class="nu0">3</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="re0">$suffixes</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st_h">'substr(-2) = '</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,-</span><span class="nu0">2</span><span class="sy0">,</span> <span class="nu0">3</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="re0">$suffixes</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st_h">'substr(-3) = '</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,-</span><span class="nu0">3</span><span class="sy0">,</span> <span class="nu0">3</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="kw1">return</span> <span class="re0">$suffixes</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>Indeed those features improve the accuracy from the baseline (Data only) 80.6% to
+87% and most importantly they improve verb's recall from 49.47% to 95.59% .</p>
+
+<h4>Context</h4>
+
+<p>Using the context of the two surrounding words we expect a general improvement
+on the quality of the tagging not specific to any part of speech.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">function</span> <span class="br0">(</span><span class="re0">$class</span><span class="sy0">,</span> <span class="re0">$doc</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <a href="http://www.php.net/list"><span class="kw3">list</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span><span class="re0">$prev</span><span class="sy0">,</span><span class="re0">$next</span><span class="br0">)</span> <span class="sy0">=</span> <span class="re0">$doc</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="re0">$f</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="kw1">for</span> <span class="br0">(</span><span class="re0">$i</span><span class="sy0">=</span><span class="nu0">0</span><span class="sy0">;</span><span class="re0">$i</span><span class="sy0">&lt;</span><a href="http://www.php.net/count"><span class="kw3">count</span></a><span class="br0">(</span><span class="re0">$prev</span><span class="br0">)</span><span class="sy0">;</span><span class="re0">$i</span><span class="sy0">++</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">        <span class="re0">$f</span><span class="br0">[</span><span class="br0">]</span><span class="sy0">=</span> <span class="st0">"prev(<span class="es4">$i</span>) = {<span class="es4">$prev</span>[<span class="es4">$i</span>]}"</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="br0">}</span></div></li><li class="li1"><div class="de1">    <span class="kw1">for</span> <span class="br0">(</span><span class="re0">$i</span><span class="sy0">=</span><span class="nu0">0</span><span class="sy0">;</span><span class="re0">$i</span><span class="sy0">&lt;</span><a href="http://www.php.net/count"><span class="kw3">count</span></a><span class="br0">(</span><span class="re0">$next</span><span class="br0">)</span><span class="sy0">;</span><span class="re0">$i</span><span class="sy0">++</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">        <span class="re0">$f</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st0">"next(<span class="es4">$i</span>) = {<span class="es4">$next</span>[<span class="es4">$i</span>]}"</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="kw1">return</span> <span class="re0">$f</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>What we are actually getting though is more complex than that. If applying this
+feature on the baseline we will see a decrease in accuracy from 80.6% to 78.7%.
+Yet, with a second look we can see that the quality of the tagging has increased.
+The mistakes are spread out more (instead of being clustered on the nouns (not
+necessarily a good thing)) and we can now identify approximately 80% of the verbs
+instead of 50%.</p>
+
+<p>In addition, if combined with the suffixes feature the overall accuracy increases
+to 88.3% from 87%.</p>
+
+<h3>In the next post</h3>
+
+<p>In the next and last post of this series I will present all the feature functions,
+package the tagger code in a github repository and package the trained model for
+ease of use (maybe even a cli application).</p>					<b class="clear"></b>
+				</div>
+								<div class="post">
+					<h2>
+						<a href="../posts/greek-pos-tag.html">
+							Developing a Greek part of speech tagger						</a>
+						<span class="date">Jun 29th, 2013</span>
+					</h2>
+										<p class="meta">
+						Project: <a href="category/greek-pos-tagger.1.html">Greek POS Tagger</a>
+					</p>
+										<p>Within a recent attempt of mine to develop tools for natural language processing in Greek I decided to implement
+the state of the art in Greek POS tagging (the paper reporting the best accuracy that I could find) and offer the
+result in a way that it will be easy to use in one's projects as a subsystem.</p>
+
+<p>The tagger is based on the work of <a href="http://uk.linkedin.com/pub/evangelia-koleli/48/21a/931">Evangelia Koleli</a> and
+her <a href="http://nlp.cs.aueb.gr/theses/ekoleli_final_report.pdf">BSc thesis</a> (the paper is in Greek) in 2011. She was
+kind enough to provide me with the dataset she used. Evangelia's work also provides an API for using the tagger in
+your own projects (in Java), I am aiming at even simpler integration (and especially web projects hence php).</p>
+
+<p>In this series of posts I will be documenting the development of the tagger.</p>
+
+<h3>Problem statement</h3>
+
+<blockquote>
+  <p>In corpus linguistics, part-of-speech tagging (POS tagging or POST), also called grammatical tagging
+  or word-category disambiguation, is the process of marking up a word in a text (corpus) as corresponding
+  to a particular part of speech, based on both its definition, as well as its context.</p>
+  
+  <p><cite> Wikipedia </cite></p>
+</blockquote>
+
+<p>In this project I will be using only the small set of parts of speech because I believe it is a good tradeoff
+between information and model simplicity. The small set of categories as defined by Evangelia Koleli is the
+following:</p>
+
+<ul><li>verb</li>
+<li>noun</li>
+<li>adjective</li>
+<li>adverb</li>
+<li>article</li>
+<li>pronoun</li>
+<li>numeral</li>
+<li>preposition</li>
+<li>particle</li>
+<li>conjuction</li>
+<li>punctuation</li>
+<li>other</li>
+</ul><h3>The approach</h3>
+
+<p>POS Tagging is a sequence tagging problem. The algorithms used aim at finding the most likely sequence of
+tags that could correspond to the observed sequence, the words. It is also, usually, dealt with on a per
+sentence basis.</p>
+
+<p>For this tagger the approach is actually quite simpler and straightforward. We deal with the problem as a
+simple classification problem. We can use the complete word sequence for feature creation but
+none of the tag sequence (ex.: we cannot use the knowledge that the previous word is a noun but we can use the
+previous word).</p>
+
+<h3>Baseline</h3>
+
+<p>Before we start discussing the tagger implementation I would like to present a baseline parser. The baseline
+parser simply tags each word with the most common tag this word had in the training set. If it has never seen
+the word before then it tags it with the most common tag (usually noun). Actually, adding a set of targeted
+transformation rules to the above baseline classifier results in the simple and effective <a href="http://en.wikipedia.org/wiki/Brill_tagger">Brill Tagger</a>.</p>
+
+<p>The Baseline parser usually has an acuraccy of approximately 90% which is huge for a baseline, compared to
+other classification tasks, but it makes intuitive sense for this task since many words can only be tagged with
+one part of speech.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">class</span> Baseline implements Classifier</div></li><li class="li1"><div class="de1"><span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="kw2">protected</span> <span class="re0">$map</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="kw2">protected</span> <span class="re0">$classmap</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> __construct<span class="br0">(</span>TrainingSet <span class="re0">$training</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">        <span class="re0">$entry</span> <span class="sy0">=</span> <a href="http://www.php.net/array_fill_keys"><span class="kw3">array_fill_keys</span></a><span class="br0">(</span><span class="re0">$training</span><span class="sy0">-&gt;</span><span class="me1">getClassSet</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">,</span> <span class="nu0">0</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">classmap</span> <span class="sy0">=</span> <span class="re0">$entry</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="kw1">foreach</span> <span class="br0">(</span><span class="re0">$training</span> <span class="kw1">as</span> <span class="re0">$class</span><span class="sy0">=&gt;</span><span class="re0">$d</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">            <a href="http://www.php.net/list"><span class="kw3">list</span></a><span class="br0">(</span><span class="re0">$w</span><span class="br0">)</span> <span class="sy0">=</span> <span class="re0">$d</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">            <span class="re0">$w</span> <span class="sy0">=</span> <a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span><span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">            <span class="kw1">if</span> <span class="br0">(</span><span class="sy0">!</span><a href="http://www.php.net/isset"><span class="kw3">isset</span></a><span class="br0">(</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">map</span><span class="br0">[</span><span class="re0">$w</span><span class="br0">]</span><span class="br0">)</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">                <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">map</span><span class="br0">[</span><span class="re0">$w</span><span class="br0">]</span> <span class="sy0">=</span> <span class="re0">$entry</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">            <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">map</span><span class="br0">[</span><span class="re0">$w</span><span class="br0">]</span><span class="br0">[</span><span class="re0">$class</span><span class="br0">]</span><span class="sy0">++;</span></div></li><li class="li1"><div class="de1">            <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">classmap</span><span class="br0">[</span><span class="re0">$class</span><span class="br0">]</span><span class="sy0">++;</span></div></li><li class="li1"><div class="de1">        <span class="br0">}</span></div></li><li class="li1"><div class="de1">        <span class="kw1">foreach</span> <span class="br0">(</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">map</span> <span class="kw1">as</span> <span class="sy0">&amp;</span><span class="re0">$occ</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">            <a href="http://www.php.net/arsort"><span class="kw3">arsort</span></a><span class="br0">(</span><span class="re0">$occ</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="br0">}</span></div></li><li class="li1"><div class="de1">        <a href="http://www.php.net/arsort"><span class="kw3">arsort</span></a><span class="br0">(</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">classmap</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> classify<span class="br0">(</span><a href="http://www.php.net/array"><span class="kw3">array</span></a> <span class="re0">$classes</span><span class="sy0">,</span> Document <span class="re0">$d</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">        <a href="http://www.php.net/list"><span class="kw3">list</span></a><span class="br0">(</span><span class="re0">$w</span><span class="br0">)</span> <span class="sy0">=</span> <span class="re0">$d</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="re0">$w</span> <span class="sy0">=</span> <a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span><span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">        <span class="kw1">if</span> <span class="br0">(</span><span class="sy0">!</span><a href="http://www.php.net/isset"><span class="kw3">isset</span></a><span class="br0">(</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">map</span><span class="br0">[</span><span class="re0">$w</span><span class="br0">]</span><span class="br0">)</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">            <span class="kw1">return</span> <a href="http://www.php.net/key"><span class="kw3">key</span></a><span class="br0">(</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">classmap</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">        <span class="kw1">return</span> <a href="http://www.php.net/key"><span class="kw3">key</span></a><span class="br0">(</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">map</span><span class="br0">[</span><span class="re0">$w</span><span class="br0">]</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="br0">}</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>This Baseline tagger learned from the training set has an accuracy of <strong>82.62%</strong> on the test set. Yet this tagger is
+a very poor tagger and this can be easily illustrated if one sees the confusion matrix or simply the per tag
+precision and recall shown in the table below.</p>
+
+<table class="small-table"><tr><td style="border: 0;"/>
+        <td>verb       </td>
+        <td>noun       </td>
+        <td>adjective  </td>
+        <td>adverb     </td>
+        <td>article    </td>
+        <td>pronoun    </td>
+        <td>numeral    </td>
+        <td>preposition</td>
+        <td>particle   </td>
+        <td>conjuction </td>
+        <td>punctuation</td>
+        <td>other      </td>
+    </tr><tr><td>Precision</td>
+        <td class="text-right">100.0    </td>
+        <td class="text-right">60.65    </td>
+        <td class="text-right">91.03    </td>
+        <td class="text-right">96.21    </td>
+        <td class="text-right">94.80    </td>
+        <td class="text-right">92.46    </td>
+        <td class="text-right">96.95    </td>
+        <td class="text-right">98.11    </td>
+        <td class="text-right">98.92    </td>
+        <td class="text-right">99.78    </td>
+        <td class="text-right">100.0    </td>
+        <td class="text-right">100.0    </td>
+    </tr><tr><td>Recall</td>
+        <td class="text-right">49.47 </td>
+        <td class="text-right">98.90 </td>
+        <td class="text-right">41.90 </td>
+        <td class="text-right">85.23 </td>
+        <td class="text-right">98.55 </td>
+        <td class="text-right">73.50 </td>
+        <td class="text-right">72.94 </td>
+        <td class="text-right">99.18 </td>
+        <td class="text-right">98.92 </td>
+        <td class="text-right">98.09 </td>
+        <td class="text-right">98.93 </td>
+        <td class="text-right">26.82 </td>
+    </tr></table><p>From the table above one can see that more than half of the verbs have been tagged incorectly. By checking the
+confusion matrix we see that they have been mostly tagged as nouns (most misclassifications are) which also explains
+the really bad precision of the noun tag.</p>
+
+<p>The above shows that accuracy or even precision, recall and F1 score are not good metrics of the quality
+of a POS tagger. Using the confusion matrix one can understand how badly a misclassification would stand out to a
+human evaluator. Classifying verbs as nouns definitely does not look good even with 90% accuracy.</p>
+
+<p>In the next post we will be evaluating features using the much simpler Naive Bayes model.</p>					<b class="clear"></b>
+				</div>
+								<div class="post">
+					<h2>
+						<a href="../posts/sentiment-detection-maxent.html">
+							Maximum entropy model for sentiment detection						</a>
+						<span class="date">Jun 20th, 2013</span>
+					</h2>
+										<p class="meta">
+						Project: <a href="category/sentiment-detection.1.html">Sentiment detection</a>
+					</p>
+										<p>In the second post in the series of <a href="category/sentiment-detection.1.html">sentiment detection</a> we will train a
+maximum entropy model to perform the exact same classification on the exact same data and compare the
+procedure and the results.</p>
+
+<h3>Getting the optimizer</h3>
+
+<p>Later on NlpTools will support more external optimizers like Megam or Mallet but for now the only
+optimizer supported is the one developed specifically for NlpTools in <a href="http://golang.org/">Go</a> that
+performs parallel batch gradient descent.</p>
+
+<p>You can download binaries for you architecture or build from source.</p>
+
+<ul><li><a href="../files/sentiment-detection/optimizer/gradient-descent-linux-386">linux/386</a></li>
+<li><a href="../files/sentiment-detection/optimizer/gradient-descent-linux-amd64">linux/amd64</a></li>
+<li><a href="../files/sentiment-detection/optimizer/gradient-descent-windows-386.exe">windows/386</a></li>
+<li><a href="../files/sentiment-detection/optimizer/gradient-descent-windows-amd64.exe">windows/amd64</a></li>
+<li><a href="https://github.com/angeloskath/nlp-maxent-optimizer">source</a></li>
+</ul><h3>Training a Maximum Entropy model</h3>
+
+<p>There are only three changes required (to our previous file) to train and evaluate a Maxent model
+instead of a Naive Bayes model.</p>
+
+<h4>Feature Factory</h4>
+
+<p>You need to create a different type of feature factory. In Maxent features should target specific classes
+so in each feature the class name should be prepended. In addition, we should model presence and not
+frequency of features. To achieve the above we will use the FeatureFactory
+<a href="../documentation/api/index.html#NlpTools/FeatureFactories/FunctionFeatures">FunctionFeatures</a>.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="re0">$ff</span> <span class="sy0">=</span> <span class="kw2">new</span> FunctionFeatures<span class="br0">(</span></div></li><li class="li1"><div class="de1">    <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">        <span class="kw2">function</span> <span class="br0">(</span><span class="re0">$c</span><span class="sy0">,</span> <span class="re0">$d</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">            <span class="kw1">return</span> <a href="http://www.php.net/array_map"><span class="kw3">array_map</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">                <span class="kw2">function</span> <span class="br0">(</span><span class="re0">$t</span><span class="br0">)</span> <span class="kw2">use</span><span class="br0">(</span><span class="re0">$c</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">                    <span class="kw1">return</span> <span class="st0">"<span class="es4">$c</span> ^ <span class="es4">$t</span>"</span><span class="sy0">;</span> <span class="co1">// target the feature to a specific class</span></div></li><li class="li1"><div class="de1">                <span class="br0">}</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">                <span class="re0">$d</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">            <span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="br0">}</span></div></li><li class="li1"><div class="de1">    <span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h4>Model instantiation</h4>
+
+<p>We should change the model instatiation code to now create and train a Maxent model.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="co1">// create empty Maxent</span></div></li><li class="li1"><div class="de1"><span class="re0">$model</span> <span class="sy0">=</span> <span class="kw2">new</span> Maxent<span class="br0">(</span><a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$model</span><span class="sy0">-&gt;</span><span class="me1">train</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="re0">$ff</span><span class="sy0">,</span> <span class="co1">// the feature factory</span></div></li><li class="li1"><div class="de1">    <span class="re0">$tset</span><span class="sy0">,</span> <span class="co1">// the documents</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> ExternalMaxentOptimizer<span class="br0">(</span></div></li><li class="li1"><div class="de1">        <span class="st_h">'gradient-descent'</span> <span class="co1">// the path to the external optimizer</span></div></li><li class="li1"><div class="de1">    <span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h4>Classifier</h4>
+
+<p>Finally, we need to change the classifier from MultinomialNaiveBayes to FeatureBasedLinearClassifier.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="re0">$cls</span> <span class="sy0">=</span> <span class="kw2">new</span> FeatureBasedLinearClassifier<span class="br0">(</span><span class="re0">$ff</span><span class="sy0">,</span> <span class="re0">$model</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>We then run the php script with the exact same parameters as in the previous post. Training time will
+take longer this time.</p>
+
+<h3>Results</h3>
+
+<p>Maximum entropy models usually perform a bit better than Naive Bayes (on par with SVM). They are, though,
+much harder to train. Our model confirms the rule by achieving <strong>86%</strong> accuracy on
+<a href="http://www.cs.cornell.edu/home/llee/papers/sentiment.home.html">Pang's and Lee's</a> dataset (No features other than the data).</p>					<b class="clear"></b>
+				</div>
+								<div class="post">
+					<h2>
+						<a href="../posts/hierarchical-clustering-php-vs-python.html">
+							Hierarchical Clustering - NlpTools vs NLTK						</a>
+						<span class="date">Jun 15th, 2013</span>
+					</h2>
+										<p>First of all, I want to clarify that this post is not about bashing NLTK or even implying that NlpTools can be a
+replacement for the great tool NLTK is. It is simply a comment on a bad implementation of an algorithm that
+is probably not considered important by the NLTK developers.</p>
+
+<p>In the rest of the post I will assume that you have read the <a href="../posts/faster-hierarchical-clustering.html">previous post</a> regarding hierarchical
+clustering algorithms, their asymptotic time complexities and what I have chosen to implement so far in NlpTools.</p>
+
+<h3>Introduction</h3>
+
+<p>I wanted to test the output of the hierarchical clustering implementation in NlpTools so I decided to run a
+comparison of the resulting dendrograms with an already established and tested library. I browsed NLTK and
+read through the <a href="http://nltk.org/api/nltk.cluster.html#module-nltk.cluster.gaac">clustering package's documentation page</a>. Based on the information there
+I went on to look at the implementation at <a href="https://github.com/nltk/nltk/blob/master/nltk/cluster/gaac.py">github</a>.</p>
+
+<h3>Naive implementation</h3>
+
+<p>NLTK's implementation is the one described in the previous post as naive. It has time complexity O(n<sup>3</sup>).
+According to the docs, they chose to support only the cosine similarity distance metric and the group average
+linkage method because thus they could do some optimizations and gain a speed up, so there must be something I
+am missing. In addition, NLTK uses numpy for efficient computation of matrix operations.</p>
+
+<p>Considering the above, I still thought php would be slower since I did not even use the native heap implementation
+(<a href="http://www.php.net/manual/en/class.splheap.php">SplHeap</a>) for the linkage method. I created a dataset of two-dimensional random points and decided to
+run and compare the times. The code that I used to run the clustering and get the times can be found in this
+<a href="https://gist.github.com/angeloskath/5768035">gist</a> (I wrote the gist before I decided to write this post).</p>
+
+<p><img src="../files/clustering/nltk-vs-nlptools.png" width="600" class="border"/></p>
+
+<h3>How bad the implementation actually is</h3>
+
+<p>As I have mentioned already the implementation is asymptotically worse than the one in NlpTools. But does this
+really account for the huge difference shown on the above graph. Actually it doesn't. NLTK does not use a
+dissimilarity matrix at all in this implementation. It recomputes the pairwise cluster similarity again for each
+merge. That means, besides the unnecessary function call, that the asymptotic complexity of the algorithm is even
+worse (something not shown by this sample dataset). The complexity of the algorithm is actually O(n<sup>3</sup>•M)
+where M is the number of dimensions that our points have.</p>
+
+<p>Keep in mind that this dataset's points only have two dimensions which means that the difference we see here is
+mostly due to the function call overhead and not due to the data dimensionality problem (which can be huge especially
+when dealing with text data).</p>
+
+<h3>Assumptions about why</h3>
+
+<h4>Saving memory</h4>
+
+<p>Using a matrix of pairwise similarities or dissimilarities requires O(n<sup>2</sup>) memory space while computing
+the similarities each time only requires O(n) for the clusters. Thus NlpTools would exhaust a computers memory
+before NLTK ever reached to 50%. On the other hand, if it ever reached 50% there is no way it would finish computing
+the clusters in our life time, so there is not much point in saving memory (except if the computer had really small memory, about 100MB).</p>
+
+<h4>Relying too much on numpy</h4>
+
+<p>Numpy is a great library for fast matrix operations in python, that doesn't mean that numpy operations are O(1)
+constant time. Accessing lists and dicts in python, on the other hand, is. One thing one can assume is that NLTK
+developers got a bit carried away by the greatness of numpy and thought it to be the tool for every job. The
+"<a href="http://nltk.org/api/nltk.cluster.html#module-nltk.cluster.gaac">efficient speed up</a>" is actually what makes this implementation that slow.</p>
+
+<h3>10+ times speed up with 46 lines of code</h3>
+
+<p>The following changes are a quick and dirty addition of a similarity matrix to the algorithm. Asymptotic time
+complexity still remains O(n<sup>3</sup>) and memory usage is now O(n<sup>2</sup>). The code is a drop in replacement
+for the lines <a href="https://github.com/nltk/nltk/blob/master/nltk/cluster/gaac.py#L45">46 to 73 of nltk/cluster/gaac.py</a>
+that doesn't require changes in any other part of the nltk cluster module. Moreover, by making a small change in the
+11th line below this implementation could accept any function as a distance metric.</p>
+
+<pre class="python"><ol><li class="li1"><div class="de1"><span class="co1"># variables describing the initial situation</span></div></li><li class="li1"><div class="de1">N <span class="sy0">=</span> <span class="kw2">len</span><span class="br0">(</span>vectors<span class="br0">)</span></div></li><li class="li1"><div class="de1">cluster_len <span class="sy0">=</span> <span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>*N</div></li><li class="li1"><div class="de1">cluster_count <span class="sy0">=</span> N</div></li><li class="li1"><div class="de1">index_map <span class="sy0">=</span> <span class="kw2">range</span><span class="br0">(</span>N<span class="br0">)</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1"># construct the similarity matrix</span></div></li><li class="li1"><div class="de1">sim<span class="sy0">=</span> <span class="br0">{</span><span class="br0">}</span></div></li><li class="li1"><div class="de1"><span class="kw1">for</span> i <span class="kw1">in</span> <span class="kw2">xrange</span><span class="br0">(</span>N<span class="br0">)</span>:</div></li><li class="li1"><div class="de1">    <span class="kw1">for</span> j <span class="kw1">in</span> <span class="kw2">xrange</span><span class="br0">(</span>i+<span class="nu0">1</span><span class="sy0">,</span>N<span class="br0">)</span>:</div></li><li class="li1"><div class="de1">        sim<span class="br0">[</span> <span class="br0">(</span>i<span class="sy0">,</span>j<span class="br0">)</span> <span class="br0">]</span> <span class="sy0">=</span> <span class="kw2">self</span>._average_similarity<span class="br0">(</span>vectors<span class="br0">[</span>i<span class="br0">]</span><span class="sy0">,</span><span class="nu0">1</span><span class="sy0">,</span>vectors<span class="br0">[</span>j<span class="br0">]</span><span class="sy0">,</span><span class="nu0">1</span><span class="br0">)</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="kw1">while</span> cluster_count <span class="sy0">&gt;</span> <span class="kw2">max</span><span class="br0">(</span><span class="kw2">self</span>._num_clusters<span class="sy0">,</span> <span class="nu0">1</span><span class="br0">)</span>:</div></li><li class="li1"><div class="de1">    <span class="br0">(</span>i<span class="sy0">,</span>j<span class="br0">)</span><span class="sy0">,</span>_sim <span class="sy0">=</span> <span class="kw2">max</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">        sim.<span class="me1">iteritems</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">        key<span class="sy0">=</span><span class="kw1">lambda</span> x: x<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="br0">)</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="co1"># update similarities</span></div></li><li class="li1"><div class="de1">    cli <span class="sy0">=</span> cluster_len<span class="br0">[</span>i<span class="br0">]</span></div></li><li class="li1"><div class="de1">    clj <span class="sy0">=</span> cluster_len<span class="br0">[</span>j<span class="br0">]</span></div></li><li class="li1"><div class="de1">    cl <span class="sy0">=</span> cli+clj</div></li><li class="li1"><div class="de1">    <span class="kw1">del</span> sim<span class="br0">[</span> <span class="br0">(</span>i<span class="sy0">,</span>j<span class="br0">)</span> <span class="br0">]</span></div></li><li class="li1"><div class="de1">    <span class="kw1">for</span> x <span class="kw1">in</span> <span class="kw2">xrange</span><span class="br0">(</span>i<span class="br0">)</span>:</div></li><li class="li1"><div class="de1">        <span class="kw1">if</span> <span class="br0">(</span>x<span class="sy0">,</span>i<span class="br0">)</span> <span class="kw1">not</span> <span class="kw1">in</span> sim: <span class="kw1">continue</span></div></li><li class="li1"><div class="de1">        sim<span class="br0">[</span> <span class="br0">(</span>x<span class="sy0">,</span>i<span class="br0">)</span> <span class="br0">]</span> <span class="sy0">=</span> <span class="br0">(</span>sim<span class="br0">[</span> <span class="br0">(</span>x<span class="sy0">,</span>i<span class="br0">)</span> <span class="br0">]</span>*cli + sim<span class="br0">[</span> <span class="br0">(</span>x<span class="sy0">,</span>j<span class="br0">)</span> <span class="br0">]</span>*clj<span class="br0">)</span>/cl</div></li><li class="li1"><div class="de1">        <span class="kw1">del</span> sim<span class="br0">[</span> <span class="br0">(</span>x<span class="sy0">,</span>j<span class="br0">)</span> <span class="br0">]</span></div></li><li class="li1"><div class="de1">    <span class="kw1">for</span> x <span class="kw1">in</span> <span class="kw2">xrange</span><span class="br0">(</span>i+<span class="nu0">1</span><span class="sy0">,</span>j<span class="br0">)</span>:</div></li><li class="li1"><div class="de1">        <span class="kw1">if</span> <span class="br0">(</span>i<span class="sy0">,</span>x<span class="br0">)</span> <span class="kw1">not</span> <span class="kw1">in</span> sim: <span class="kw1">continue</span></div></li><li class="li1"><div class="de1">        sim<span class="br0">[</span> <span class="br0">(</span>i<span class="sy0">,</span>x<span class="br0">)</span> <span class="br0">]</span> <span class="sy0">=</span> <span class="br0">(</span>sim<span class="br0">[</span> <span class="br0">(</span>i<span class="sy0">,</span>x<span class="br0">)</span> <span class="br0">]</span>*cli + sim<span class="br0">[</span> <span class="br0">(</span>x<span class="sy0">,</span>j<span class="br0">)</span> <span class="br0">]</span>*clj<span class="br0">)</span>/cl</div></li><li class="li1"><div class="de1">        <span class="kw1">del</span> sim<span class="br0">[</span> <span class="br0">(</span>x<span class="sy0">,</span>j<span class="br0">)</span> <span class="br0">]</span></div></li><li class="li1"><div class="de1">    <span class="kw1">for</span> x <span class="kw1">in</span> <span class="kw2">xrange</span><span class="br0">(</span>j+<span class="nu0">1</span><span class="sy0">,</span>N<span class="br0">)</span>:</div></li><li class="li1"><div class="de1">        <span class="kw1">if</span> <span class="br0">(</span>i<span class="sy0">,</span>x<span class="br0">)</span> <span class="kw1">not</span> <span class="kw1">in</span> sim: <span class="kw1">continue</span></div></li><li class="li1"><div class="de1">        sim<span class="br0">[</span> <span class="br0">(</span>i<span class="sy0">,</span>x<span class="br0">)</span> <span class="br0">]</span> <span class="sy0">=</span> <span class="br0">(</span>sim<span class="br0">[</span> <span class="br0">(</span>i<span class="sy0">,</span>x<span class="br0">)</span> <span class="br0">]</span>*cli + sim<span class="br0">[</span> <span class="br0">(</span>j<span class="sy0">,</span>x<span class="br0">)</span> <span class="br0">]</span>*clj<span class="br0">)</span>/cl</div></li><li class="li1"><div class="de1">        <span class="kw1">del</span> sim<span class="br0">[</span> <span class="br0">(</span>j<span class="sy0">,</span>x<span class="br0">)</span> <span class="br0">]</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="co1"># merge the clusters</span></div></li><li class="li1"><div class="de1">    cluster_len<span class="br0">[</span>i<span class="br0">]</span> <span class="sy0">=</span> cl</div></li><li class="li1"><div class="de1">    <span class="kw2">self</span>._dendrogram.<span class="me1">merge</span><span class="br0">(</span>index_map<span class="br0">[</span>i<span class="br0">]</span><span class="sy0">,</span>index_map<span class="br0">[</span>j<span class="br0">]</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">    cluster_count -<span class="sy0">=</span> <span class="nu0">1</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="co1"># update the index map to reflect the indexes if we</span></div></li><li class="li1"><div class="de1">    <span class="co1"># had removed j</span></div></li><li class="li1"><div class="de1">    <span class="kw1">for</span> x <span class="kw1">in</span> <span class="kw2">xrange</span><span class="br0">(</span>j+<span class="nu0">1</span><span class="sy0">,</span>N<span class="br0">)</span>:</div></li><li class="li1"><div class="de1">        index_map<span class="br0">[</span>x<span class="br0">]</span> -<span class="sy0">=</span> <span class="nu0">1</span></div></li><li class="li1"><div class="de1">    index_map<span class="br0">[</span>j<span class="br0">]</span> <span class="sy0">=</span> -<span class="nu0">1</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h3>Graph running times</h3>
+
+<p>For the following graphs each algorithm was run 10 times and the average is plotted. I would also plot the standard
+deviation but it was insignificant. The data can be found <a href="../files/clustering/nlptools-vs-nltk.csv">here as csv</a> and <a href="../files/clustering/nlptools-vs-nltk.gnumeric">here as a gnumeric
+document</a>.</p>
+
+<h4>Comparison of every implementation</h4>
+
+<p><img src="../files/clustering/nltk-vs-nltk-vs-nlptools.png" width="600" class="border"/></p>
+
+<p>NLTK series is incomplete because it took too much time to run the tests. You can interpolate that it would take
+more than 8 hours to actually cluster 1200 points ten times.</p>
+
+<h4>Relative performance</h4>
+
+<p>The following graph is actually the most interesting. It shows that with this improvement we have not actually solved
+any problem, we have simply made the algorithm 13 times faster. The execution time still increases by the cube of
+the number of points which means that the NlpTools implementation will always be incrementally faster as the number
+of points increases.</p>
+
+<p><img src="../files/clustering/relative-performance-nltk-nlptools.png" width="600" class="border"/></p>					<b class="clear"></b>
+				</div>
+								<div class="post">
+					<h2>
+						<a href="../posts/faster-hierarchical-clustering.html">
+							O(n<sup>2</sup>logn) hierarchical clustering						</a>
+						<span class="date">Jun 7th, 2013</span>
+					</h2>
+										<p><a href="http://en.wikipedia.org/wiki/Hierarchical_clustering">Hierarchical clustering</a> is the process in which given a dissimilarity matrix
+between documents one has to join those that are most similar and update the
+matrix given an update strategy (<a href="http://en.wikipedia.org/wiki/Single-linkage_clustering">single</a>/<a href="http://en.wikipedia.org/wiki/Complete_linkage_clustering">complete link</a>,
+<a href="http://en.wikipedia.org/wiki/Complete_linkage_clustering">group average</a>, etc)</p>
+
+<h3>Naive case</h3>
+
+<p>The above process, in the general case, is of complexity O(n<sup>3</sup>) since we have
+to traverse n<sup>2</sup> elements (in the matrix) and find their minimum and we have to do
+this n times. If one does code it this way, especially in PHP that is a relatively
+slow language, the maximum number of documents that can be clustered in a reasonable
+time (less than a day) is about 1000 (depending heavily on the computer).</p>
+
+<h3>Improving the general case</h3>
+
+<p>One could improve the general case of O(n<sup>3</sup>) simply by noticing that most of
+the time is spent looking for a minimum. If we use a <a href="http://en.wikipedia.org/wiki/Heap_(data_structure)">heap</a> instead of
+a matrix, then finding the minimum is an O(1) operation. Yet inserting and removing from
+the heap (as we updated the matrix previously) is an O(logn) operation and we have to do it
+n times for each merge. Thus the new complexity of the algorithm is now O(n<sup>2</sup>logn)
+which improves substantially the usefulness of the algorithm in php. (<em>for instance if n=1000
+we improve the running time approximately by 100</em>).</p>
+
+<h3>As fast as possible</h3>
+
+<p>More than 40 years ago Mr. Sibson developed the <a href="http://www.cs.gsu.edu/~wkim/index_files/papers/sibson.pdf">SLINK</a> algorithm for single link
+hierarchical clustering, based on a new mathematical representation of a <a href="https://en.wikipedia.org/wiki/Dendrogram">dendrogram</a>
+he devised an algorithm with time complexity O(n<sup>2</sup>). It is easily provable that no
+algorithm can be asymptotically faster than that. The SLINK algorithm, although easy to write
+in code, it deviates quite a lot from intuition in the sense that the algorithm does not
+merge two clusters n times untill all clusters are merged into one but instead it recursively updates
+the dendrogram from having i points to having i+1 points (thus the new dendrogram representation).</p>
+
+<h3>What is NlpTools using</h3>
+
+<p>PHP is a relatively slow language (captain obvious). The fastest algorithm possible should be used
+in order to achieve usable (or good) performance. That being said, NlpTools except for a toolkit
+and library for NLP, it also aims to be a good resource for introduction to machine
+learning and NLP algorithms. Thus, sometimes a simpler solution is chosen than the faster one.</p>
+
+<p>The first implementation of hierarchical clustering in NlpTools will be using a <a href="https://github.com/angeloskath/php-associative-heap">custom made
+heap</a> that makes it easy to understand what is going on in the <em>Hierarchical</em>
+class that implements the <a href="../documentation/api/index.html#NlpTools/Clustering/Clusterer">Clusterer interface</a> and yet provides much better
+performance than the naive implementation.</p>
+
+<h3>What about SLINK and CLINK</h3>
+
+<p>Those algorithms will probably be added in the clustering namespace as two completely new classes
+that provide the same results as using <em>Hierarchical</em> with SingleLink and CompleteLink strategies
+accordingly. Top priority though is to implement yet more merge strategies like Ward and Centroid.</p>
+
+<h3>And a beautiful looking dendrogram?</h3>
+
+<p><img src="../files/clustering/dendrogram_1.png" class="border"/></p>
+
+<p><img src="../files/clustering/hierarchical_1.png" class="border"/></p>
+
+<p>The clustering above is done using single link hierarchical clustering with euclidean distance.
+The images were created using gd in php and the code is included in NlpTools as tests for the
+clustering namespace.</p>					<b class="clear"></b>
+				</div>
+								<div class="post">
+					<h2>
+						<a href="../posts/text-clustering.html">
+							Text clustering						</a>
+						<span class="date">May 10th, 2013</span>
+					</h2>
+										<p>In this article I will introduce one thing that has been missing from
+NlpTools, clustering. The base similarity concepts have long been included
+in NlpTools and it was a matter of time to implement some clustering methods.</p>
+
+<h3>Current status</h3>
+
+<p>So far only KMeans has been implemented and I have not yet published it.
+KMeans is, probably, the simplest clustering algorithm and one of the
+fastest. It allows for clustering with many distance metrics (euclidean,
+cosine similarity, hamming, etc). Combined with <a href="http://www.php-nlp-tools.local/documentation/api/#NlpTools\Similarity\Simhash">simhash</a>
+it can be used to cluster big corpuses even in php.</p>
+
+<h3>Examples</h3>
+
+<p>Simple euclidean clustering at two dimensions.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Clustering\KMeans<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Clustering\CentroidFactories\Euclidean <span class="kw1">as</span> EuclideanCF<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Similarity\Euclidean<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$clust</span> <span class="sy0">=</span> <span class="kw2">new</span> KMeans<span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="nu0">2</span><span class="sy0">,</span> <span class="co1">// 2 clusters</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> Euclidean<span class="br0">(</span><span class="br0">)</span><span class="sy0">,</span> <span class="co1">// the distance metric</span></div></li><li class="li1"><div class="de1">                     <span class="co1">// must implement Distance interface</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> EuclideanCF<span class="br0">(</span><span class="br0">)</span><span class="sy0">,</span> <span class="co1">// how we will be creating centroids</span></div></li><li class="li1"><div class="de1">    <span class="nu19">0.001</span> <span class="co1">// the cutoff value (can be ommited)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$clust</span><span class="sy0">-&gt;</span><span class="me1">cluster</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="re0">$tset</span><span class="sy0">,</span> <span class="co1">// a training set</span></div></li><li class="li1"><div class="de1">    <span class="re0">$ff</span> <span class="co1">// a feature factory that will transform the document data</span></div></li><li class="li1"><div class="de1">        <span class="co1">// to data compatible with the distance metric and the</span></div></li><li class="li1"><div class="de1">        <span class="co1">// centroid factory</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p><img src="../files/clustering/euclidean_2.png" class="border"/></p>
+
+<p>The only thing that needs to change, in order to cluster using cosine
+similarity at two dimensions, is the parameters at the initialization
+of the KMeans class.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Clustering\KMeans<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Clustering\CentroidFactories\MeanAngle<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Similarity\CosineSimilarity<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$clust</span> <span class="sy0">=</span> <span class="kw2">new</span> KMeans<span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="nu0">4</span><span class="sy0">,</span> <span class="co1">// 4 clusters</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> CosineSimilarity<span class="br0">(</span><span class="br0">)</span><span class="sy0">,</span> <span class="co1">// the distance metric</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> MeanAngle<span class="br0">(</span><span class="br0">)</span><span class="sy0">,</span> <span class="co1">// how we will be creating centroids</span></div></li><li class="li1"><div class="de1">    <span class="nu19">0.001</span> <span class="co1">// the cutoff value (can be ommited)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p><img src="../files/clustering/cosine_4.png" class="border"/></p>
+
+<h3>Future</h3>
+
+<p>NlpTools will also contain the following clustering methods</p>
+
+<ul><li>Hierarchical clustering</li>
+<li>Expectation Maximization clustering (probably with Naive Bayes model)</li>
+</ul><p>Moreover I plan to add some tools for internal evaluation of clusters (silhouette, SSE, Correlation).</p>
+
+<h3>Backwards incompatible changes</h3>
+
+<p>When the clustering branch is merged with the master branch the following backwards incompatible changes will take place.</p>
+
+<ul><li>SetDistance and SetSimilarity, the similarity and distance interfaces
+accordingly are renamed to Distance and Similarity</li>
+<li>The above interfaces no longer require arrays as parameters, thus we
+could even define the distance between two strings without the need to
+split those strings in character sets</li>
+</ul>					<b class="clear"></b>
+				</div>
+								<div class="post">
+					<h2>
+						<a href="../posts/introducing-latent-dirichlet-allocation.html">
+							Introducing Latent Dirichlet Allocation						</a>
+						<span class="date">Apr 30th, 2013</span>
+					</h2>
+										<p>In this article I will introduce work still in progress in NlpTools,
+Latent Dirichlet Allocation with batch Gibbs sampling. I haven't
+updated the API Docs yet so one can only see the API by looking to the
+<a href="https://github.com/angeloskath/php-nlp-tools/blob/master/models/lda.php">code</a>.</p>
+
+<p>The implementation is based on the paper by <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC387300/">Griffiths and Steyvers</a>.
+With this new model a new namespace is also introduced in NlpTools (although
+it is arguable if it will stay) the NlpTools\Random namespace. It provides
+useful constructs for dealing with random distributions. As always it is
+coded in an as needed basis and only Gamma, Dirichlet and Normal distributions
+are implemented (much based on <a href="http://www.johndcook.com/SimpleRNG.cpp">http://www.johndcook.com/SimpleRNG.cpp</a>)</p>
+
+<p>I would also like to mention <a href="http://gist.github.com/542786">Mathieu Blondel's python implementation</a> that
+helped seriously in debugging mine and from which I took the log likelihood
+implementation.</p>
+
+<h3>A graphical example</h3>
+
+<p>The implementation comes with an accompanying test, the beautiful
+graphical example used by Griffiths and Steyvers in their own paper.</p>
+
+<p>We create a set of documents (images) while sticking to the model's
+assumptions, sampling each topic from a Dirichlet distribution.</p>
+
+<p>Topics:</p>
+
+<p><img src="../files/lda/topics/topic-0" class="border"/><img src="../files/lda/topics/topic-1" class="border"/><img src="../files/lda/topics/topic-2" class="border"/><img src="../files/lda/topics/topic-3" class="border"/><img src="../files/lda/topics/topic-4" class="border"/></p>
+
+<p><img src="../files/lda/topics/topic-5" class="border"/><img src="../files/lda/topics/topic-6" class="border"/><img src="../files/lda/topics/topic-7" class="border"/><img src="../files/lda/topics/topic-8" class="border"/><img src="../files/lda/topics/topic-9" class="border"/></p>
+
+<p>Examples of generated documents:</p>
+
+<p><img src="../files/lda/documents/74" class="border"/><img src="../files/lda/documents/75" class="border"/><img src="../files/lda/documents/87" class="border"/><img src="../files/lda/documents/90" class="border"/><img src="../files/lda/documents/93" class="border"/></p>
+
+<p>Topics found in 1st iteration (log likelihood -278203.915):</p>
+
+<p><img src="../files/lda/results/topic-0001-0000" class="border"/><img src="../files/lda/results/topic-0001-0001" class="border"/><img src="../files/lda/results/topic-0001-0002" class="border"/><img src="../files/lda/results/topic-0001-0003" class="border"/><img src="../files/lda/results/topic-0001-0004" class="border"/></p>
+
+<p><img src="../files/lda/results/topic-0001-0005" class="border"/><img src="../files/lda/results/topic-0001-0006" class="border"/><img src="../files/lda/results/topic-0001-0007" class="border"/><img src="../files/lda/results/topic-0001-0008" class="border"/><img src="../files/lda/results/topic-0001-0009" class="border"/></p>
+
+<p>Topics found in 5th iteration (log likelihood -205116.986):</p>
+
+<p><img src="../files/lda/results/topic-0005-0000" class="border"/><img src="../files/lda/results/topic-0005-0001" class="border"/><img src="../files/lda/results/topic-0005-0002" class="border"/><img src="../files/lda/results/topic-0005-0003" class="border"/><img src="../files/lda/results/topic-0005-0004" class="border"/></p>
+
+<p><img src="../files/lda/results/topic-0005-0005" class="border"/><img src="../files/lda/results/topic-0005-0006" class="border"/><img src="../files/lda/results/topic-0005-0007" class="border"/><img src="../files/lda/results/topic-0005-0008" class="border"/><img src="../files/lda/results/topic-0005-0009" class="border"/></p>
+
+<p>Topics found in 50th iteration (log likelihood -133652.225):</p>
+
+<p><img src="../files/lda/results/topic-0050-0000" class="border"/><img src="../files/lda/results/topic-0050-0001" class="border"/><img src="../files/lda/results/topic-0050-0002" class="border"/><img src="../files/lda/results/topic-0050-0003" class="border"/><img src="../files/lda/results/topic-0050-0004" class="border"/></p>
+
+<p><img src="../files/lda/results/topic-0050-0005" class="border"/><img src="../files/lda/results/topic-0050-0006" class="border"/><img src="../files/lda/results/topic-0050-0007" class="border"/><img src="../files/lda/results/topic-0050-0008" class="border"/><img src="../files/lda/results/topic-0050-0009" class="border"/></p>
+
+<h3>Usage</h3>
+
+<p>For example the following code finds the topics of an array of
+text documents.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\FeatureFactories\DataAsFeatures<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Tokenizers\WhitespaceTokenizer<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Documents\TokensDocument<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Documents\TrainingSet<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Models\Lda<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1">// supposedly the list of documents is in a file that is passed</span></div></li><li class="li1"><div class="de1"><span class="co1">// as first parameter</span></div></li><li class="li1"><div class="de1"><span class="kw1">if</span> <span class="br0">(</span><a href="http://www.php.net/file_exists"><span class="kw3">file_exists</span></a><span class="br0">(</span><span class="re0">$argv</span><span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">    <span class="re0">$docs</span> <span class="sy0">=</span> <a href="http://www.php.net/file"><span class="kw3">file</span></a><span class="br0">(</span><span class="re0">$argv</span><span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw1">else</span></div></li><li class="li1"><div class="de1">    <a href="http://www.php.net/die"><span class="kw3">die</span></a><span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$tok</span> <span class="sy0">=</span> <span class="kw2">new</span> WhitespaceTokenizer<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$tset</span> <span class="sy0">=</span> <span class="kw2">new</span> TrainingSet<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw1">foreach</span> <span class="br0">(</span><span class="re0">$docs</span> <span class="kw1">as</span> <span class="re0">$f</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="re0">$tset</span><span class="sy0">-&gt;</span><span class="me1">addDocument</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">        <span class="st_h">''</span><span class="sy0">,</span> <span class="co1">// the class is not used by the lda model</span></div></li><li class="li1"><div class="de1">        <span class="kw2">new</span> TokensDocument<span class="br0">(</span></div></li><li class="li1"><div class="de1">            <span class="re0">$tok</span><span class="sy0">-&gt;</span><span class="me1">tokenize</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">                <a href="http://www.php.net/file_get_contents"><span class="kw3">file_get_contents</span></a><span class="br0">(</span><span class="re0">$f</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">            <span class="br0">)</span></div></li><li class="li1"><div class="de1">        <span class="br0">)</span></div></li><li class="li1"><div class="de1">    <span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$lda</span> <span class="sy0">=</span> <span class="kw2">new</span> Lda<span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> DataAsFeatures<span class="br0">(</span><span class="br0">)</span><span class="sy0">,</span> <span class="co1">// a feature factory to transform the document data</span></div></li><li class="li1"><div class="de1">    <span class="nu0">5</span><span class="sy0">,</span> <span class="co1">// the number of topics we want</span></div></li><li class="li1"><div class="de1">    <span class="nu0">1</span><span class="sy0">,</span> <span class="co1">// the dirichlet prior assumed for the per document topic distribution</span></div></li><li class="li1"><div class="de1">    <span class="nu0">1</span>  <span class="co1">// the dirichlet prior assumed for the per word topic distribution</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1">// run the sampler 50 times</span></div></li><li class="li1"><div class="de1"><span class="re0">$lda</span><span class="sy0">-&gt;</span><span class="me1">train</span><span class="br0">(</span><span class="re0">$tset</span><span class="sy0">,</span><span class="nu0">50</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1">// synonymous to calling getPhi() as per Griffiths and Steyvers</span></div></li><li class="li1"><div class="de1"><span class="co1">// it returns a mapping of words to probabilities for each topic</span></div></li><li class="li1"><div class="de1"><span class="co1">// ex.:</span></div></li><li class="li1"><div class="de1"><span class="co1">// Array(</span></div></li><li class="li1"><div class="de1"><span class="co1">//   [0] =&gt; Array(</span></div></li><li class="li1"><div class="de1"><span class="co1">//      [word1] =&gt; 0.0013...</span></div></li><li class="li1"><div class="de1"><span class="co1">//      ....................</span></div></li><li class="li1"><div class="de1"><span class="co1">//      [wordn] =&gt; 0.0001...</span></div></li><li class="li1"><div class="de1"><span class="co1">//     ),</span></div></li><li class="li1"><div class="de1"><span class="co1">//   [1] =&gt; Array(</span></div></li><li class="li1"><div class="de1"><span class="co1">//      ....</span></div></li><li class="li1"><div class="de1"><span class="co1">//     )</span></div></li><li class="li1"><div class="de1"><span class="co1">// )</span></div></li><li class="li1"><div class="de1"><a href="http://www.php.net/print_r"><span class="kw3">print_r</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="co1">// $lda-&gt;getPhi(10)</span></div></li><li class="li1"><div class="de1">    <span class="co1">// just the 10 largest probabilities</span></div></li><li class="li1"><div class="de1">    <span class="re0">$lda</span><span class="sy0">-&gt;</span><span class="me1">getWordsPerTopicsProbabilities</span><span class="br0">(</span><span class="nu0">10</span><span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>					<b class="clear"></b>
+				</div>
+								<div style="text-align: center;">
+																					<a href="page/2.html">Next &raquo;</a>
+									</div>
+			</div>
+
+		</div>
+		
+		<div class="container" style="text-align: right;" id="footer">
+	<p class="x-small">
+		This website is powered by <a href="http://www.imdb.com/title/tt0198781/" title="I was thinking of putting 'cries of children' but it seemed too evil">the laughter of children</a>
+	</p>
+</div>
+<div style="display: none;" id="geo-disclaimer">
+	Αφού είσαι από <strong>Ελλάδα</strong> και σε ενδιαφέρει η επεξεργασία φυσικής γλώσσας, <a href="../greek-nlp.html">συνέχισε εδώ →</a>
+</div>
+<script>
+	(function () {
+		var co=document.cookie.split(';');
+		for (var i=0;i<co.length;i++)
+		{
+			if (co[i].substr(0,6)!='theme=')
+				continue;
+			
+			var newtheme = co[i].substr(6),
+				theme_select = document.getElementById('theme-select'),
+				opts = theme_select.options;
+				
+			themeroller.changeHighlight(newtheme);
+			for (var j=0; j<opts.length; j++)
+			{
+				if (opts[j].value==newtheme)
+				{
+					theme_select.selectedIndex = j;
+					break;
+				}
+			}
+			break;
+		}
+	})();
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-9373187-5']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+	// geoip
+	(function () {
+		var geo = document.createElement("script");
+		geo.type = "text/javascript";
+		geo.async = true;
+		geo.src = "http://php-nlp-tools.com:8081/js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(geo, s)
+		geo.onload = function () {
+			if (COUNTRY == "GR") {
+				document.getElementById("footer").style.marginBottom = "60px";
+				document.getElementById("geo-disclaimer").style.display = "block";
+			}
+		};
+	})();
+</script>
+		
+	</body>
+</html>

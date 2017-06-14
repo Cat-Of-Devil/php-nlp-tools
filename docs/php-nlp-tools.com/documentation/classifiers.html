@@ -1,0 +1,238 @@
+<!Doctype html>
+<html>
+
+		<head>
+		<base href="" >
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
+		
+					<title>Classifiers | NlpTools PHP</title>
+				<link rel="stylesheet" href="../style.css" />
+		<script>
+			var themeroller = (function () {
+				var haveStyle = false,
+					expired = 'Thu, 2 Aug 2001 20:47:11 UTC',
+					unexpired = 'Mon, 2 Aug 2021 20:47:11 UTC',
+					from = '',
+					changeClasses = function (from,theme) {
+						var items = document.getElementsByTagName('pre');
+						for (var i=0;i<items.length;i++)
+						{
+							var cls_re = new RegExp('\\s?\\b'+from+'\\b\\s?|^\s*$');
+							items[i].className = items[i].className.replace(cls_re,' '+theme+' ').trim();
+						}
+					},
+					updateCookie = function (t) {
+						if (t=='')
+							document.cookie = 'theme=; expires='+expired+'; path=/';
+						else
+							document.cookie = 'theme='+t+'; expires='+unexpired+'; path=/';
+						from = t;
+					};
+					
+				return {
+					onSelectChange: function () {
+						var theme = this.options[this.selectedIndex].value;
+						themeroller.changeHighlight(theme);
+					},
+					changeHighlight: function (theme) {
+						
+						if (haveStyle)
+						{
+							changeClasses(from,theme);
+						}
+						else
+						{
+							var l = document.createElement('link');
+							l.rel = 'stylesheet';
+							l.href = 'codecolorer.css';
+							document.head.appendChild(l);
+							haveStyle = true;
+							changeClasses(from,theme);
+						}
+						updateCookie(theme);
+					}
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="container">
+				<h1 class="title"><a href="../index.html">NlpTools</a></h1>
+				<h2 class="subtitle">Natural language processing in php</h2>
+				<b class="clear"></b>
+			</div>
+		</div>
+
+		<div class="container">
+
+			<div class="sidebar">
+	
+		<div class="sidebar-container">
+		<h3>Api Docs</h3>
+					<a href="api/index.html">Api Documentation</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Documentation</h3>
+					<a href="index.html">Get Started</a><br/>
+					<a href="tokenizers.html">Tokenizers</a><br/>
+					<a href="documents.html">Documents</a><br/>
+					<a href="feature-factories.html">Feature Factories</a><br/>
+					<a href="classifiers.html">Classifiers</a><br/>
+					<a href="bayesian-model.html">Bayesian Model</a><br/>
+					<a href="maximum-entropy-model.html">Maximum Entropy Model</a><br/>
+					<a href="similarity.html">Similarity</a><br/>
+					<a href="clustering.html">Clustering</a><br/>
+					<a href="transformations.html">Transformations</a><br/>
+					<a href="other.html">Other</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Navigation</h3>
+					<a href="../index.html">Home</a><br/>
+					<a href="index.html">Documentation</a><br/>
+					<a href="../blog/index.html">Blog</a><br/>
+					<a href="https://github.com/angeloskath/php-nlp-tools/">Github</a><br/>
+					<a href="mailto:info@php-nlp-tools.com">Contact</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Mini nlp projects</h3>
+					<a href="../blog/category/spam-detection-service/index.html">Spam detection service</a><br/>
+					<a href="../blog/category/sentiment-detection.1.html">Sentiment detection</a><br/>
+					<a href="../blog/category/greek-pos-tagger.1.html">Greek POS Tagger</a><br/>
+					<a href="../blog/category/programming-language-detection/index.html">Programming language detection</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Syntax highlighting</h3>
+		<select id="theme-select" onchange="themeroller.onSelectChange.call(this)">
+			<option value="">Vibrant Ink</option>
+			<option value="twitlight">Twitlight</option>
+			<option value="solarized-dark">Solarized Dark</option>
+			<option value="dawn">Dawn</option>
+			<option value="blackboard">Blackboard</option>
+			<option value="mac-classic">Mac Classic</option>
+			<option value="railscasts">Railscasts</option>
+		</select>
+		<p class="x-small">
+			Style sheet provided by
+			<a href="https://github.com/kpumuk/codecolorer">Codecolorer</a>
+			and tokenizing by <a href="http://qbnz.com/highlighter/geshi-doc.html">GeSHi</a>
+		</p>
+	</div>
+</div>
+			
+			<div class="content">
+				<div class="post">
+					<h2>
+						Classifiers											</h2>
+										<blockquote>
+  <p>In machine learning classification is the problem of identifying in
+  which of a set of categories (classes) a new observation belongs.
+  <cite>Wikipedia</cite></p>
+</blockquote>
+
+<h3>Interface</h3>
+
+<p>The Classifier interface contains only the function classify that
+receives the set of categories (classes) and a Document which contains
+all the data of a new observation and returns a predicted class for
+the Document.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">interface</span> ClassifierInterface</div></li><li class="li1"><div class="de1"><span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="co4">/**</span></div></li><li class="li1"><div class="de1"><span class="co4">     * Decide in which class C member of $classes would $d fit best.</span></div></li><li class="li1"><div class="de1"><span class="co4">     * </span></div></li><li class="li1"><div class="de1"><span class="co4">     * @param array $classes A set of classes</span></div></li><li class="li1"><div class="de1"><span class="co4">     * @param Document $d A Document</span></div></li><li class="li1"><div class="de1"><span class="co4">     * @return string A class</span></div></li><li class="li1"><div class="de1"><span class="co4">     */</span></div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> classify<span class="br0">(</span><a href="http://www.php.net/array"><span class="kw3">array</span></a> <span class="re0">$classes</span><span class="sy0">,</span> Document <span class="re0">$d</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h3>Feature based linear classifier</h3>
+
+<p>This classifier needs a <a href="feature-factories.html">Feature Factory</a>
+and a <a href="api/index.html#NlpTools\Models\LinearModel">Linear Model</a>.</p>
+
+<p>For a given document and a class the <em>feature vector</em> is computed. Through
+a linear combination with the weights of the <a href="api/index.html#NlpTools\Models\LinearModel">Linear Model</a>
+a vote for the given class <em>C<sub>i</sub></em> is computed. The class <em>C</em>
+that maximizes the vote is the predicted class.</p>
+
+<h3>Multinomial Naive Bayes Classifier</h3>
+
+<p>This classifier also needs a <a href="feature-factories.html">Feature Factory</a>.
+In addition it needs a <a href="api/index.html#NlpTools\Models\MultinomialNBModelInterface">Multinomial Naive Bayes Model</a>.</p>
+
+<p>You can find a thorough explanation of this method by the <a href="http://nlp.stanford.edu/IR-book/html/htmledition/naive-bayes-text-classification-1.html">Stanford NLP department</a>.</p>
+
+<p>In short, the probability of a document <em>d</em> belonging in the class <em>c</em>
+is computed using the prior probablities of the classes and the
+assumption that each indicator random variable (the features in our case)
+is independent with any other.</p>
+
+<div style="text-align: center;">
+
+<p><a href="feature-factories.html">« Feature Factories</a>
+/
+<a href="bayesian-model.html">Bayesian Model »</a></p>
+
+</div>					<b class="clear"></b>
+				</div>
+			</div>
+
+		</div>
+		
+		<div class="container" style="text-align: right;" id="footer">
+	<p class="x-small">
+		This website is powered by <a href="http://www.imdb.com/title/tt0198781/" title="I was thinking of putting 'cries of children' but it seemed too evil">the laughter of children</a>
+	</p>
+</div>
+<div style="display: none;" id="geo-disclaimer">
+	Αφού είσαι από <strong>Ελλάδα</strong> και σε ενδιαφέρει η επεξεργασία φυσικής γλώσσας, <a href="../greek-nlp.html">συνέχισε εδώ →</a>
+</div>
+<script>
+	(function () {
+		var co=document.cookie.split(';');
+		for (var i=0;i<co.length;i++)
+		{
+			if (co[i].substr(0,6)!='theme=')
+				continue;
+			
+			var newtheme = co[i].substr(6),
+				theme_select = document.getElementById('theme-select'),
+				opts = theme_select.options;
+				
+			themeroller.changeHighlight(newtheme);
+			for (var j=0; j<opts.length; j++)
+			{
+				if (opts[j].value==newtheme)
+				{
+					theme_select.selectedIndex = j;
+					break;
+				}
+			}
+			break;
+		}
+	})();
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-9373187-5']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+	// geoip
+	(function () {
+		var geo = document.createElement("script");
+		geo.type = "text/javascript";
+		geo.async = true;
+		geo.src = "http://php-nlp-tools.com:8081/js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(geo, s)
+		geo.onload = function () {
+			if (COUNTRY == "GR") {
+				document.getElementById("footer").style.marginBottom = "60px";
+				document.getElementById("geo-disclaimer").style.display = "block";
+			}
+		};
+	})();
+</script>
+		
+	</body>
+</html>

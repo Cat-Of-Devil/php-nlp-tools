@@ -1,0 +1,216 @@
+<!Doctype html>
+<html>
+
+		<head>
+		<base href="" >
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
+		
+					<title>Επεξεργασία της Ελληνικής φυσική γλώσσας | NlpTools PHP</title>
+				<link rel="stylesheet" href="style.css" />
+		<script>
+			var themeroller = (function () {
+				var haveStyle = false,
+					expired = 'Thu, 2 Aug 2001 20:47:11 UTC',
+					unexpired = 'Mon, 2 Aug 2021 20:47:11 UTC',
+					from = '',
+					changeClasses = function (from,theme) {
+						var items = document.getElementsByTagName('pre');
+						for (var i=0;i<items.length;i++)
+						{
+							var cls_re = new RegExp('\\s?\\b'+from+'\\b\\s?|^\s*$');
+							items[i].className = items[i].className.replace(cls_re,' '+theme+' ').trim();
+						}
+					},
+					updateCookie = function (t) {
+						if (t=='')
+							document.cookie = 'theme=; expires='+expired+'; path=/';
+						else
+							document.cookie = 'theme='+t+'; expires='+unexpired+'; path=/';
+						from = t;
+					};
+					
+				return {
+					onSelectChange: function () {
+						var theme = this.options[this.selectedIndex].value;
+						themeroller.changeHighlight(theme);
+					},
+					changeHighlight: function (theme) {
+						
+						if (haveStyle)
+						{
+							changeClasses(from,theme);
+						}
+						else
+						{
+							var l = document.createElement('link');
+							l.rel = 'stylesheet';
+							l.href = 'codecolorer.css';
+							document.head.appendChild(l);
+							haveStyle = true;
+							changeClasses(from,theme);
+						}
+						updateCookie(theme);
+					}
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="container">
+				<h1 class="title"><a href="index.html">NlpTools</a></h1>
+				<h2 class="subtitle">Natural language processing in php</h2>
+				<b class="clear"></b>
+			</div>
+		</div>
+
+		<div class="container">
+
+			<div class="sidebar">
+	
+		<div class="sidebar-container">
+		<h3>Navigation</h3>
+					<a href="index.html">Home</a><br/>
+					<a href="documentation/index.html">Documentation</a><br/>
+					<a href="blog/index.html">Blog</a><br/>
+					<a href="https://github.com/angeloskath/php-nlp-tools/">Github</a><br/>
+					<a href="mailto:info@php-nlp-tools.com">Contact</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Mini nlp projects</h3>
+					<a href="blog/category/spam-detection-service/index.html">Spam detection service</a><br/>
+					<a href="blog/category/sentiment-detection.1.html">Sentiment detection</a><br/>
+					<a href="blog/category/greek-pos-tagger.1.html">Greek POS Tagger</a><br/>
+					<a href="blog/category/programming-language-detection/index.html">Programming language detection</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Syntax highlighting</h3>
+		<select id="theme-select" onchange="themeroller.onSelectChange.call(this)">
+			<option value="">Vibrant Ink</option>
+			<option value="twitlight">Twitlight</option>
+			<option value="solarized-dark">Solarized Dark</option>
+			<option value="dawn">Dawn</option>
+			<option value="blackboard">Blackboard</option>
+			<option value="mac-classic">Mac Classic</option>
+			<option value="railscasts">Railscasts</option>
+		</select>
+		<p class="x-small">
+			Style sheet provided by
+			<a href="https://github.com/kpumuk/codecolorer">Codecolorer</a>
+			and tokenizing by <a href="http://qbnz.com/highlighter/geshi-doc.html">GeSHi</a>
+		</p>
+	</div>
+</div>
+			
+			<div class="content">
+				<div class="post">
+					<h2>
+						Επεξεργασία της Ελληνικής φυσική γλώσσας											</h2>
+										<p>Όντας μία μικρή χώρα με μία περίπλοκη και μοναδική γλώσσα είναι αναμενόμενο να υστερούμε σημαντικά σε εργαλεία και πληροφορίες για την ανάλυση των Ελληνικών με υπολογιστές.
+Σκοπός αυτής της σελίδας είναι να συγκεντρώσει πληροφορίες και εργαλεία για NLP στα Ελληνικά (corpus lists, έτοιμα μοντέλα, stemmers, gazeteers κτλ).</p>
+
+<p>Θα χαρώ πολύ αν επικοινωνήσετε μαζί μου στο <a href="mailto:info@php-nlp-tools.com">info@php-nlp-tools.com</a> είτε για να μοιραστείτε κάποια εργαλεία, πληροφορίες, κώδικα κτλ είτε για
+συζητήσουμε για την υλοποίηση κάποιων αλγορίθμων στην βιβλιοθήκη.</p>
+
+<h3>POS Taggers</h3>
+
+<p>Πιο ελληνικά, επισημειωτές μερών του λόγου. Για τον επισημειωτή των NlpTools μπορείτε να <a href="blog/category/greek-pos-tagger.1.html">διαβάσετε παραπάνω στο
+blog</a>.</p>
+
+<ul><li><a href="files/pos-tag/pos-tag.phar">NlpTools pos-tag</a> (η εφαρμογή) και τα
+μοντέλα
+
+<ul><li><a href="files/pos-tag/models/model.bin">model.bin (complete)</a></li>
+<li><a href="files/pos-tag/models/model_thre_0.09.bin">model_thre_0.09.bin</a></li>
+<li><a href="files/pos-tag/models/model_thre_0.49.bin">model_thre_0.49.bin (recommended)</a></li>
+<li><a href="files/pos-tag/models/model_thre_0.99.bin">model_thre_0.99.bin</a></li>
+</ul></li>
+<li><a href="http://nlp.cs.aueb.gr/software_and_datasets/AUEB_POS_tagger_2_2_alpha.tar.gz">AUEB's POS Tagger</a></li>
+</ul><h3>Stemmers</h3>
+
+<h4>NlpTools</h4>
+
+<p>Δεν υπάρχει ακόμη κάποιος stemmer υλοποιημένος. Να υλοποιηθεί κάποιος από τους από κάτω; Ίσως όλοι;</p>
+
+<h4>Papers</h4>
+
+<ul><li>Γεώργιος Νταής, Master Thesis, 2006 [<a href="http://people.dsv.su.se/~hercules/papers/Ntais_greek_stemmer_thesis_final.pdf">pdf</a>]</li>
+</ul><h3>Gazeteers</h3>
+
+<ul><li><a href="files/greek-nlp/gazeteers/names.csv">Λίστα ελληνικών ονομάτων</a> (την συνέλεξε και την επεξεργάστηκε ο κύριος <a href="http://www.foundalis.com/grk/EllinikaOnomata.html">Φουνταλής</a>)</li>
+</ul><h3>Corpus</h3>
+
+<ul><li><a href="http://hnc.ilsp.gr/">Εθνικός Θησαυρός της Ελληνικής Γλώσσας</a></li>
+</ul><h3>Χρήσιμα Link</h3>
+
+<ul><li><a href="http://www.ilsp.gr/el/profile/research-departments/natural-language-and-knowledge-extraction-department">Τμήμα Φυσικής Γλώσσας και Εξαγωγής Γνώσης</a></li>
+<li><a href="http://nlp.cs.aueb.gr/index_gr.html">Ομάδα Επεξεργασίας Φυσικής Γλώσσας</a> Οικονομικό Πανεπιστήμιο Αθηνών</li>
+</ul>					<b class="clear"></b>
+				</div>
+			</div>
+
+		</div>
+		
+		<div class="container" style="text-align: right;" id="footer">
+	<p class="x-small">
+		This website is powered by <a href="http://www.imdb.com/title/tt0198781/" title="I was thinking of putting 'cries of children' but it seemed too evil">the laughter of children</a>
+	</p>
+</div>
+<div style="display: none;" id="geo-disclaimer">
+	Αφού είσαι από <strong>Ελλάδα</strong> και σε ενδιαφέρει η επεξεργασία φυσικής γλώσσας, <a href="greek-nlp.html">συνέχισε εδώ →</a>
+</div>
+<script>
+	(function () {
+		var co=document.cookie.split(';');
+		for (var i=0;i<co.length;i++)
+		{
+			if (co[i].substr(0,6)!='theme=')
+				continue;
+			
+			var newtheme = co[i].substr(6),
+				theme_select = document.getElementById('theme-select'),
+				opts = theme_select.options;
+				
+			themeroller.changeHighlight(newtheme);
+			for (var j=0; j<opts.length; j++)
+			{
+				if (opts[j].value==newtheme)
+				{
+					theme_select.selectedIndex = j;
+					break;
+				}
+			}
+			break;
+		}
+	})();
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-9373187-5']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+	// geoip
+	(function () {
+		var geo = document.createElement("script");
+		geo.type = "text/javascript";
+		geo.async = true;
+		geo.src = "http://php-nlp-tools.com:8081/js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(geo, s)
+		geo.onload = function () {
+			if (COUNTRY == "GR") {
+				document.getElementById("footer").style.marginBottom = "60px";
+				document.getElementById("geo-disclaimer").style.display = "block";
+			}
+		};
+	})();
+</script>
+		
+	</body>
+</html>

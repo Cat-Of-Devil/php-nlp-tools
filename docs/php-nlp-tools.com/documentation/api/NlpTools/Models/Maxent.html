@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow, all" />
+        <title>NlpTools\Models\Maxent | NlpTools API</title>
+                    <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+                            </head>
+        <body id="class">
+            <div class="header">
+        <ul>
+            <li><a href="../../classes.html">Classes</a></li>
+                            <li><a href="../../namespaces.html">Namespaces</a></li>
+                        <li><a href="../../interfaces.html">Interfaces</a></li>
+            <li><a href="../../doc-index.html">Index</a></li>
+            
+        </ul>
+
+        <div id="title">NlpTools API</div>
+
+            <div class="type">Class</div>
+    <h1><a href="../Models.html">NlpTools\Models</a>\Maxent</h1>
+    </div>
+        <div class="content">
+                <p>class    <strong>Maxent</strong>        extends <a href="LinearModel.html"><abbr title="NlpTools\Models\LinearModel">LinearModel</abbr></a></p>
+
+            <div class="description">
+            <p>Maxent is a model that assigns a weight for each feature such that all the weights maximize the Conditional Log Likelihood of the training data.</p>
+            <p>Because it does that without making any assumptions about the data<br />
+ it is named maximum entropy model (maximum ignorance).</p>
+        </div>
+    
+            <h2>Constants</h2>
+
+            <table>
+                    <tr>
+                <td>INITIAL_PARAM_VALUE</td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+            </table>
+
+    
+    
+            <h2>Methods</h2>
+
+            <table>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="Maxent.html#method___construct">__construct</a>(array $l)
+                    <p></p>
+                </td>
+                <td><small>from&nbsp;<a href="LinearModel.html#method___construct"><abbr title="NlpTools\Models\LinearModel">LinearModel</abbr></a></small></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    <abbr title="NlpTools\Models\float">float</abbr>
+                </td>
+                <td class="last">
+                    <a href="Maxent.html#method_getWeight">getWeight</a>(string $feature)
+                    <p>Get the weight for a given feature</p>
+                </td>
+                <td><small>from&nbsp;<a href="LinearModel.html#method_getWeight"><abbr title="NlpTools\Models\LinearModel">LinearModel</abbr></a></small></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    array
+                </td>
+                <td class="last">
+                    <a href="Maxent.html#method_getWeights">getWeights</a>()
+                    <p>Get all the weights as an array.</p>
+                </td>
+                <td><small>from&nbsp;<a href="LinearModel.html#method_getWeights"><abbr title="NlpTools\Models\LinearModel">LinearModel</abbr></a></small></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    void
+                </td>
+                <td class="last">
+                    <a href="Maxent.html#method_train">train</a>(<a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a> $ff, <a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a> $tset, <a href="../Optimizers/MaxentOptimizerInterface.html"><abbr title="NlpTools\Optimizers\MaxentOptimizerInterface">MaxentOptimizerInterface</abbr></a> $opt)
+                    <p>Calculate all the features for every possible class.</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    <abbr title="NlpTools\Models\float">float</abbr>
+                </td>
+                <td class="last">
+                    <a href="Maxent.html#method_P">P</a>(array $classes, <a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a> $ff, <abbr title="NlpTools\Models\DocumentInterface">DocumentInterface</abbr> $d, string $class)
+                    <p>Calculate the probability that document $d belongs to the class $class given a set of possible classes, a feature factory and the model&#039;s weights l[i]</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="Maxent.html#method_CLogLik">CLogLik</a>(<a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a> $tset, <a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a> $ff)
+                    <p>Not implemented yet.</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="Maxent.html#method_dumpWeights">dumpWeights</a>()
+                    <p>Simply print_r weights.</p>
+                </td>
+                <td></td>
+            </tr>
+            </table>
+
+
+        <h2>Details</h2>
+
+                        <h3 id="method___construct">
+        <div class="location">in <a href="LinearModel.html#method___construct"><abbr title="NlpTools\Models\LinearModel">LinearModel</abbr></a> at line 18</div>
+        <code>            public            
+    <strong>__construct</strong>(array $l)</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>array</td>
+                <td>$l</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getWeight">
+        <div class="location">in <a href="LinearModel.html#method_getWeight"><abbr title="NlpTools\Models\LinearModel">LinearModel</abbr></a> at line 28</div>
+        <code>            public            <abbr title="NlpTools\Models\float">float</abbr>
+    <strong>getWeight</strong>(string $feature)</code>
+    </h3>
+    <div class="details">
+        <p>Get the weight for a given feature</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>string</td>
+                <td>$feature</td>
+                <td>The feature for which the weight will be returned</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td><abbr title="NlpTools\Models\float">float</abbr></td>
+            <td>The weight</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getWeights">
+        <div class="location">in <a href="LinearModel.html#method_getWeights"><abbr title="NlpTools\Models\LinearModel">LinearModel</abbr></a> at line 39</div>
+        <code>            public            array
+    <strong>getWeights</strong>()</code>
+    </h3>
+    <div class="details">
+        <p>Get all the weights as an array.</p>
+        <p></p>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>array</td>
+            <td>The weights as an associative array</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_train">
+        <div class="location">at line 29</div>
+        <code>            public            void
+    <strong>train</strong>(<a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a> $ff, <a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a> $tset, <a href="../Optimizers/MaxentOptimizerInterface.html"><abbr title="NlpTools\Optimizers\MaxentOptimizerInterface">MaxentOptimizerInterface</abbr></a> $opt)</code>
+    </h3>
+    <div class="details">
+        <p>Calculate all the features for every possible class.</p>
+        <p>Pass the<br />
+ information to the optimizer to find the weights that satisfy the<br />
+ constraints and maximize the entropy</p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td><a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a></td>
+                <td>$ff</td>
+                <td>The feature factory</td>
+            </tr>
+                    <tr>
+                <td><a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a></td>
+                <td>$tset</td>
+                <td>A collection of training documents</td>
+            </tr>
+                    <tr>
+                <td><a href="../Optimizers/MaxentOptimizerInterface.html"><abbr title="NlpTools\Optimizers\MaxentOptimizerInterface">MaxentOptimizerInterface</abbr></a></td>
+                <td>$opt</td>
+                <td>An optimizer, we need a maxent optimizer</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>void</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_P">
+        <div class="location">at line 78</div>
+        <code>            public            <abbr title="NlpTools\Models\float">float</abbr>
+    <strong>P</strong>(array $classes, <a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a> $ff, <abbr title="NlpTools\Models\DocumentInterface">DocumentInterface</abbr> $d, string $class)</code>
+    </h3>
+    <div class="details">
+        <p>Calculate the probability that document $d belongs to the class $class given a set of possible classes, a feature factory and the model&#039;s weights l[i]</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>array</td>
+                <td>$classes</td>
+                <td>The set of possible classes</td>
+            </tr>
+                    <tr>
+                <td><a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a></td>
+                <td>$ff</td>
+                <td>The feature factory</td>
+            </tr>
+                    <tr>
+                <td><abbr title="NlpTools\Models\DocumentInterface">DocumentInterface</abbr></td>
+                <td>$d</td>
+                <td>The document</td>
+            </tr>
+                    <tr>
+                <td>string</td>
+                <td>$class</td>
+                <td>A class for which we calculate the probability</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td><abbr title="NlpTools\Models\float">float</abbr></td>
+            <td>The probability that document $d belongs to class $class</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_CLogLik">
+        <div class="location">at line 99</div>
+        <code>            public            
+    <strong>CLogLik</strong>(<a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a> $tset, <a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a> $ff)</code>
+    </h3>
+    <div class="details">
+        <p>Not implemented yet.</p>
+        <p>Simply put:<br />
+ 	result += log( $this-&gt;P(..., ..., ...) ) for every doc in TrainingSet</p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td><a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a></td>
+                <td>$tset</td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td><a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a></td>
+                <td>$ff</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                            <h4>Exceptions</h4>
+
+                    <table>
+                    <tr>
+                <td><a href="http://php.net/Exception"><abbr title="Exception">Exception</abbr></a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                    </div>
+    </div>
+
+                <h3 id="method_dumpWeights">
+        <div class="location">at line 108</div>
+        <code>            public            
+    <strong>dumpWeights</strong>()</code>
+    </h3>
+    <div class="details">
+        <p>Simply print_r weights.</p>
+        <p>Usefull for some kind of debugging when<br />
+ working with small training sets and few features</p>
+        <div class="tags">
+            
+            
+            
+                    </div>
+    </div>
+
+    
+            </div>
+            <div id="footer">
+        Generated by <a href="http://sami.sensiolabs.org/" target="_top">Sami, the API Documentation Generator</a>.
+    </div>
+    </body>
+</html>

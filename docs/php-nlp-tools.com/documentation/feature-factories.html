@@ -1,0 +1,270 @@
+<!Doctype html>
+<html>
+
+		<head>
+		<base href="" >
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
+		
+					<title>Feature Factories | NlpTools PHP</title>
+				<link rel="stylesheet" href="../style.css" />
+		<script>
+			var themeroller = (function () {
+				var haveStyle = false,
+					expired = 'Thu, 2 Aug 2001 20:47:11 UTC',
+					unexpired = 'Mon, 2 Aug 2021 20:47:11 UTC',
+					from = '',
+					changeClasses = function (from,theme) {
+						var items = document.getElementsByTagName('pre');
+						for (var i=0;i<items.length;i++)
+						{
+							var cls_re = new RegExp('\\s?\\b'+from+'\\b\\s?|^\s*$');
+							items[i].className = items[i].className.replace(cls_re,' '+theme+' ').trim();
+						}
+					},
+					updateCookie = function (t) {
+						if (t=='')
+							document.cookie = 'theme=; expires='+expired+'; path=/';
+						else
+							document.cookie = 'theme='+t+'; expires='+unexpired+'; path=/';
+						from = t;
+					};
+					
+				return {
+					onSelectChange: function () {
+						var theme = this.options[this.selectedIndex].value;
+						themeroller.changeHighlight(theme);
+					},
+					changeHighlight: function (theme) {
+						
+						if (haveStyle)
+						{
+							changeClasses(from,theme);
+						}
+						else
+						{
+							var l = document.createElement('link');
+							l.rel = 'stylesheet';
+							l.href = 'codecolorer.css';
+							document.head.appendChild(l);
+							haveStyle = true;
+							changeClasses(from,theme);
+						}
+						updateCookie(theme);
+					}
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="container">
+				<h1 class="title"><a href="../index.html">NlpTools</a></h1>
+				<h2 class="subtitle">Natural language processing in php</h2>
+				<b class="clear"></b>
+			</div>
+		</div>
+
+		<div class="container">
+
+			<div class="sidebar">
+	
+		<div class="sidebar-container">
+		<h3>Api Docs</h3>
+					<a href="api/index.html">Api Documentation</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Documentation</h3>
+					<a href="index.html">Get Started</a><br/>
+					<a href="tokenizers.html">Tokenizers</a><br/>
+					<a href="documents.html">Documents</a><br/>
+					<a href="feature-factories.html">Feature Factories</a><br/>
+					<a href="classifiers.html">Classifiers</a><br/>
+					<a href="bayesian-model.html">Bayesian Model</a><br/>
+					<a href="maximum-entropy-model.html">Maximum Entropy Model</a><br/>
+					<a href="similarity.html">Similarity</a><br/>
+					<a href="clustering.html">Clustering</a><br/>
+					<a href="transformations.html">Transformations</a><br/>
+					<a href="other.html">Other</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Navigation</h3>
+					<a href="../index.html">Home</a><br/>
+					<a href="index.html">Documentation</a><br/>
+					<a href="../blog/index.html">Blog</a><br/>
+					<a href="https://github.com/angeloskath/php-nlp-tools/">Github</a><br/>
+					<a href="mailto:info@php-nlp-tools.com">Contact</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Mini nlp projects</h3>
+					<a href="../blog/category/spam-detection-service/index.html">Spam detection service</a><br/>
+					<a href="../blog/category/sentiment-detection.1.html">Sentiment detection</a><br/>
+					<a href="../blog/category/greek-pos-tagger.1.html">Greek POS Tagger</a><br/>
+					<a href="../blog/category/programming-language-detection/index.html">Programming language detection</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Syntax highlighting</h3>
+		<select id="theme-select" onchange="themeroller.onSelectChange.call(this)">
+			<option value="">Vibrant Ink</option>
+			<option value="twitlight">Twitlight</option>
+			<option value="solarized-dark">Solarized Dark</option>
+			<option value="dawn">Dawn</option>
+			<option value="blackboard">Blackboard</option>
+			<option value="mac-classic">Mac Classic</option>
+			<option value="railscasts">Railscasts</option>
+		</select>
+		<p class="x-small">
+			Style sheet provided by
+			<a href="https://github.com/kpumuk/codecolorer">Codecolorer</a>
+			and tokenizing by <a href="http://qbnz.com/highlighter/geshi-doc.html">GeSHi</a>
+		</p>
+	</div>
+</div>
+			
+			<div class="content">
+				<div class="post">
+					<h2>
+						Feature Factories											</h2>
+										<blockquote>
+  <p>In machine learning and pattern recognition, a <a href="http://en.wikipedia.org/wiki/Feature_(machine_learning)"><strong>feature</strong></a>
+  is an individual measurable heuristic property of a phenomenon being
+  observed.
+  <cite>Wikipedia</cite></p>
+</blockquote>
+
+<p>In NlpTools features are an array of either values or values paired with
+a weight. Features can be thought of as a set of functions and their
+return values. The feature array is an array of the functions that fired.
+If the value of each function is always 0 or 1 then the feature array is
+a sparse matrix with only the function names of the functions that return 1.</p>
+
+<p>For example a common set of features for NLP is the set of the words that
+are contained in the Document. Those features can be thought of as the
+functions "Is 'worda' found in the document?". Those features model the
+presence of the words in the Document.</p>
+
+<h3>Types of Feature Arrays</h3>
+
+<p>Both Maxent and Naive Bayes receive feature arrays that are the set of
+the names of the functions that returned 1. Both feature presence and
+feature frequency can be modeled using this type of feature array.</p>
+
+<p>Naive Bayes is usually trained with feature frequency, which means that
+in the feature array one function can exist many times, while Maxent is
+trained with feature presence.</p>
+
+<h3>Feature Factory Interface</h3>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">interface</span> FeatureFactoryInterface</div></li><li class="li1"><div class="de1"><span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="coMULTI">/*</span></div></li><li class="li1"><div class="de1"><span class="coMULTI">     * Return an array with unique strings that are the features that</span></div></li><li class="li1"><div class="de1"><span class="coMULTI">     * "fire" for the specified Document $d and class $class</span></div></li><li class="li1"><div class="de1"><span class="coMULTI">     * </span></div></li><li class="li1"><div class="de1"><span class="coMULTI">     * name: getFeatureArray</span></div></li><li class="li1"><div class="de1"><span class="coMULTI">     * @return array</span></div></li><li class="li1"><div class="de1"><span class="coMULTI">     */</span></div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> getFeatureArray<span class="br0">(</span><span class="re0">$class</span><span class="sy0">,</span> Document <span class="re0">$d</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h3>Callables as Features</h3>
+
+<p>FunctionFeatures is a class that receives a number of callbacks the
+returns of which after they have been merged is the feature array.</p>
+
+<p>The class can be asked to model presence or frequency using the methods
+<code>modelPresence</code> and <code>modelFrequency</code>. If the class models presence then
+it returns an array of feature names that "fired" while if it models
+frequency it returns an array of key-value pairs where keys are the feature
+names and the values are the number of times a feature "fired".</p>
+
+<p>The example that follows showcases the use of the class FunctionFeatures.
+See also <a href="documents.html">Documents</a> and <a href="tokenizers.html">Tokenizers</a>.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\FeatureFactories\FunctionFeatures<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Tokenizers\WhitespaceTokenizer<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Documents\Document<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Documents\WordDocument<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="co1">// Define your features</span></div></li><li class="li1"><div class="de1"><span class="re0">$feats</span> <span class="sy0">=</span> <span class="kw2">new</span> FunctionFeatures<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$feats</span><span class="sy0">-&gt;</span><span class="me1">add</span><span class="br0">(</span><span class="kw2">function</span> <span class="br0">(</span><span class="re0">$class</span><span class="sy0">,</span>Document <span class="re0">$d</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="co1">// this feature is the presence of the word</span></div></li><li class="li1"><div class="de1">    <span class="kw1">return</span> <a href="http://www.php.net/current"><span class="kw3">current</span></a><span class="br0">(</span><span class="re0">$d</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$feats</span><span class="sy0">-&gt;</span><span class="me1">add</span><span class="br0">(</span><span class="kw2">function</span> <span class="br0">(</span><span class="re0">$class</span><span class="sy0">,</span>Document <span class="re0">$d</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="co1">// this feature is the function 'is the word capitalized?'</span></div></li><li class="li1"><div class="de1">    <span class="re0">$w</span> <span class="sy0">=</span> <a href="http://www.php.net/current"><span class="kw3">current</span></a><span class="br0">(</span><span class="re0">$d</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="kw1">if</span> <span class="br0">(</span><a href="http://www.php.net/ctype_upper"><span class="kw3">ctype_upper</span></a><span class="br0">(</span><span class="re0">$w</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="br0">)</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">        <span class="kw1">return</span> <span class="st0">"isCapitalized"</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1">// tokenize the data and create documents</span></div></li><li class="li1"><div class="de1"><span class="re0">$text</span> <span class="sy0">=</span> <span class="st0">"Please allow me to introduce myself</span></div></li><li class="li1"><div class="de1"><span class="st0">        I'm a man of wealth and taste"</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$tokenizer</span> <span class="sy0">=</span> <span class="kw2">new</span> WhitespaceTokenizer<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$tokens</span> <span class="sy0">=</span> <span class="re0">$tokenizer</span><span class="sy0">-&gt;</span><span class="me1">tokenize</span><span class="br0">(</span><span class="re0">$text</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$documents</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw1">foreach</span> <span class="br0">(</span><span class="re0">$tokens</span> <span class="kw1">as</span> <span class="re0">$index</span><span class="sy0">=&gt;</span><span class="re0">$token</span><span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="re0">$documents</span><span class="br0">[</span><span class="re0">$index</span><span class="br0">]</span> <span class="sy0">=</span> <span class="kw2">new</span> WordDocument<span class="br0">(</span><span class="re0">$tokens</span><span class="sy0">,</span><span class="re0">$index</span><span class="sy0">,</span><span class="nu0">5</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1">// print the features that fired for each document given the class '0'</span></div></li><li class="li1"><div class="de1"><span class="kw1">echo</span> <a href="http://www.php.net/implode"><span class="kw3">implode</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">    PHP_EOL<span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <a href="http://www.php.net/array_map"><span class="kw3">array_map</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">        <span class="kw2">function</span> <span class="br0">(</span><span class="re0">$d</span><span class="br0">)</span> <span class="kw2">use</span><span class="br0">(</span><span class="re0">$feats</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">            <span class="kw1">return</span> <span class="st_h">'['</span><span class="sy0">.</span><a href="http://www.php.net/implode"><span class="kw3">implode</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">                <span class="st_h">','</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">                <span class="re0">$feats</span><span class="sy0">-&gt;</span><span class="me1">getFeatureArray</span><span class="br0">(</span><span class="st_h">'0'</span><span class="sy0">,</span><span class="re0">$d</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">            <span class="br0">)</span><span class="sy0">.</span><span class="st_h">']'</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="br0">}</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">        <span class="re0">$documents</span></div></li><li class="li1"><div class="de1">    <span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1">// print the features with their frequencies</span></div></li><li class="li1"><div class="de1"><span class="re0">$feats</span><span class="sy0">-&gt;</span><span class="me1">modelFrequency</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><a href="http://www.php.net/print_r"><span class="kw3">print_r</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="re0">$feats</span><span class="sy0">-&gt;</span><span class="me1">getFeatureArray</span><span class="br0">(</span><span class="st_h">'0'</span><span class="sy0">,</span> <span class="re0">$d</span><span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h3>Data as Features</h3>
+
+<p>This simple feature factory returns all the document data as features.
+It is very useful for a quick and dirty Naive Bayes for example.</p>
+
+<p>This feature factory could easily be implemented (although it would model
+presence by default while it now models frequency) with the following.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\FeatureFactories\FunctionFeatures<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\FeatureFactories\TokensDocument<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$feats</span> <span class="sy0">=</span> <span class="kw2">new</span> FunctionFeatures<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$feats</span><span class="sy0">-&gt;</span><span class="me1">add</span><span class="br0">(</span><span class="kw2">function</span> <span class="br0">(</span><span class="re0">$class</span><span class="sy0">,</span>TokensDocument <span class="re0">$d</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="kw1">return</span> <span class="re0">$d</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h3>What is the class argument</h3>
+
+<p>In case you did not check, the feature factory, except the Document, also
+takes a class parameter. This is to create features that only fire for
+certain classes (commonly used in Maxent).</p>
+
+<p>An easy way to create features that fire only for a given class is to
+prepend the class name to the feature name.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\FeatureFactories\FunctionFeatures<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\FeatureFactories\TokensDocument<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$feats</span> <span class="sy0">=</span> <span class="kw2">new</span> FunctionFeatures<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$feats</span><span class="sy0">-&gt;</span><span class="me1">add</span><span class="br0">(</span><span class="kw2">function</span> <span class="br0">(</span><span class="re0">$class</span><span class="sy0">,</span>TokensDocument <span class="re0">$d</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="co1">// prepend the class name in each </span></div></li><li class="li1"><div class="de1">    <span class="kw1">return</span> <a href="http://www.php.net/array_map"><span class="kw3">array_map</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">        <span class="kw2">function</span> <span class="br0">(</span><span class="re0">$token</span><span class="br0">)</span> <span class="kw2">use</span><span class="br0">(</span><span class="re0">$class</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">            <span class="kw1">return</span> <span class="re0">$class</span><span class="sy0">.</span><span class="re0">$token</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="br0">}</span><span class="sy0">.</span></div></li><li class="li1"><div class="de1">        <span class="re0">$d</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">    <span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<div style="text-align: center;">
+
+<p><a href="documents.html">« Documents</a>
+/
+<a href="classifiers.html">Classifiers »</a></p>
+
+</div>					<b class="clear"></b>
+				</div>
+			</div>
+
+		</div>
+		
+		<div class="container" style="text-align: right;" id="footer">
+	<p class="x-small">
+		This website is powered by <a href="http://www.imdb.com/title/tt0198781/" title="I was thinking of putting 'cries of children' but it seemed too evil">the laughter of children</a>
+	</p>
+</div>
+<div style="display: none;" id="geo-disclaimer">
+	Αφού είσαι από <strong>Ελλάδα</strong> και σε ενδιαφέρει η επεξεργασία φυσικής γλώσσας, <a href="../greek-nlp.html">συνέχισε εδώ →</a>
+</div>
+<script>
+	(function () {
+		var co=document.cookie.split(';');
+		for (var i=0;i<co.length;i++)
+		{
+			if (co[i].substr(0,6)!='theme=')
+				continue;
+			
+			var newtheme = co[i].substr(6),
+				theme_select = document.getElementById('theme-select'),
+				opts = theme_select.options;
+				
+			themeroller.changeHighlight(newtheme);
+			for (var j=0; j<opts.length; j++)
+			{
+				if (opts[j].value==newtheme)
+				{
+					theme_select.selectedIndex = j;
+					break;
+				}
+			}
+			break;
+		}
+	})();
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-9373187-5']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+	// geoip
+	(function () {
+		var geo = document.createElement("script");
+		geo.type = "text/javascript";
+		geo.async = true;
+		geo.src = "http://php-nlp-tools.com:8081/js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(geo, s)
+		geo.onload = function () {
+			if (COUNTRY == "GR") {
+				document.getElementById("footer").style.marginBottom = "60px";
+				document.getElementById("geo-disclaimer").style.display = "block";
+			}
+		};
+	})();
+</script>
+		
+	</body>
+</html>

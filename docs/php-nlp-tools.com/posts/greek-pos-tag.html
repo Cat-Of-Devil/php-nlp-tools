@@ -1,0 +1,293 @@
+<!Doctype html>
+<html>
+
+		<head>
+		<base href="" >
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
+		
+					<title>Developing a Greek part of speech tagger | NlpTools PHP</title>
+				<link rel="stylesheet" href="../style.css" />
+		<script>
+			var themeroller = (function () {
+				var haveStyle = false,
+					expired = 'Thu, 2 Aug 2001 20:47:11 UTC',
+					unexpired = 'Mon, 2 Aug 2021 20:47:11 UTC',
+					from = '',
+					changeClasses = function (from,theme) {
+						var items = document.getElementsByTagName('pre');
+						for (var i=0;i<items.length;i++)
+						{
+							var cls_re = new RegExp('\\s?\\b'+from+'\\b\\s?|^\s*$');
+							items[i].className = items[i].className.replace(cls_re,' '+theme+' ').trim();
+						}
+					},
+					updateCookie = function (t) {
+						if (t=='')
+							document.cookie = 'theme=; expires='+expired+'; path=/';
+						else
+							document.cookie = 'theme='+t+'; expires='+unexpired+'; path=/';
+						from = t;
+					};
+					
+				return {
+					onSelectChange: function () {
+						var theme = this.options[this.selectedIndex].value;
+						themeroller.changeHighlight(theme);
+					},
+					changeHighlight: function (theme) {
+						
+						if (haveStyle)
+						{
+							changeClasses(from,theme);
+						}
+						else
+						{
+							var l = document.createElement('link');
+							l.rel = 'stylesheet';
+							l.href = 'codecolorer.css';
+							document.head.appendChild(l);
+							haveStyle = true;
+							changeClasses(from,theme);
+						}
+						updateCookie(theme);
+					}
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="container">
+				<h1 class="title"><a href="../index.html">NlpTools</a></h1>
+				<h2 class="subtitle">Natural language processing in php</h2>
+				<b class="clear"></b>
+			</div>
+		</div>
+
+		<div class="container">
+
+			<div class="sidebar">
+	
+		<div class="sidebar-container">
+		<h3>Navigation</h3>
+					<a href="../index.html">Home</a><br/>
+					<a href="../documentation/index.html">Documentation</a><br/>
+					<a href="../blog/index.html">Blog</a><br/>
+					<a href="https://github.com/angeloskath/php-nlp-tools/">Github</a><br/>
+					<a href="mailto:info@php-nlp-tools.com">Contact</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Mini nlp projects</h3>
+					<a href="../blog/category/spam-detection-service/index.html">Spam detection service</a><br/>
+					<a href="../blog/category/sentiment-detection.1.html">Sentiment detection</a><br/>
+					<a href="../blog/category/greek-pos-tagger.1.html">Greek POS Tagger</a><br/>
+					<a href="../blog/category/programming-language-detection/index.html">Programming language detection</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Syntax highlighting</h3>
+		<select id="theme-select" onchange="themeroller.onSelectChange.call(this)">
+			<option value="">Vibrant Ink</option>
+			<option value="twitlight">Twitlight</option>
+			<option value="solarized-dark">Solarized Dark</option>
+			<option value="dawn">Dawn</option>
+			<option value="blackboard">Blackboard</option>
+			<option value="mac-classic">Mac Classic</option>
+			<option value="railscasts">Railscasts</option>
+		</select>
+		<p class="x-small">
+			Style sheet provided by
+			<a href="https://github.com/kpumuk/codecolorer">Codecolorer</a>
+			and tokenizing by <a href="http://qbnz.com/highlighter/geshi-doc.html">GeSHi</a>
+		</p>
+	</div>
+</div>
+			
+			<div class="content">
+				<div class="post">
+					<h2>
+						Developing a Greek part of speech tagger													<span class="date">Jun 29th, 2013</span>
+											</h2>
+										<p class="meta">
+						Project: <a href="../blog/category/greek-pos-tagger.1.html">Greek POS Tagger</a>
+					</p>
+										<p>Within a recent attempt of mine to develop tools for natural language processing in Greek I decided to implement
+the state of the art in Greek POS tagging (the paper reporting the best accuracy that I could find) and offer the
+result in a way that it will be easy to use in one's projects as a subsystem.</p>
+
+<p>The tagger is based on the work of <a href="http://uk.linkedin.com/pub/evangelia-koleli/48/21a/931">Evangelia Koleli</a> and
+her <a href="http://nlp.cs.aueb.gr/theses/ekoleli_final_report.pdf">BSc thesis</a> (the paper is in Greek) in 2011. She was
+kind enough to provide me with the dataset she used. Evangelia's work also provides an API for using the tagger in
+your own projects (in Java), I am aiming at even simpler integration (and especially web projects hence php).</p>
+
+<p>In this series of posts I will be documenting the development of the tagger.</p>
+
+<h3>Problem statement</h3>
+
+<blockquote>
+  <p>In corpus linguistics, part-of-speech tagging (POS tagging or POST), also called grammatical tagging
+  or word-category disambiguation, is the process of marking up a word in a text (corpus) as corresponding
+  to a particular part of speech, based on both its definition, as well as its context.</p>
+  
+  <p><cite> Wikipedia </cite></p>
+</blockquote>
+
+<p>In this project I will be using only the small set of parts of speech because I believe it is a good tradeoff
+between information and model simplicity. The small set of categories as defined by Evangelia Koleli is the
+following:</p>
+
+<ul><li>verb</li>
+<li>noun</li>
+<li>adjective</li>
+<li>adverb</li>
+<li>article</li>
+<li>pronoun</li>
+<li>numeral</li>
+<li>preposition</li>
+<li>particle</li>
+<li>conjuction</li>
+<li>punctuation</li>
+<li>other</li>
+</ul><h3>The approach</h3>
+
+<p>POS Tagging is a sequence tagging problem. The algorithms used aim at finding the most likely sequence of
+tags that could correspond to the observed sequence, the words. It is also, usually, dealt with on a per
+sentence basis.</p>
+
+<p>For this tagger the approach is actually quite simpler and straightforward. We deal with the problem as a
+simple classification problem. We can use the complete word sequence for feature creation but
+none of the tag sequence (ex.: we cannot use the knowledge that the previous word is a noun but we can use the
+previous word).</p>
+
+<h3>Baseline</h3>
+
+<p>Before we start discussing the tagger implementation I would like to present a baseline parser. The baseline
+parser simply tags each word with the most common tag this word had in the training set. If it has never seen
+the word before then it tags it with the most common tag (usually noun). Actually, adding a set of targeted
+transformation rules to the above baseline classifier results in the simple and effective <a href="http://en.wikipedia.org/wiki/Brill_tagger">Brill Tagger</a>.</p>
+
+<p>The Baseline parser usually has an acuraccy of approximately 90% which is huge for a baseline, compared to
+other classification tasks, but it makes intuitive sense for this task since many words can only be tagged with
+one part of speech.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">class</span> Baseline implements Classifier</div></li><li class="li1"><div class="de1"><span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="kw2">protected</span> <span class="re0">$map</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="kw2">protected</span> <span class="re0">$classmap</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> __construct<span class="br0">(</span>TrainingSet <span class="re0">$training</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">        <span class="re0">$entry</span> <span class="sy0">=</span> <a href="http://www.php.net/array_fill_keys"><span class="kw3">array_fill_keys</span></a><span class="br0">(</span><span class="re0">$training</span><span class="sy0">-&gt;</span><span class="me1">getClassSet</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">,</span> <span class="nu0">0</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">classmap</span> <span class="sy0">=</span> <span class="re0">$entry</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="kw1">foreach</span> <span class="br0">(</span><span class="re0">$training</span> <span class="kw1">as</span> <span class="re0">$class</span><span class="sy0">=&gt;</span><span class="re0">$d</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">            <a href="http://www.php.net/list"><span class="kw3">list</span></a><span class="br0">(</span><span class="re0">$w</span><span class="br0">)</span> <span class="sy0">=</span> <span class="re0">$d</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">            <span class="re0">$w</span> <span class="sy0">=</span> <a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span><span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">            <span class="kw1">if</span> <span class="br0">(</span><span class="sy0">!</span><a href="http://www.php.net/isset"><span class="kw3">isset</span></a><span class="br0">(</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">map</span><span class="br0">[</span><span class="re0">$w</span><span class="br0">]</span><span class="br0">)</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">                <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">map</span><span class="br0">[</span><span class="re0">$w</span><span class="br0">]</span> <span class="sy0">=</span> <span class="re0">$entry</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">            <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">map</span><span class="br0">[</span><span class="re0">$w</span><span class="br0">]</span><span class="br0">[</span><span class="re0">$class</span><span class="br0">]</span><span class="sy0">++;</span></div></li><li class="li1"><div class="de1">            <span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">classmap</span><span class="br0">[</span><span class="re0">$class</span><span class="br0">]</span><span class="sy0">++;</span></div></li><li class="li1"><div class="de1">        <span class="br0">}</span></div></li><li class="li1"><div class="de1">        <span class="kw1">foreach</span> <span class="br0">(</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">map</span> <span class="kw1">as</span> <span class="sy0">&amp;</span><span class="re0">$occ</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">            <a href="http://www.php.net/arsort"><span class="kw3">arsort</span></a><span class="br0">(</span><span class="re0">$occ</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="br0">}</span></div></li><li class="li1"><div class="de1">        <a href="http://www.php.net/arsort"><span class="kw3">arsort</span></a><span class="br0">(</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">classmap</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> classify<span class="br0">(</span><a href="http://www.php.net/array"><span class="kw3">array</span></a> <span class="re0">$classes</span><span class="sy0">,</span> Document <span class="re0">$d</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">        <a href="http://www.php.net/list"><span class="kw3">list</span></a><span class="br0">(</span><span class="re0">$w</span><span class="br0">)</span> <span class="sy0">=</span> <span class="re0">$d</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="re0">$w</span> <span class="sy0">=</span> <a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span><span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">        <span class="kw1">if</span> <span class="br0">(</span><span class="sy0">!</span><a href="http://www.php.net/isset"><span class="kw3">isset</span></a><span class="br0">(</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">map</span><span class="br0">[</span><span class="re0">$w</span><span class="br0">]</span><span class="br0">)</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">            <span class="kw1">return</span> <a href="http://www.php.net/key"><span class="kw3">key</span></a><span class="br0">(</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">classmap</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">        <span class="kw1">return</span> <a href="http://www.php.net/key"><span class="kw3">key</span></a><span class="br0">(</span><span class="re0">$this</span><span class="sy0">-&gt;</span><span class="me1">map</span><span class="br0">[</span><span class="re0">$w</span><span class="br0">]</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="br0">}</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>This Baseline tagger learned from the training set has an accuracy of <strong>82.62%</strong> on the test set. Yet this tagger is
+a very poor tagger and this can be easily illustrated if one sees the confusion matrix or simply the per tag
+precision and recall shown in the table below.</p>
+
+<table class="small-table"><tr><td style="border: 0;"/>
+        <td>verb       </td>
+        <td>noun       </td>
+        <td>adjective  </td>
+        <td>adverb     </td>
+        <td>article    </td>
+        <td>pronoun    </td>
+        <td>numeral    </td>
+        <td>preposition</td>
+        <td>particle   </td>
+        <td>conjuction </td>
+        <td>punctuation</td>
+        <td>other      </td>
+    </tr><tr><td>Precision</td>
+        <td class="text-right">100.0    </td>
+        <td class="text-right">60.65    </td>
+        <td class="text-right">91.03    </td>
+        <td class="text-right">96.21    </td>
+        <td class="text-right">94.80    </td>
+        <td class="text-right">92.46    </td>
+        <td class="text-right">96.95    </td>
+        <td class="text-right">98.11    </td>
+        <td class="text-right">98.92    </td>
+        <td class="text-right">99.78    </td>
+        <td class="text-right">100.0    </td>
+        <td class="text-right">100.0    </td>
+    </tr><tr><td>Recall</td>
+        <td class="text-right">49.47 </td>
+        <td class="text-right">98.90 </td>
+        <td class="text-right">41.90 </td>
+        <td class="text-right">85.23 </td>
+        <td class="text-right">98.55 </td>
+        <td class="text-right">73.50 </td>
+        <td class="text-right">72.94 </td>
+        <td class="text-right">99.18 </td>
+        <td class="text-right">98.92 </td>
+        <td class="text-right">98.09 </td>
+        <td class="text-right">98.93 </td>
+        <td class="text-right">26.82 </td>
+    </tr></table><p>From the table above one can see that more than half of the verbs have been tagged incorectly. By checking the
+confusion matrix we see that they have been mostly tagged as nouns (most misclassifications are) which also explains
+the really bad precision of the noun tag.</p>
+
+<p>The above shows that accuracy or even precision, recall and F1 score are not good metrics of the quality
+of a POS tagger. Using the confusion matrix one can understand how badly a misclassification would stand out to a
+human evaluator. Classifying verbs as nouns definitely does not look good even with 90% accuracy.</p>
+
+<p>In the next post we will be evaluating features using the much simpler Naive Bayes model.</p>					<b class="clear"></b>
+				</div>
+			</div>
+
+		</div>
+		
+		<div class="container" style="text-align: right;" id="footer">
+	<p class="x-small">
+		This website is powered by <a href="http://www.imdb.com/title/tt0198781/" title="I was thinking of putting 'cries of children' but it seemed too evil">the laughter of children</a>
+	</p>
+</div>
+<div style="display: none;" id="geo-disclaimer">
+	Αφού είσαι από <strong>Ελλάδα</strong> και σε ενδιαφέρει η επεξεργασία φυσικής γλώσσας, <a href="../greek-nlp.html">συνέχισε εδώ →</a>
+</div>
+<script>
+	(function () {
+		var co=document.cookie.split(';');
+		for (var i=0;i<co.length;i++)
+		{
+			if (co[i].substr(0,6)!='theme=')
+				continue;
+			
+			var newtheme = co[i].substr(6),
+				theme_select = document.getElementById('theme-select'),
+				opts = theme_select.options;
+				
+			themeroller.changeHighlight(newtheme);
+			for (var j=0; j<opts.length; j++)
+			{
+				if (opts[j].value==newtheme)
+				{
+					theme_select.selectedIndex = j;
+					break;
+				}
+			}
+			break;
+		}
+	})();
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-9373187-5']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+	// geoip
+	(function () {
+		var geo = document.createElement("script");
+		geo.type = "text/javascript";
+		geo.async = true;
+		geo.src = "http://php-nlp-tools.com:8081/js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(geo, s)
+		geo.onload = function () {
+			if (COUNTRY == "GR") {
+				document.getElementById("footer").style.marginBottom = "60px";
+				document.getElementById("geo-disclaimer").style.display = "block";
+			}
+		};
+	})();
+</script>
+		
+	</body>
+</html>

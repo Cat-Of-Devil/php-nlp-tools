@@ -1,0 +1,258 @@
+<!Doctype html>
+<html>
+
+		<head>
+		<base href="" >
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
+		
+					<title>Greek POS Tagger | NlpTools PHP</title>
+				<link rel="stylesheet" href="../../../../style.css" />
+		<script>
+			var themeroller = (function () {
+				var haveStyle = false,
+					expired = 'Thu, 2 Aug 2001 20:47:11 UTC',
+					unexpired = 'Mon, 2 Aug 2021 20:47:11 UTC',
+					from = '',
+					changeClasses = function (from,theme) {
+						var items = document.getElementsByTagName('pre');
+						for (var i=0;i<items.length;i++)
+						{
+							var cls_re = new RegExp('\\s?\\b'+from+'\\b\\s?|^\s*$');
+							items[i].className = items[i].className.replace(cls_re,' '+theme+' ').trim();
+						}
+					},
+					updateCookie = function (t) {
+						if (t=='')
+							document.cookie = 'theme=; expires='+expired+'; path=/';
+						else
+							document.cookie = 'theme='+t+'; expires='+unexpired+'; path=/';
+						from = t;
+					};
+					
+				return {
+					onSelectChange: function () {
+						var theme = this.options[this.selectedIndex].value;
+						themeroller.changeHighlight(theme);
+					},
+					changeHighlight: function (theme) {
+						
+						if (haveStyle)
+						{
+							changeClasses(from,theme);
+						}
+						else
+						{
+							var l = document.createElement('link');
+							l.rel = 'stylesheet';
+							l.href = 'codecolorer.css';
+							document.head.appendChild(l);
+							haveStyle = true;
+							changeClasses(from,theme);
+						}
+						updateCookie(theme);
+					}
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="container">
+				<h1 class="title"><a href="../../../../index.html">NlpTools</a></h1>
+				<h2 class="subtitle">Natural language processing in php</h2>
+				<b class="clear"></b>
+			</div>
+		</div>
+
+		<div class="container">
+
+			<div class="sidebar">
+	
+		<div class="sidebar-container">
+		<h3>Navigation</h3>
+					<a href="../../../../index.html">Home</a><br/>
+					<a href="../../../../documentation/index.html">Documentation</a><br/>
+					<a href="../../../index.html">Blog</a><br/>
+					<a href="https://github.com/angeloskath/php-nlp-tools/">Github</a><br/>
+					<a href="mailto:info@php-nlp-tools.com">Contact</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Mini nlp projects</h3>
+					<a href="../../spam-detection-service/index.html">Spam detection service</a><br/>
+					<a href="../../sentiment-detection.1.html">Sentiment detection</a><br/>
+					<a href="../../greek-pos-tagger.1.html">Greek POS Tagger</a><br/>
+					<a href="../../programming-language-detection/index.html">Programming language detection</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Syntax highlighting</h3>
+		<select id="theme-select" onchange="themeroller.onSelectChange.call(this)">
+			<option value="">Vibrant Ink</option>
+			<option value="twitlight">Twitlight</option>
+			<option value="solarized-dark">Solarized Dark</option>
+			<option value="dawn">Dawn</option>
+			<option value="blackboard">Blackboard</option>
+			<option value="mac-classic">Mac Classic</option>
+			<option value="railscasts">Railscasts</option>
+		</select>
+		<p class="x-small">
+			Style sheet provided by
+			<a href="https://github.com/kpumuk/codecolorer">Codecolorer</a>
+			and tokenizing by <a href="http://qbnz.com/highlighter/geshi-doc.html">GeSHi</a>
+		</p>
+	</div>
+</div>
+			
+			<div class="content">
+								<div class="post">
+					<h2>
+						<a href="../../../../posts/pos-tag-application.html">
+							Tagging parts of speech in Greek						</a>
+						<span class="date">Jul 21st, 2013</span>
+					</h2>
+										<p>In this final post I will present a usable pos tagger model and cli application with <strong>93.2%</strong> accuracy in
+tagging parts of speech on the held out test set (improving noticeably on the results of the thesis
+I base my work on).</p>
+
+<h3>Features</h3>
+
+<ol><li>The word</li>
+<li>One, Two and Three letter suffixes</li>
+<li>The word without the above suffixes</li>
+<li>The previous word</li>
+<li>The next word</li>
+<li>If the word contains a number</li>
+<li>If the word is one letter</li>
+</ol><pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">function</span> <span class="br0">(</span><span class="re0">$class</span><span class="sy0">,</span> <span class="re0">$doc</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <a href="http://www.php.net/list"><span class="kw3">list</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span> <span class="re0">$prev</span><span class="sy0">,</span> <span class="re0">$next</span><span class="br0">)</span> <span class="sy0">=</span> <span class="re0">$doc</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="re0">$features</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="re0">$len</span> <span class="sy0">=</span> <a href="http://www.php.net/mb_strlen"><span class="kw3">mb_strlen</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="co1">// the actual word in lower case</span></div></li><li class="li1"><div class="de1">    <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st0">"<span class="es4">$class</span> ^ "</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span><span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="kw1">if</span> <span class="br0">(</span><span class="re0">$len</span><span class="sy0">&gt;</span><span class="nu0">3</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">        <span class="co1">// the word's suffixes</span></div></li><li class="li1"><div class="de1">        <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span><span class="sy0">=</span><span class="st0">"<span class="es4">$class</span> ^ sub(-1)="</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,-</span><span class="nu0">1</span><span class="sy0">,</span> <span class="nu0">3</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span><span class="sy0">=</span><span class="st0">"<span class="es4">$class</span> ^ sub(-2)="</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,-</span><span class="nu0">2</span><span class="sy0">,</span> <span class="nu0">3</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span><span class="sy0">=</span><span class="st0">"<span class="es4">$class</span> ^ sub(-3)="</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,-</span><span class="nu0">3</span><span class="sy0">,</span> <span class="nu0">3</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="co1">// the words without the suffixes</span></div></li><li class="li1"><div class="de1">    <span class="kw1">if</span> <span class="br0">(</span><span class="re0">$len</span><span class="sy0">&gt;</span><span class="nu0">5</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">        <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st0">"<span class="es4">$class</span> ^ pre(-3)="</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span> <span class="nu0">0</span><span class="sy0">,</span> <span class="sy0">-</span><span class="nu0">3</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="kw1">if</span> <span class="br0">(</span><span class="re0">$len</span><span class="sy0">&gt;</span><span class="nu0">4</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">        <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st0">"<span class="es4">$class</span> ^ pre(-2)="</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span> <span class="nu0">0</span><span class="sy0">,</span> <span class="sy0">-</span><span class="nu0">2</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="kw1">if</span> <span class="br0">(</span><span class="re0">$len</span><span class="sy0">&gt;</span><span class="nu0">3</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">        <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st0">"<span class="es4">$class</span> ^ pre(-1)="</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span> <span class="nu0">0</span><span class="sy0">,</span> <span class="sy0">-</span><span class="nu0">1</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="co1">// the previous word</span></div></li><li class="li1"><div class="de1">    <span class="kw1">if</span> <span class="br0">(</span><a href="http://www.php.net/isset"><span class="kw3">isset</span></a><span class="br0">(</span><span class="re0">$prev</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="br0">)</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">        <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st0">"<span class="es4">$class</span> ^ ctx(-1)="</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><span class="re0">$prev</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="sy0">,</span><span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="co1">// the next word</span></div></li><li class="li1"><div class="de1">    <span class="kw1">if</span> <span class="br0">(</span><a href="http://www.php.net/isset"><span class="kw3">isset</span></a><span class="br0">(</span><span class="re0">$next</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="br0">)</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">        <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st0">"<span class="es4">$class</span> ^ ctx(1)="</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><span class="re0">$next</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="sy0">,</span><span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="kw1">if</span> <span class="br0">(</span><a href="http://www.php.net/preg_match"><span class="kw3">preg_match</span></a><span class="br0">(</span><span class="st0">"/\d/u"</span><span class="sy0">,</span><span class="re0">$w</span><span class="br0">)</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">        <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st0">"<span class="es4">$class</span> ^ has_number"</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="kw1">if</span> <span class="br0">(</span><a href="http://www.php.net/mb_strlen"><span class="kw3">mb_strlen</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span><span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">==</span><span class="nu0">1</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">        <span class="re0">$features</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st0">"<span class="es4">$class</span> ^ one_letter"</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="kw1">return</span> <span class="re0">$features</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h3>Code</h3>
+
+<p>The code (not the models) can be found <a href="https://github.com/angeloskath/pos-tag/">at github</a>. Most
+of the contents of the repository are for the console application. There are two files that might
+interest anyone who wants to extend the tagger,
+ <a href="https://github.com/angeloskath/pos-tag/blob/master/src/PosTagger.php">PosTagger.php</a>
+and <a href="https://github.com/angeloskath/pos-tag/blob/master/src/PosTrainingSet.php">PosTrainingSet.php</a>.</p>
+
+<h3>Models</h3>
+
+<p>I am publishing one model trained on both the test set and the training set, on a total of 31554 tokens.
+The complete model is <strong>77MB</strong> serialized and contains more than <strong>half a million</strong> features. Although it contains
+all the information learned from the training it is impractical to use and with a little bit of pruning
+we can keep the same level of accuracy with one fifth the model size and startup time.</p>
+
+<p>Thus, I will publish here 4 different files. 'model.bin' is the complete model. Each one of the others
+named 'model_thre_{num}.bin' with num being a variable number is simply produced from model.bin after
+removing all features with value less than or equal to {num}.</p>
+
+<table class="small-table" style="width: 550px; margin: 0 auto;"><tr><td><strong>File</strong></td>
+        <td><strong>Size in bytes</strong></td>
+        <td><strong>Size in features</strong></td>
+        <td><strong>Accuracy in training set</strong></td>
+    </tr><tr><td><a href="../../../../files/pos-tag/models/model.bin">model.bin</a></td>
+        <td>77M</td>
+        <td>~ 500K</td>
+        <td>99.974%</td>
+    </tr><tr><td><a href="../../../../files/pos-tag/models/model_thre_0.09.bin">model_thre_0.09.bin</a></td>
+        <td>17M</td>
+        <td>~ 132K</td>
+        <td>99.974%</td>
+    </tr><tr><td><a href="../../../../files/pos-tag/models/model_thre_0.49.bin">model_thre_0.49.bin</a></td>
+        <td>6.2M</td>
+        <td>~ 52K</td>
+        <td>99.974%</td>
+    </tr><tr><td><a href="../../../../files/pos-tag/models/model_thre_0.99.bin">model_thre_0.99.bin</a></td>
+        <td>3.2M</td>
+        <td>~ 31K</td>
+        <td>99.822%</td>
+    </tr></table><p>-</p>
+
+<h3>Usage</h3>
+
+<p>You can dowload the code from github and run composer install or download a usable (and executable)
+<a href="../../../../files/pos-tag/pos-tag.phar">phar archive</a>.</p>
+
+<pre class="bash"><ol><li class="li1"><div class="de1"><span class="kw2">git clone</span> https:<span class="sy0">//</span>github.com<span class="sy0">/</span>angeloskath<span class="sy0">/</span>pos-tag.git</div></li><li class="li1"><div class="de1"><span class="kw3">cd</span> pos-tag<span class="sy0">/</span></div></li><li class="li1"><div class="de1">composer <span class="kw2">install</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h4>With code</h4>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="co1">// require("phar://pos-tag.phar/vendor/autoload.php");</span></div></li><li class="li1"><div class="de1"><span class="kw1">require</span><span class="br0">(</span><span class="st0">"vendor/autoload.php"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$tagger</span> <span class="sy0">=</span> <span class="kw2">new</span> \PosTagger<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$tagger</span><span class="sy0">-&gt;</span><span class="me1">loadModelFromFile</span><span class="br0">(</span><span class="st0">"path/to/model.bin"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1">// $tok = new NlpTools\Tokenizers\WhitespaceTokenizer();</span></div></li><li class="li1"><div class="de1"><span class="co1">// $tokens = $tok-&gt;tokenize("Η καλή μας αγελάδα βόσκει κάτω στην λιακάδα");</span></div></li><li class="li1"><div class="de1"><span class="co1">// $tokens = $tok-&gt;tokenize("The quick brown fox jumped over the lazy dog");</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$tokens</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span><span class="st0">"Η"</span><span class="sy0">,</span><span class="st0">"καλή"</span><span class="sy0">,</span><span class="st0">"μας"</span><span class="sy0">,</span><span class="st0">"αγελάδα"</span><span class="sy0">,</span><span class="st0">"βόσκει"</span><span class="sy0">,</span><span class="st0">"κάτω"</span><span class="sy0">,</span><span class="st0">"στην"</span><span class="sy0">,</span><span class="st0">"λιακάδα"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$tags</span> <span class="sy0">=</span> <span class="re0">$tagger</span><span class="sy0">-&gt;</span><span class="me1">tag</span><span class="br0">(</span><span class="re0">$tokens</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="kw1">echo</span> <a href="http://www.php.net/implode"><span class="kw3">implode</span></a><span class="br0">(</span><span class="st0">" "</span><span class="sy0">,</span><span class="re0">$tags</span><span class="br0">)</span><span class="sy0">,</span> PHP_EOL<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="co1">// article adjective pronoun noun verb adverb article noun</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h4>With the console app</h4>
+
+<p>Download the console application and the models.</p>
+
+<pre class="bash"><ol><li class="li1"><div class="de1"><span class="co0"># download the console app</span></div></li><li class="li1"><div class="de1"><span class="kw2">wget</span> http:<span class="sy0">//</span>php-nlp-tools.com<span class="sy0">/</span>files<span class="sy0">/</span>pos-tag<span class="sy0">/</span>pos-tag.phar <span class="re5">-O</span> pos-tag</div></li><li class="li1"><div class="de1"><span class="kw2">chmod</span> +x pos-tag</div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co0"># download the model</span></div></li><li class="li1"><div class="de1"><span class="kw2">wget</span> http:<span class="sy0">//</span>php-nlp-tools.com<span class="sy0">/</span>files<span class="sy0">/</span>pos-tag<span class="sy0">/</span>models<span class="sy0">/</span>model_thre_0.49.bin <span class="re5">-O</span> model.bin</div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>Now you can tag plain text in Greek. Examples:</p>
+
+<pre class="bash"><ol><li class="li1"><div class="de1"><span class="co0"># -m model.bin is not necessary because model.bin is the default</span></div></li><li class="li1"><div class="de1">.<span class="sy0">/</span>pos-tag tag <span class="re5">-m</span> model.bin <span class="st0">"Η καλή μας αγελάδα βόσκει κάτω στην λιακάδα"</span></div></li><li class="li1"><div class="de1"><span class="co0"># Assuming greek_text is a file containing some text in greek.</span></div></li><li class="li1"><div class="de1">.<span class="sy0">/</span>pos-tag tag <span class="sy0">&lt;</span>greek_text</div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co0"># You can see a pretty useful help message for every command</span></div></li><li class="li1"><div class="de1">.<span class="sy0">/</span>pos-tag <span class="kw3">help</span> tag</div></li><li class="li1"><div class="de1">.<span class="sy0">/</span>pos-tag <span class="kw3">help</span> features</div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co0"># and of course you will see a list of available commands if</span></div></li><li class="li1"><div class="de1"><span class="co0"># you simply run the app</span></div></li><li class="li1"><div class="de1">.<span class="sy0">/</span>pos-tag</div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co0"># now follows an example tagging the first greek text that</span></div></li><li class="li1"><div class="de1"><span class="co0"># I found in one of the open tabs in my browser</span></div></li><li class="li1"><div class="de1">.<span class="sy0">/</span>pos-tag tag <span class="re5">-o</span> <span class="st0">"&lt;w&gt; &lt;info&gt;&lt;t&gt;&lt;/info&gt;&lt;n&gt;"</span> <span class="st0">"Το σώμα κειμένων του Ινστιτούτου Επεξεργασίας του Λόγου αναπτύχθηκε επί σειρά ετών και σήμερα περιλαμβάνει περισσότερες από 47.000.000 λέξεις"</span></div></li><li class="li1"><div class="de1">Το article</div></li><li class="li1"><div class="de1">σώμα noun</div></li><li class="li1"><div class="de1">κειμένων noun</div></li><li class="li1"><div class="de1">του article</div></li><li class="li1"><div class="de1">Ινστιτούτου noun</div></li><li class="li1"><div class="de1">Επεξεργασίας noun</div></li><li class="li1"><div class="de1">του article</div></li><li class="li1"><div class="de1">Λόγου noun</div></li><li class="li1"><div class="de1">αναπτύχθηκε verb</div></li><li class="li1"><div class="de1">επί preposition</div></li><li class="li1"><div class="de1">σειρά noun</div></li><li class="li1"><div class="de1">ετών noun</div></li><li class="li1"><div class="de1">και conjunction</div></li><li class="li1"><div class="de1">σήμερα adverb</div></li><li class="li1"><div class="de1">περιλαμβάνει verb</div></li><li class="li1"><div class="de1">περισσότερες adjective</div></li><li class="li1"><div class="de1">από preposition</div></li><li class="li1"><div class="de1">47.000.000 numeral</div></li><li class="li1"><div class="de1">λέξεις noun</div></li><li class="li1"><div class="de1"> </div></li></ol></pre>					<b class="clear"></b>
+				</div>
+								<div style="text-align: center;">
+											<a href="2.html">&laquo; Previous</a>
+																			</div>
+			</div>
+
+		</div>
+		
+		<div class="container" style="text-align: right;" id="footer">
+	<p class="x-small">
+		This website is powered by <a href="http://www.imdb.com/title/tt0198781/" title="I was thinking of putting 'cries of children' but it seemed too evil">the laughter of children</a>
+	</p>
+</div>
+<div style="display: none;" id="geo-disclaimer">
+	Αφού είσαι από <strong>Ελλάδα</strong> και σε ενδιαφέρει η επεξεργασία φυσικής γλώσσας, <a href="../../../../greek-nlp.html">συνέχισε εδώ →</a>
+</div>
+<script>
+	(function () {
+		var co=document.cookie.split(';');
+		for (var i=0;i<co.length;i++)
+		{
+			if (co[i].substr(0,6)!='theme=')
+				continue;
+			
+			var newtheme = co[i].substr(6),
+				theme_select = document.getElementById('theme-select'),
+				opts = theme_select.options;
+				
+			themeroller.changeHighlight(newtheme);
+			for (var j=0; j<opts.length; j++)
+			{
+				if (opts[j].value==newtheme)
+				{
+					theme_select.selectedIndex = j;
+					break;
+				}
+			}
+			break;
+		}
+	})();
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-9373187-5']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+	// geoip
+	(function () {
+		var geo = document.createElement("script");
+		geo.type = "text/javascript";
+		geo.async = true;
+		geo.src = "http://php-nlp-tools.com:8081/js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(geo, s)
+		geo.onload = function () {
+			if (COUNTRY == "GR") {
+				document.getElementById("footer").style.marginBottom = "60px";
+				document.getElementById("geo-disclaimer").style.display = "block";
+			}
+		};
+	})();
+</script>
+		
+	</body>
+</html>

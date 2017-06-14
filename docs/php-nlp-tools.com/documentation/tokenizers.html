@@ -1,0 +1,282 @@
+<!Doctype html>
+<html>
+
+		<head>
+		<base href="" >
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
+		
+					<title>Tokenizers | NlpTools PHP</title>
+				<link rel="stylesheet" href="../style.css" />
+		<script>
+			var themeroller = (function () {
+				var haveStyle = false,
+					expired = 'Thu, 2 Aug 2001 20:47:11 UTC',
+					unexpired = 'Mon, 2 Aug 2021 20:47:11 UTC',
+					from = '',
+					changeClasses = function (from,theme) {
+						var items = document.getElementsByTagName('pre');
+						for (var i=0;i<items.length;i++)
+						{
+							var cls_re = new RegExp('\\s?\\b'+from+'\\b\\s?|^\s*$');
+							items[i].className = items[i].className.replace(cls_re,' '+theme+' ').trim();
+						}
+					},
+					updateCookie = function (t) {
+						if (t=='')
+							document.cookie = 'theme=; expires='+expired+'; path=/';
+						else
+							document.cookie = 'theme='+t+'; expires='+unexpired+'; path=/';
+						from = t;
+					};
+					
+				return {
+					onSelectChange: function () {
+						var theme = this.options[this.selectedIndex].value;
+						themeroller.changeHighlight(theme);
+					},
+					changeHighlight: function (theme) {
+						
+						if (haveStyle)
+						{
+							changeClasses(from,theme);
+						}
+						else
+						{
+							var l = document.createElement('link');
+							l.rel = 'stylesheet';
+							l.href = 'codecolorer.css';
+							document.head.appendChild(l);
+							haveStyle = true;
+							changeClasses(from,theme);
+						}
+						updateCookie(theme);
+					}
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="container">
+				<h1 class="title"><a href="../index.html">NlpTools</a></h1>
+				<h2 class="subtitle">Natural language processing in php</h2>
+				<b class="clear"></b>
+			</div>
+		</div>
+
+		<div class="container">
+
+			<div class="sidebar">
+	
+		<div class="sidebar-container">
+		<h3>Api Docs</h3>
+					<a href="api/index.html">Api Documentation</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Documentation</h3>
+					<a href="index.html">Get Started</a><br/>
+					<a href="tokenizers.html">Tokenizers</a><br/>
+					<a href="documents.html">Documents</a><br/>
+					<a href="feature-factories.html">Feature Factories</a><br/>
+					<a href="classifiers.html">Classifiers</a><br/>
+					<a href="bayesian-model.html">Bayesian Model</a><br/>
+					<a href="maximum-entropy-model.html">Maximum Entropy Model</a><br/>
+					<a href="similarity.html">Similarity</a><br/>
+					<a href="clustering.html">Clustering</a><br/>
+					<a href="transformations.html">Transformations</a><br/>
+					<a href="other.html">Other</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Navigation</h3>
+					<a href="../index.html">Home</a><br/>
+					<a href="index.html">Documentation</a><br/>
+					<a href="../blog/index.html">Blog</a><br/>
+					<a href="https://github.com/angeloskath/php-nlp-tools/">Github</a><br/>
+					<a href="mailto:info@php-nlp-tools.com">Contact</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Mini nlp projects</h3>
+					<a href="../blog/category/spam-detection-service/index.html">Spam detection service</a><br/>
+					<a href="../blog/category/sentiment-detection.1.html">Sentiment detection</a><br/>
+					<a href="../blog/category/greek-pos-tagger.1.html">Greek POS Tagger</a><br/>
+					<a href="../blog/category/programming-language-detection/index.html">Programming language detection</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Syntax highlighting</h3>
+		<select id="theme-select" onchange="themeroller.onSelectChange.call(this)">
+			<option value="">Vibrant Ink</option>
+			<option value="twitlight">Twitlight</option>
+			<option value="solarized-dark">Solarized Dark</option>
+			<option value="dawn">Dawn</option>
+			<option value="blackboard">Blackboard</option>
+			<option value="mac-classic">Mac Classic</option>
+			<option value="railscasts">Railscasts</option>
+		</select>
+		<p class="x-small">
+			Style sheet provided by
+			<a href="https://github.com/kpumuk/codecolorer">Codecolorer</a>
+			and tokenizing by <a href="http://qbnz.com/highlighter/geshi-doc.html">GeSHi</a>
+		</p>
+	</div>
+</div>
+			
+			<div class="content">
+				<div class="post">
+					<h2>
+						Tokenizers											</h2>
+										<p>Tokenizing in regards to computer science, to quote <a href="http://en.wikipedia.org/wiki/Tokenizing">wikipedia</a>,
+is the process of converting a sequence of characters to a sequence of
+tokens.</p>
+
+<p>In NLP we tokenize a large piece of text to generate tokens which are
+smaller pieces of text (words, sentences, etc.) that are easier to work
+with. For instance we might want to apply a <a href="http://en.wikipedia.org/wiki/Stop_words">stop word list </a>,
+we will be applying it to the tokens and not the original text.</p>
+
+<h3>Tokenizer interface</h3>
+
+<p>The tokenizer interface is a very simple one with only one method.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">interface</span> TokenizerInterface</div></li><li class="li1"><div class="de1"><span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="coMULTI">/*</span></div></li><li class="li1"><div class="de1"><span class="coMULTI">     * @param string $str The text for tokenization</span></div></li><li class="li1"><div class="de1"><span class="coMULTI">     * @return array The list of tokens from the string</span></div></li><li class="li1"><div class="de1"><span class="coMULTI">     */</span></div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> tokenize<span class="br0">(</span><span class="re0">$str</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>NlpTools does not introduce a new data structure for the token sequences
+they are plain arrays.</p>
+
+<h3>Tokenizers provided</h3>
+
+<p>The following tokenizers reside in the <em>\NlpTools\Tokenizers</em> namespace.</p>
+
+<ol><li>WhitespaceTokenizer</li>
+<li>WhitespaceAndPunctuationTokenizer</li>
+<li>ClassifierBasedTokenizer</li>
+<li>RegexTokenizer</li>
+<li>PennTreeBankTokenizer</li>
+</ol><pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">use</span> \NlpTools\Tokenizers\WhitespaceTokenizer<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> \NlpTools\Tokenizers\WhitespaceAndPunctuationTokenizer<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> \NlpTools\Tokenizers\ClassifierBasedTokenizer<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$s</span> <span class="sy0">=</span> <span class="st0">"Please allow me to introduce myself </span></div></li><li class="li1"><div class="de1"><span class="st0">        I'm a man of wealth and taste"</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$space</span> <span class="sy0">=</span> <span class="kw2">new</span> WhitespaceTokenizer<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$punct</span> <span class="sy0">=</span> <span class="kw2">new</span> WhitespaceAndPunctuationTokenizer<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="co1">// instantiate a binary classifier that chooses among the labels</span></div></li><li class="li1"><div class="de1"><span class="co1">// EOW --&gt; End Of Word</span></div></li><li class="li1"><div class="de1"><span class="co1">// O   --&gt; Other</span></div></li><li class="li1"><div class="de1"><span class="co1">// $cls &lt;-- that classifier</span></div></li><li class="li1"><div class="de1"><span class="re0">$clstok</span> <span class="sy0">=</span> <span class="kw2">new</span> ClassifierBasedTokenizer<span class="br0">(</span><span class="re0">$cls</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$space</span><span class="sy0">-&gt;</span><span class="me1">tokenize</span><span class="br0">(</span><span class="re0">$s</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="co1">// array('Please','allow','me','to','introduce','myself',</span></div></li><li class="li1"><div class="de1"><span class="co1">//      'I\'m','a','man','of','wealth','and','taste')</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$punct</span><span class="sy0">-&gt;</span><span class="me1">tokenize</span><span class="br0">(</span><span class="re0">$s</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="co1">// array('Please','allow','me','to','introduce','myself',</span></div></li><li class="li1"><div class="de1"><span class="co1">//      'I','\'','m','a','man','of','wealth','and','taste')</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$clstok</span><span class="sy0">-&gt;</span><span class="me1">tokenize</span><span class="br0">(</span><span class="re0">$s</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="co1">// output depends on the classifier</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>Although WhitespaceTokenizer and WhitespaceAndPunctuationTokenizer are
+straight forward the rest of them need a bit of separate mention.</p>
+
+<h3>Classifier based tokenization</h3>
+
+<p>The constructor of the ClassifierBasedTokenizer looks like this</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">class</span> ClassifierBasedTokenizer implements TokenizerInterface</div></li><li class="li1"><div class="de1"><span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> __construct<span class="br0">(</span>Classifier <span class="re0">$cls</span><span class="sy0">,</span> Tokenizer <span class="re0">$tok</span><span class="sy0">=</span><span class="kw4">null</span><span class="sy0">,</span><span class="re0">$sep</span><span class="sy0">=</span><span class="st_h">' '</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">        <span class="sy0">...</span></div></li><li class="li1"><div class="de1">    <span class="br0">}</span></div></li><li class="li1"><div class="de1">    <span class="sy0">...</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>We will see how the classifier based tokenizer works with a simple
+example that implements a naive rule based sentence tokenizer and then I
+will explain a bit the simple algorithm that this tokenizer uses.</p>
+
+<p><em>ClassifierBasedTokenizer</em> sends to the classifier a document of type
+<em>WordDocument</em> (you might want to check <a href="documents.html">the documents documentation</a>).</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">&lt;?php</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="kw1">include</span> <span class="br0">(</span><span class="st_h">'vendor/autoload.php'</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="kw2">use</span> \NlpTools\Tokenizers\ClassifierBasedTokenizer<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> \NlpTools\Tokenizers\WhitespaceTokenizer<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> \NlpTools\Classifiers\ClassifierInterface<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> \NlpTools\Documents\DocumentInterface<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="kw2">class</span> EndOfSentence implements ClassifierInterface</div></li><li class="li1"><div class="de1"><span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> classify<span class="br0">(</span><a href="http://www.php.net/array"><span class="kw3">array</span></a> <span class="re0">$classes</span><span class="sy0">,</span> DocumentInterface <span class="re0">$d</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">        <a href="http://www.php.net/list"><span class="kw3">list</span></a><span class="br0">(</span><span class="re0">$token</span><span class="sy0">,</span><span class="re0">$before</span><span class="sy0">,</span><span class="re0">$after</span><span class="br0">)</span> <span class="sy0">=</span> <span class="re0">$d</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">        <span class="re0">$dotcnt</span> <span class="sy0">=</span> <a href="http://www.php.net/count"><span class="kw3">count</span></a><span class="br0">(</span><a href="http://www.php.net/explode"><span class="kw3">explode</span></a><span class="br0">(</span><span class="st_h">'.'</span><span class="sy0">,</span><span class="re0">$token</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">-</span><span class="nu0">1</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="re0">$lastdot</span> <span class="sy0">=</span> <a href="http://www.php.net/substr"><span class="kw3">substr</span></a><span class="br0">(</span><span class="re0">$token</span><span class="sy0">,-</span><span class="nu0">1</span><span class="br0">)</span><span class="sy0">==</span><span class="st_h">'.'</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">        <span class="kw1">if</span> <span class="br0">(</span><span class="sy0">!</span><span class="re0">$lastdot</span><span class="br0">)</span> <span class="co1">// assume that all sentences end in full stops</span></div></li><li class="li1"><div class="de1">            <span class="kw1">return</span> <span class="st_h">'O'</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">        <span class="kw1">if</span> <span class="br0">(</span><span class="re0">$dotcnt</span><span class="sy0">&gt;</span><span class="nu0">1</span><span class="br0">)</span> <span class="co1">// to catch some naive abbreviations U.S.A.</span></div></li><li class="li1"><div class="de1">            <span class="kw1">return</span> <span class="st_h">'O'</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">        <span class="kw1">return</span> <span class="st_h">'EOW'</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="br0">}</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$tok</span> <span class="sy0">=</span> <span class="kw2">new</span> ClassifierBasedTokenizer<span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> EndOfSentence<span class="br0">(</span><span class="br0">)</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> WhitespaceTokenizer<span class="br0">(</span><span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$text</span> <span class="sy0">=</span> <span class="st0">"We are what we repeatedly do.</span></div></li><li class="li1"><div class="de1"><span class="st0">        Excellence, then, is not an act, but a habit."</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><a href="http://www.php.net/print_r"><span class="kw3">print_r</span></a><span class="br0">(</span><span class="re0">$tok</span><span class="sy0">-&gt;</span><span class="me1">tokenize</span><span class="br0">(</span><span class="re0">$text</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1">// Array</span></div></li><li class="li1"><div class="de1"><span class="co1">// (</span></div></li><li class="li1"><div class="de1"><span class="co1">//    [0] =&gt; We are what we repeatedly do.</span></div></li><li class="li1"><div class="de1"><span class="co1">//    [1] =&gt; Excellence, then, is not an act, but a habit.</span></div></li><li class="li1"><div class="de1"><span class="co1">// )</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>ClassifierBasedTokenizer follows the following simple algorithm to
+combine tokens from another tokenizer into larger tokens.</p>
+
+<ol><li>Break the character sequence into a token sequence using another
+Tokenizer instance</li>
+<li>Classify each token whether it is an EOW or an O. EOW stands for
+"End of word" and O stands for "Other".</li>
+<li>Join all O tokens up to an EOW token using a given separator (any
+character sequence)</li>
+</ol><h3>RegexTokenizer</h3>
+
+<p>This tokenizer tokenizes text based on a set of regexes. The regexes
+are passed as a constructor parameter and can have the following
+three forms.</p>
+
+<ol><li>A simple string</li>
+<li>An array of a string and an integer</li>
+<li>An array of two strings</li>
+</ol><p>Each case is handled differently by the tokenizer. In the first case
+the input will be split using preg_split and the provided string as
+pattern. In the second case the integer denotes the subpattern to keep
+and the first the pattern to be used with preg_match. Finally in the
+third case preg_replace is used and the matches are replaced with the
+second string.</p>
+
+<p>The results of each regex are then passed to the next as a pipeline.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Tokenizers\RegexTokenizer<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$s</span> <span class="sy0">=</span> <span class="st0">"Please allow me to introduce myself </span></div></li><li class="li1"><div class="de1"><span class="st0">        I'm a man of wealth and taste"</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$rtok</span> <span class="sy0">=</span> <span class="kw2">new</span> RegexTokenizer<span class="br0">(</span><a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">    <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span><span class="st0">"/\s+/"</span><span class="sy0">,</span><span class="st0">" "</span><span class="br0">)</span><span class="sy0">,</span>              <span class="co1">// replace many spaces with a single space</span></div></li><li class="li1"><div class="de1">    <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span><span class="st0">"/'(m|ve|d|s)/"</span><span class="sy0">,</span> <span class="st0">" '<span class="es1">\$</span>1"</span><span class="br0">)</span><span class="sy0">,</span> <span class="co1">// split I've, it's, we've, we'd, ...</span></div></li><li class="li1"><div class="de1">    <span class="st0">"/ /"</span>                            <span class="co1">// split on every space</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><a href="http://www.php.net/print_r"><span class="kw3">print_r</span></a><span class="br0">(</span><span class="re0">$rtok</span><span class="sy0">-&gt;</span><span class="me1">tokenize</span><span class="br0">(</span><span class="re0">$s</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="co1">// Array</span></div></li><li class="li1"><div class="de1"><span class="co1">// (</span></div></li><li class="li1"><div class="de1"><span class="co1">//     [0] =&gt; Please</span></div></li><li class="li1"><div class="de1"><span class="co1">//     [1] =&gt; allow</span></div></li><li class="li1"><div class="de1"><span class="co1">//     [2] =&gt; me</span></div></li><li class="li1"><div class="de1"><span class="co1">//     [3] =&gt; to</span></div></li><li class="li1"><div class="de1"><span class="co1">//     [4] =&gt; introduce</span></div></li><li class="li1"><div class="de1"><span class="co1">//     [5] =&gt; myself</span></div></li><li class="li1"><div class="de1"><span class="co1">//     [6] =&gt; I</span></div></li><li class="li1"><div class="de1"><span class="co1">//     [7] =&gt; 'm</span></div></li><li class="li1"><div class="de1"><span class="co1">//     [8] =&gt; a</span></div></li><li class="li1"><div class="de1"><span class="co1">//     [9] =&gt; man</span></div></li><li class="li1"><div class="de1"><span class="co1">//     [10] =&gt; of</span></div></li><li class="li1"><div class="de1"><span class="co1">//     [11] =&gt; wealth</span></div></li><li class="li1"><div class="de1"><span class="co1">//     [12] =&gt; and</span></div></li><li class="li1"><div class="de1"><span class="co1">//     [13] =&gt; taste</span></div></li><li class="li1"><div class="de1"><span class="co1">// )</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h3>Treebank tokenization</h3>
+
+<p>This is a very popular tokenization for the english language. We use the Penn
+treebank tokenization for which you can read more at <a href="http://www.cis.upenn.edu/~treebank/tokenization.html">upenn.edu</a>.</p>
+
+<div style="text-align: center;">
+
+<p><a href="index.html">« Getting started</a>
+/
+<a href="documents.html">Documents »</a></p>
+
+</div>					<b class="clear"></b>
+				</div>
+			</div>
+
+		</div>
+		
+		<div class="container" style="text-align: right;" id="footer">
+	<p class="x-small">
+		This website is powered by <a href="http://www.imdb.com/title/tt0198781/" title="I was thinking of putting 'cries of children' but it seemed too evil">the laughter of children</a>
+	</p>
+</div>
+<div style="display: none;" id="geo-disclaimer">
+	Αφού είσαι από <strong>Ελλάδα</strong> και σε ενδιαφέρει η επεξεργασία φυσικής γλώσσας, <a href="../greek-nlp.html">συνέχισε εδώ →</a>
+</div>
+<script>
+	(function () {
+		var co=document.cookie.split(';');
+		for (var i=0;i<co.length;i++)
+		{
+			if (co[i].substr(0,6)!='theme=')
+				continue;
+			
+			var newtheme = co[i].substr(6),
+				theme_select = document.getElementById('theme-select'),
+				opts = theme_select.options;
+				
+			themeroller.changeHighlight(newtheme);
+			for (var j=0; j<opts.length; j++)
+			{
+				if (opts[j].value==newtheme)
+				{
+					theme_select.selectedIndex = j;
+					break;
+				}
+			}
+			break;
+		}
+	})();
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-9373187-5']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+	// geoip
+	(function () {
+		var geo = document.createElement("script");
+		geo.type = "text/javascript";
+		geo.async = true;
+		geo.src = "http://php-nlp-tools.com:8081/js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(geo, s)
+		geo.onload = function () {
+			if (COUNTRY == "GR") {
+				document.getElementById("footer").style.marginBottom = "60px";
+				document.getElementById("geo-disclaimer").style.display = "block";
+			}
+		};
+	})();
+</script>
+		
+	</body>
+</html>

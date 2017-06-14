@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow, all" />
+        <title>NlpTools\Tokenizers\ClassifierBasedTokenizer | NlpTools API</title>
+                    <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+                            </head>
+        <body id="class">
+            <div class="header">
+        <ul>
+            <li><a href="../../classes.html">Classes</a></li>
+                            <li><a href="../../namespaces.html">Namespaces</a></li>
+                        <li><a href="../../interfaces.html">Interfaces</a></li>
+            <li><a href="../../doc-index.html">Index</a></li>
+            
+        </ul>
+
+        <div id="title">NlpTools API</div>
+
+            <div class="type">Class</div>
+    <h1><a href="../Tokenizers.html">NlpTools\Tokenizers</a>\ClassifierBasedTokenizer</h1>
+    </div>
+        <div class="content">
+                <p>class    <strong>ClassifierBasedTokenizer</strong>        implements
+        <a href="TokenizerInterface.html"><abbr title="NlpTools\Tokenizers\TokenizerInterface">TokenizerInterface</abbr></a></p>
+
+            <div class="description">
+            <p>A tokenizer that uses a classifier (of any type) to determine if there is an &quot;end of word&quot; (EOW).</p>
+            <p>It takes as a parameter an initial<br />
+ tokenizer and then determines if any two following tokens should in<br />
+ fact be one token.<br />
+<br />
+ Those tokenizers could be nested to produce sentence tokenizers.<br />
+<br />
+ Example:<br />
+<br />
+ If we were for example to tokenize the following sentence<br />
+ &quot;Me and O&#039;Brien, we &#039;ll go!&quot; and we used a simple space tokenizer we<br />
+ would end up with this<br />
+ [&quot;Me&quot;,&quot;and&quot;,&quot;O&#039;Brien,&quot;,&quot;we&quot;,&quot;&#039;ll&quot;,&quot;go!&quot;]<br />
+ if we used a space and punctuation tokenizer we &#039;d end up with<br />
+ [&quot;Me&quot;,&quot;and&quot;,&quot;O&quot;,&quot;&#039;&quot;,&quot;Brien&quot;,&quot;,&quot;,&quot;we&quot;,&quot;&#039;&quot;,&quot;ll&quot;,&quot;go&quot;,&quot;!&quot;]<br />
+ but we want<br />
+ [&quot;Me&quot;,&quot;and&quot;,&quot;O&#039;Brien&quot;,&quot;,&quot;,&quot;we&quot;,&quot;&#039;ll&quot;,&quot;go&quot;,&quot;!&quot;]<br />
+ so we should train a classifier to do the following<br />
+<br />
+ Token | Cls<br />
+ ------------<br />
+ Me    | EOW<br />
+ and   | EOW<br />
+ O     | O<br />
+ &#039;     | O<br />
+ Brien | EOW<br />
+ ,     | EOW<br />
+ we    | EOW<br />
+ &#039;     | O<br />
+ ll    | EOW<br />
+ go    | EOW<br />
+ !     | EOW</p>
+        </div>
+    
+            <h2>Constants</h2>
+
+            <table>
+                    <tr>
+                <td>EOW</td>
+                <td class="last">
+                    <p><em></em></p>
+                    <p></p>
+                </td>
+            </tr>
+            </table>
+
+    
+    
+            <h2>Methods</h2>
+
+            <table>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="ClassifierBasedTokenizer.html#method___construct">__construct</a>(<a href="../Classifiers/ClassifierInterface.html"><abbr title="NlpTools\Classifiers\ClassifierInterface">ClassifierInterface</abbr></a> $cls, <a href="TokenizerInterface.html"><abbr title="NlpTools\Tokenizers\TokenizerInterface">TokenizerInterface</abbr></a> $tok = null, $sep = &#039; &#039;)
+                    <p></p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    array
+                </td>
+                <td class="last">
+                    <a href="ClassifierBasedTokenizer.html#method_tokenize">tokenize</a>(string $str)
+                    <p>Break a character sequence to a token sequence</p>
+                </td>
+                <td></td>
+            </tr>
+            </table>
+
+
+        <h2>Details</h2>
+
+                        <h3 id="method___construct">
+        <div class="location">at line 56</div>
+        <code>            public            
+    <strong>__construct</strong>(<a href="../Classifiers/ClassifierInterface.html"><abbr title="NlpTools\Classifiers\ClassifierInterface">ClassifierInterface</abbr></a> $cls, <a href="TokenizerInterface.html"><abbr title="NlpTools\Tokenizers\TokenizerInterface">TokenizerInterface</abbr></a> $tok = null, $sep = &#039; &#039;)</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td><a href="../Classifiers/ClassifierInterface.html"><abbr title="NlpTools\Classifiers\ClassifierInterface">ClassifierInterface</abbr></a></td>
+                <td>$cls</td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td><a href="TokenizerInterface.html"><abbr title="NlpTools\Tokenizers\TokenizerInterface">TokenizerInterface</abbr></a></td>
+                <td>$tok</td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td></td>
+                <td>$sep</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_tokenize">
+        <div class="location">at line 77</div>
+        <code>            public            array
+    <strong>tokenize</strong>(string $str)</code>
+    </h3>
+    <div class="details">
+        <p>Break a character sequence to a token sequence</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>string</td>
+                <td>$str</td>
+                <td>The character sequence to be broken in tokens</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>array</td>
+            <td>The token array</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+    
+            </div>
+            <div id="footer">
+        Generated by <a href="http://sami.sensiolabs.org/" target="_top">Sami, the API Documentation Generator</a>.
+    </div>
+    </body>
+</html>

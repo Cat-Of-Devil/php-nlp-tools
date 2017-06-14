@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow, all" />
+        <title>NlpTools\Optimizers\MaxentGradientDescent | NlpTools API</title>
+                    <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+                            </head>
+        <body id="class">
+            <div class="header">
+        <ul>
+            <li><a href="../../classes.html">Classes</a></li>
+                            <li><a href="../../namespaces.html">Namespaces</a></li>
+                        <li><a href="../../interfaces.html">Interfaces</a></li>
+            <li><a href="../../doc-index.html">Index</a></li>
+            
+        </ul>
+
+        <div id="title">NlpTools API</div>
+
+            <div class="type">Class</div>
+    <h1><a href="../Optimizers.html">NlpTools\Optimizers</a>\MaxentGradientDescent</h1>
+    </div>
+        <div class="content">
+                <p>class    <strong>MaxentGradientDescent</strong>        extends <a href="GradientDescentOptimizer.html"><abbr title="NlpTools\Optimizers\GradientDescentOptimizer">GradientDescentOptimizer</abbr></a>        implements
+        <a href="MaxentOptimizerInterface.html"><abbr title="NlpTools\Optimizers\MaxentOptimizerInterface">MaxentOptimizerInterface</abbr></a></p>
+
+            <div class="description">
+            <p>Implement a gradient descent algorithm that maximizes the conditional log likelihood of the training data.</p>
+            <p>See page 24 - 28 of http://nlp.stanford.edu/pubs/maxent-tutorial-slides.pdf</p>
+        </div>
+    
+    
+    
+            <h2>Methods</h2>
+
+            <table>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="MaxentGradientDescent.html#method___construct">__construct</a>($precision = 0.001, $step = 0.1, $maxiter = -1)
+                    <p></p>
+                </td>
+                <td><small>from&nbsp;<a href="GradientDescentOptimizer.html#method___construct"><abbr title="NlpTools\Optimizers\GradientDescentOptimizer">GradientDescentOptimizer</abbr></a></small></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    array
+                </td>
+                <td class="last">
+                    <a href="MaxentGradientDescent.html#method_optimize">optimize</a>(array $feature_array)
+                    <p>This function receives an array that contains an array for each document which contains an array of feature identifiers for each class and at the special key &#039;__label__&#039; the actual class of the training document.</p>
+                </td>
+                <td><small>from&nbsp;<a href="GradientDescentOptimizer.html#method_optimize"><abbr title="NlpTools\Optimizers\GradientDescentOptimizer">GradientDescentOptimizer</abbr></a></small></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="MaxentGradientDescent.html#method_reportProgress">reportProgress</a>($itercount)
+                    <p></p>
+                </td>
+                <td><small>from&nbsp;<a href="GradientDescentOptimizer.html#method_reportProgress"><abbr title="NlpTools\Optimizers\GradientDescentOptimizer">GradientDescentOptimizer</abbr></a></small></td>
+            </tr>
+            </table>
+
+
+        <h2>Details</h2>
+
+                        <h3 id="method___construct">
+        <div class="location">in <a href="GradientDescentOptimizer.html#method___construct"><abbr title="NlpTools\Optimizers\GradientDescentOptimizer">GradientDescentOptimizer</abbr></a> at line 22</div>
+        <code>            public            
+    <strong>__construct</strong>($precision = 0.001, $step = 0.1, $maxiter = -1)</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td></td>
+                <td>$precision</td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td></td>
+                <td>$step</td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td></td>
+                <td>$maxiter</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_optimize">
+        <div class="location">in <a href="GradientDescentOptimizer.html#method_optimize"><abbr title="NlpTools\Optimizers\GradientDescentOptimizer">GradientDescentOptimizer</abbr></a> at line 65</div>
+        <code>            public            array
+    <strong>optimize</strong>(array $feature_array)</code>
+    </h3>
+    <div class="details">
+        <p>This function receives an array that contains an array for each document which contains an array of feature identifiers for each class and at the special key &#039;__label__&#039; the actual class of the training document.</p>
+        <p>As a result it contains all the information needed to train a<br />
+ set of weights with any target. Ex.: If we were training a maxent<br />
+ model we would try to maximize the CLogLik that can be calculated<br />
+ from this array.</p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>array</td>
+                <td>$feature_array</td>
+                <td>All the data known about the training set</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>array</td>
+            <td>The parameters $l[$i] that minimize F</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_reportProgress">
+        <div class="location">in <a href="GradientDescentOptimizer.html#method_reportProgress"><abbr title="NlpTools\Optimizers\GradientDescentOptimizer">GradientDescentOptimizer</abbr></a> at line 92</div>
+        <code>            public            
+    <strong>reportProgress</strong>($itercount)</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td></td>
+                <td>$itercount</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+    
+            </div>
+            <div id="footer">
+        Generated by <a href="http://sami.sensiolabs.org/" target="_top">Sami, the API Documentation Generator</a>.
+    </div>
+    </body>
+</html>

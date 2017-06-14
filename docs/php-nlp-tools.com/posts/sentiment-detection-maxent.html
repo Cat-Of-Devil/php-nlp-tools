@@ -1,0 +1,231 @@
+<!Doctype html>
+<html>
+
+		<head>
+		<base href="" >
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
+		
+					<title>Maximum entropy model for sentiment detection | NlpTools PHP</title>
+				<link rel="stylesheet" href="../style.css" />
+		<script>
+			var themeroller = (function () {
+				var haveStyle = false,
+					expired = 'Thu, 2 Aug 2001 20:47:11 UTC',
+					unexpired = 'Mon, 2 Aug 2021 20:47:11 UTC',
+					from = '',
+					changeClasses = function (from,theme) {
+						var items = document.getElementsByTagName('pre');
+						for (var i=0;i<items.length;i++)
+						{
+							var cls_re = new RegExp('\\s?\\b'+from+'\\b\\s?|^\s*$');
+							items[i].className = items[i].className.replace(cls_re,' '+theme+' ').trim();
+						}
+					},
+					updateCookie = function (t) {
+						if (t=='')
+							document.cookie = 'theme=; expires='+expired+'; path=/';
+						else
+							document.cookie = 'theme='+t+'; expires='+unexpired+'; path=/';
+						from = t;
+					};
+					
+				return {
+					onSelectChange: function () {
+						var theme = this.options[this.selectedIndex].value;
+						themeroller.changeHighlight(theme);
+					},
+					changeHighlight: function (theme) {
+						
+						if (haveStyle)
+						{
+							changeClasses(from,theme);
+						}
+						else
+						{
+							var l = document.createElement('link');
+							l.rel = 'stylesheet';
+							l.href = 'codecolorer.css';
+							document.head.appendChild(l);
+							haveStyle = true;
+							changeClasses(from,theme);
+						}
+						updateCookie(theme);
+					}
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="container">
+				<h1 class="title"><a href="../index.html">NlpTools</a></h1>
+				<h2 class="subtitle">Natural language processing in php</h2>
+				<b class="clear"></b>
+			</div>
+		</div>
+
+		<div class="container">
+
+			<div class="sidebar">
+	
+		<div class="sidebar-container">
+		<h3>Navigation</h3>
+					<a href="../index.html">Home</a><br/>
+					<a href="../documentation/index.html">Documentation</a><br/>
+					<a href="../blog/index.html">Blog</a><br/>
+					<a href="https://github.com/angeloskath/php-nlp-tools/">Github</a><br/>
+					<a href="mailto:info@php-nlp-tools.com">Contact</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Mini nlp projects</h3>
+					<a href="../blog/category/spam-detection-service/index.html">Spam detection service</a><br/>
+					<a href="../blog/category/sentiment-detection.1.html">Sentiment detection</a><br/>
+					<a href="../blog/category/greek-pos-tagger.1.html">Greek POS Tagger</a><br/>
+					<a href="../blog/category/programming-language-detection/index.html">Programming language detection</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Syntax highlighting</h3>
+		<select id="theme-select" onchange="themeroller.onSelectChange.call(this)">
+			<option value="">Vibrant Ink</option>
+			<option value="twitlight">Twitlight</option>
+			<option value="solarized-dark">Solarized Dark</option>
+			<option value="dawn">Dawn</option>
+			<option value="blackboard">Blackboard</option>
+			<option value="mac-classic">Mac Classic</option>
+			<option value="railscasts">Railscasts</option>
+		</select>
+		<p class="x-small">
+			Style sheet provided by
+			<a href="https://github.com/kpumuk/codecolorer">Codecolorer</a>
+			and tokenizing by <a href="http://qbnz.com/highlighter/geshi-doc.html">GeSHi</a>
+		</p>
+	</div>
+</div>
+			
+			<div class="content">
+				<div class="post">
+					<h2>
+						Maximum entropy model for sentiment detection													<span class="date">Jun 20th, 2013</span>
+											</h2>
+										<p class="meta">
+						Project: <a href="../blog/category/sentiment-detection.1.html">Sentiment detection</a>
+					</p>
+										<p>In the second post in the series of <a href="../blog/category/sentiment-detection.1.html">sentiment detection</a> we will train a
+maximum entropy model to perform the exact same classification on the exact same data and compare the
+procedure and the results.</p>
+
+<h3>Getting the optimizer</h3>
+
+<p>Later on NlpTools will support more external optimizers like Megam or Mallet but for now the only
+optimizer supported is the one developed specifically for NlpTools in <a href="http://golang.org/">Go</a> that
+performs parallel batch gradient descent.</p>
+
+<p>You can download binaries for you architecture or build from source.</p>
+
+<ul><li><a href="../files/sentiment-detection/optimizer/gradient-descent-linux-386">linux/386</a></li>
+<li><a href="../files/sentiment-detection/optimizer/gradient-descent-linux-amd64">linux/amd64</a></li>
+<li><a href="../files/sentiment-detection/optimizer/gradient-descent-windows-386.exe">windows/386</a></li>
+<li><a href="../files/sentiment-detection/optimizer/gradient-descent-windows-amd64.exe">windows/amd64</a></li>
+<li><a href="https://github.com/angeloskath/nlp-maxent-optimizer">source</a></li>
+</ul><h3>Training a Maximum Entropy model</h3>
+
+<p>There are only three changes required (to our previous file) to train and evaluate a Maxent model
+instead of a Naive Bayes model.</p>
+
+<h4>Feature Factory</h4>
+
+<p>You need to create a different type of feature factory. In Maxent features should target specific classes
+so in each feature the class name should be prepended. In addition, we should model presence and not
+frequency of features. To achieve the above we will use the FeatureFactory
+<a href="../documentation/api/index.html#NlpTools/FeatureFactories/FunctionFeatures">FunctionFeatures</a>.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="re0">$ff</span> <span class="sy0">=</span> <span class="kw2">new</span> FunctionFeatures<span class="br0">(</span></div></li><li class="li1"><div class="de1">    <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">        <span class="kw2">function</span> <span class="br0">(</span><span class="re0">$c</span><span class="sy0">,</span> <span class="re0">$d</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">            <span class="kw1">return</span> <a href="http://www.php.net/array_map"><span class="kw3">array_map</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">                <span class="kw2">function</span> <span class="br0">(</span><span class="re0">$t</span><span class="br0">)</span> <span class="kw2">use</span><span class="br0">(</span><span class="re0">$c</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">                    <span class="kw1">return</span> <span class="st0">"<span class="es4">$c</span> ^ <span class="es4">$t</span>"</span><span class="sy0">;</span> <span class="co1">// target the feature to a specific class</span></div></li><li class="li1"><div class="de1">                <span class="br0">}</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">                <span class="re0">$d</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">            <span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="br0">}</span></div></li><li class="li1"><div class="de1">    <span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h4>Model instantiation</h4>
+
+<p>We should change the model instatiation code to now create and train a Maxent model.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="co1">// create empty Maxent</span></div></li><li class="li1"><div class="de1"><span class="re0">$model</span> <span class="sy0">=</span> <span class="kw2">new</span> Maxent<span class="br0">(</span><a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$model</span><span class="sy0">-&gt;</span><span class="me1">train</span><span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="re0">$ff</span><span class="sy0">,</span> <span class="co1">// the feature factory</span></div></li><li class="li1"><div class="de1">    <span class="re0">$tset</span><span class="sy0">,</span> <span class="co1">// the documents</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> ExternalMaxentOptimizer<span class="br0">(</span></div></li><li class="li1"><div class="de1">        <span class="st_h">'gradient-descent'</span> <span class="co1">// the path to the external optimizer</span></div></li><li class="li1"><div class="de1">    <span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h4>Classifier</h4>
+
+<p>Finally, we need to change the classifier from MultinomialNaiveBayes to FeatureBasedLinearClassifier.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="re0">$cls</span> <span class="sy0">=</span> <span class="kw2">new</span> FeatureBasedLinearClassifier<span class="br0">(</span><span class="re0">$ff</span><span class="sy0">,</span> <span class="re0">$model</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>We then run the php script with the exact same parameters as in the previous post. Training time will
+take longer this time.</p>
+
+<h3>Results</h3>
+
+<p>Maximum entropy models usually perform a bit better than Naive Bayes (on par with SVM). They are, though,
+much harder to train. Our model confirms the rule by achieving <strong>86%</strong> accuracy on
+<a href="http://www.cs.cornell.edu/home/llee/papers/sentiment.home.html">Pang's and Lee's</a> dataset (No features other than the data).</p>					<b class="clear"></b>
+				</div>
+			</div>
+
+		</div>
+		
+		<div class="container" style="text-align: right;" id="footer">
+	<p class="x-small">
+		This website is powered by <a href="http://www.imdb.com/title/tt0198781/" title="I was thinking of putting 'cries of children' but it seemed too evil">the laughter of children</a>
+	</p>
+</div>
+<div style="display: none;" id="geo-disclaimer">
+	Αφού είσαι από <strong>Ελλάδα</strong> και σε ενδιαφέρει η επεξεργασία φυσικής γλώσσας, <a href="../greek-nlp.html">συνέχισε εδώ →</a>
+</div>
+<script>
+	(function () {
+		var co=document.cookie.split(';');
+		for (var i=0;i<co.length;i++)
+		{
+			if (co[i].substr(0,6)!='theme=')
+				continue;
+			
+			var newtheme = co[i].substr(6),
+				theme_select = document.getElementById('theme-select'),
+				opts = theme_select.options;
+				
+			themeroller.changeHighlight(newtheme);
+			for (var j=0; j<opts.length; j++)
+			{
+				if (opts[j].value==newtheme)
+				{
+					theme_select.selectedIndex = j;
+					break;
+				}
+			}
+			break;
+		}
+	})();
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-9373187-5']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+	// geoip
+	(function () {
+		var geo = document.createElement("script");
+		geo.type = "text/javascript";
+		geo.async = true;
+		geo.src = "http://php-nlp-tools.com:8081/js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(geo, s)
+		geo.onload = function () {
+			if (COUNTRY == "GR") {
+				document.getElementById("footer").style.marginBottom = "60px";
+				document.getElementById("geo-disclaimer").style.display = "block";
+			}
+		};
+	})();
+</script>
+		
+	</body>
+</html>

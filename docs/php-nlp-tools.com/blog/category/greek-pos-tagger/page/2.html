@@ -1,0 +1,275 @@
+<!Doctype html>
+<html>
+
+		<head>
+		<base href="" >
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
+		
+					<title>Greek POS Tagger | NlpTools PHP</title>
+				<link rel="stylesheet" href="../../../../style.css" />
+		<script>
+			var themeroller = (function () {
+				var haveStyle = false,
+					expired = 'Thu, 2 Aug 2001 20:47:11 UTC',
+					unexpired = 'Mon, 2 Aug 2021 20:47:11 UTC',
+					from = '',
+					changeClasses = function (from,theme) {
+						var items = document.getElementsByTagName('pre');
+						for (var i=0;i<items.length;i++)
+						{
+							var cls_re = new RegExp('\\s?\\b'+from+'\\b\\s?|^\s*$');
+							items[i].className = items[i].className.replace(cls_re,' '+theme+' ').trim();
+						}
+					},
+					updateCookie = function (t) {
+						if (t=='')
+							document.cookie = 'theme=; expires='+expired+'; path=/';
+						else
+							document.cookie = 'theme='+t+'; expires='+unexpired+'; path=/';
+						from = t;
+					};
+					
+				return {
+					onSelectChange: function () {
+						var theme = this.options[this.selectedIndex].value;
+						themeroller.changeHighlight(theme);
+					},
+					changeHighlight: function (theme) {
+						
+						if (haveStyle)
+						{
+							changeClasses(from,theme);
+						}
+						else
+						{
+							var l = document.createElement('link');
+							l.rel = 'stylesheet';
+							l.href = 'codecolorer.css';
+							document.head.appendChild(l);
+							haveStyle = true;
+							changeClasses(from,theme);
+						}
+						updateCookie(theme);
+					}
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="container">
+				<h1 class="title"><a href="../../../../index.html">NlpTools</a></h1>
+				<h2 class="subtitle">Natural language processing in php</h2>
+				<b class="clear"></b>
+			</div>
+		</div>
+
+		<div class="container">
+
+			<div class="sidebar">
+	
+		<div class="sidebar-container">
+		<h3>Navigation</h3>
+					<a href="../../../../index.html">Home</a><br/>
+					<a href="../../../../documentation/index.html">Documentation</a><br/>
+					<a href="../../../index.html">Blog</a><br/>
+					<a href="https://github.com/angeloskath/php-nlp-tools/">Github</a><br/>
+					<a href="mailto:info@php-nlp-tools.com">Contact</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Mini nlp projects</h3>
+					<a href="../../spam-detection-service/index.html">Spam detection service</a><br/>
+					<a href="../../sentiment-detection.1.html">Sentiment detection</a><br/>
+					<a href="../../greek-pos-tagger.1.html">Greek POS Tagger</a><br/>
+					<a href="../../programming-language-detection/index.html">Programming language detection</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Syntax highlighting</h3>
+		<select id="theme-select" onchange="themeroller.onSelectChange.call(this)">
+			<option value="">Vibrant Ink</option>
+			<option value="twitlight">Twitlight</option>
+			<option value="solarized-dark">Solarized Dark</option>
+			<option value="dawn">Dawn</option>
+			<option value="blackboard">Blackboard</option>
+			<option value="mac-classic">Mac Classic</option>
+			<option value="railscasts">Railscasts</option>
+		</select>
+		<p class="x-small">
+			Style sheet provided by
+			<a href="https://github.com/kpumuk/codecolorer">Codecolorer</a>
+			and tokenizing by <a href="http://qbnz.com/highlighter/geshi-doc.html">GeSHi</a>
+		</p>
+	</div>
+</div>
+			
+			<div class="content">
+								<div class="post">
+					<h2>
+						<a href="../../../../posts/improving-the-baseline.html">
+							Evaluating features with Naive Bayes						</a>
+						<span class="date">Jul 21st, 2013</span>
+					</h2>
+										<p>Following Evangelia's paper  we will be using a Maxent model for our final prediction model.
+But training Maxent models is an order of magnitude slower than training a Naive Bayes model. We could simply
+implement the features defined in the paper and train one final model, but because I want to gain a better
+understanding of the POS tagger I will be implementing them one at a time and evaluating each time the improvement.
+To avoid waiting, I will be using a simple Naive Bayes model.</p>
+
+<h3>Only the data as features</h3>
+
+<p>If we simply train a Naive Bayes model with the only features the presence of the words themselves then we have a model
+that does not differ much from our baseline. Only one feature fires for each word and for the unknown words the prior
+gets to decide the class (actually the results would be identical if it were not for smoothing the model).</p>
+
+<p>Consequently the results are a model with a bit worse accuracy than the baseline but with much the same behaviour (it
+still mistakes half the verbs for nouns).</p>
+
+<h3>Options at hand</h3>
+
+<p>Up until now the features do not rely at all on our knowledge as a linguist or even on our knowledge of the greek
+language. As a matter of fact we could create such a baseline parser in any language just by feeding it a big
+pre-annotated corpus.</p>
+
+<p>To improve further we will have to add features that more or less depend on our knowledge of the task of recognizing
+parts of speech. For instance the knowldge that the ending of verbs is an important characteristic of the greek
+language or that if the previous word is "την" (an article) it is very unlikely that an article will follow.</p>
+
+<p>We can separate the features in two categories.</p>
+
+<ul><li>Contextual</li>
+<li>Language based</li>
+</ul><p>We will of course add features of both types in the end, but I would like to discuss the differences of those two
+categories. I believe they deserve to be in different categories because they rely on different knowledge of the
+language.</p>
+
+<p>The contextual features are features that try to exploit the fact that combinations of words have meaning
+e.g. "from the house" and "to the house" have exactly the opposite meaning. Contextual features can be generic, they
+will always carry information about the current word, regardless the language.</p>
+
+<p>Language based methods rely on our knowledge of the specific language (or family of languages) that we are targeting.
+e.g. The fact that if the suffix of the word is 'ω' the word is probably a verb.</p>
+
+<p>Contemplating on the Brill Tagger, what I have been describing above are rules that could be used in such a tagger.
+For this machine learning based tagger we will describe (in code) the way of coming up with rules and then the model,
+through the training process, will evaluate which rules are successful and should be relied upon and which are not.</p>
+
+<p>For instance we will <em>not</em> be using as a feature the following function 'ends_in_omega' but the function 'last_char'.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="co1">// not a good feature that only checks one possible</span></div></li><li class="li1"><div class="de1"><span class="co1">// suffix and relies on our expert knowledge that this</span></div></li><li class="li1"><div class="de1"><span class="co1">// suffix is important</span></div></li><li class="li1"><div class="de1"><span class="kw2">function</span> ends_in_omega<span class="br0">(</span><span class="re0">$w</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="kw1">return</span> <a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,-</span><span class="nu0">1</span><span class="sy0">,</span><span class="nu0">1</span><span class="sy0">,</span><span class="st_h">'utf-8'</span><span class="br0">)</span><span class="sy0">==</span><span class="st_h">'ω'</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1">// a good feature. It does not rely at all on our</span></div></li><li class="li1"><div class="de1"><span class="co1">// knowledge of a specific suffix. It simply asks for</span></div></li><li class="li1"><div class="de1"><span class="co1">// the model to evaluate if a suffix is important for</span></div></li><li class="li1"><div class="de1"><span class="co1">// a specific part of speech</span></div></li><li class="li1"><div class="de1"><span class="kw2">function</span> last_char<span class="br0">(</span><span class="re0">$w</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="kw1">return</span> <a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,-</span><span class="nu0">1</span><span class="sy0">,</span><span class="nu0">1</span><span class="sy0">,</span><span class="st_h">'utf-8'</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h3>Actually trying out features</h3>
+
+<h4>Data</h4>
+
+<p>I have already mentioned that having only the data as features results in
+a slightly worse result than our baseline due to model smoothing.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">function</span> <span class="br0">(</span><span class="re0">$class</span><span class="sy0">,</span> <span class="re0">$doc</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <a href="http://www.php.net/list"><span class="kw3">list</span></a><span class="br0">(</span><span class="re0">$w</span><span class="br0">)</span> <span class="sy0">=</span> <span class="re0">$doc</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="kw1">return</span> <a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span><span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h4>Suffixes</h4>
+
+<p>Using the last three letters of the word should drastically improve the
+performance of our tagger because it shall now recognize the common suffixes
+produced by the greek grammatical conjugation, thus it shall improve upon the
+most important flaw of our tagger, the huge misclassification of verbs.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">function</span> <span class="br0">(</span><span class="re0">$class</span><span class="sy0">,</span> <span class="re0">$doc</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <a href="http://www.php.net/list"><span class="kw3">list</span></a><span class="br0">(</span><span class="re0">$w</span><span class="br0">)</span> <span class="sy0">=</span> <span class="re0">$doc</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="kw1">if</span> <span class="br0">(</span><a href="http://www.php.net/mb_strlen"><span class="kw3">mb_strlen</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span><span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">&lt;=</span><span class="nu0">3</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">        <span class="kw1">return</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="re0">$suffixes</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="re0">$suffixes</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st_h">'substr(-1) = '</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,-</span><span class="nu0">1</span><span class="sy0">,</span> <span class="nu0">3</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="re0">$suffixes</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st_h">'substr(-2) = '</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,-</span><span class="nu0">2</span><span class="sy0">,</span> <span class="nu0">3</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="re0">$suffixes</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st_h">'substr(-3) = '</span><span class="sy0">.</span><a href="http://www.php.net/mb_strtolower"><span class="kw3">mb_strtolower</span></a><span class="br0">(</span><a href="http://www.php.net/mb_substr"><span class="kw3">mb_substr</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,-</span><span class="nu0">3</span><span class="sy0">,</span> <span class="nu0">3</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">,</span> <span class="st0">"utf-8"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="kw1">return</span> <span class="re0">$suffixes</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>Indeed those features improve the accuracy from the baseline (Data only) 80.6% to
+87% and most importantly they improve verb's recall from 49.47% to 95.59% .</p>
+
+<h4>Context</h4>
+
+<p>Using the context of the two surrounding words we expect a general improvement
+on the quality of the tagging not specific to any part of speech.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">function</span> <span class="br0">(</span><span class="re0">$class</span><span class="sy0">,</span> <span class="re0">$doc</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">    <a href="http://www.php.net/list"><span class="kw3">list</span></a><span class="br0">(</span><span class="re0">$w</span><span class="sy0">,</span><span class="re0">$prev</span><span class="sy0">,</span><span class="re0">$next</span><span class="br0">)</span> <span class="sy0">=</span> <span class="re0">$doc</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="re0">$f</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="kw1">for</span> <span class="br0">(</span><span class="re0">$i</span><span class="sy0">=</span><span class="nu0">0</span><span class="sy0">;</span><span class="re0">$i</span><span class="sy0">&lt;</span><a href="http://www.php.net/count"><span class="kw3">count</span></a><span class="br0">(</span><span class="re0">$prev</span><span class="br0">)</span><span class="sy0">;</span><span class="re0">$i</span><span class="sy0">++</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">        <span class="re0">$f</span><span class="br0">[</span><span class="br0">]</span><span class="sy0">=</span> <span class="st0">"prev(<span class="es4">$i</span>) = {<span class="es4">$prev</span>[<span class="es4">$i</span>]}"</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="br0">}</span></div></li><li class="li1"><div class="de1">    <span class="kw1">for</span> <span class="br0">(</span><span class="re0">$i</span><span class="sy0">=</span><span class="nu0">0</span><span class="sy0">;</span><span class="re0">$i</span><span class="sy0">&lt;</span><a href="http://www.php.net/count"><span class="kw3">count</span></a><span class="br0">(</span><span class="re0">$next</span><span class="br0">)</span><span class="sy0">;</span><span class="re0">$i</span><span class="sy0">++</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">        <span class="re0">$f</span><span class="br0">[</span><span class="br0">]</span> <span class="sy0">=</span> <span class="st0">"next(<span class="es4">$i</span>) = {<span class="es4">$next</span>[<span class="es4">$i</span>]}"</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">    <span class="kw1">return</span> <span class="re0">$f</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>What we are actually getting though is more complex than that. If applying this
+feature on the baseline we will see a decrease in accuracy from 80.6% to 78.7%.
+Yet, with a second look we can see that the quality of the tagging has increased.
+The mistakes are spread out more (instead of being clustered on the nouns (not
+necessarily a good thing)) and we can now identify approximately 80% of the verbs
+instead of 50%.</p>
+
+<p>In addition, if combined with the suffixes feature the overall accuracy increases
+to 88.3% from 87%.</p>
+
+<h3>In the next post</h3>
+
+<p>In the next and last post of this series I will present all the feature functions,
+package the tagger code in a github repository and package the trained model for
+ease of use (maybe even a cli application).</p>					<b class="clear"></b>
+				</div>
+								<div style="text-align: center;">
+											<a href="../index.html">&laquo; Previous</a>
+																/
+																<a href="3.html">Next &raquo;</a>
+									</div>
+			</div>
+
+		</div>
+		
+		<div class="container" style="text-align: right;" id="footer">
+	<p class="x-small">
+		This website is powered by <a href="http://www.imdb.com/title/tt0198781/" title="I was thinking of putting 'cries of children' but it seemed too evil">the laughter of children</a>
+	</p>
+</div>
+<div style="display: none;" id="geo-disclaimer">
+	Αφού είσαι από <strong>Ελλάδα</strong> και σε ενδιαφέρει η επεξεργασία φυσικής γλώσσας, <a href="../../../../greek-nlp.html">συνέχισε εδώ →</a>
+</div>
+<script>
+	(function () {
+		var co=document.cookie.split(';');
+		for (var i=0;i<co.length;i++)
+		{
+			if (co[i].substr(0,6)!='theme=')
+				continue;
+			
+			var newtheme = co[i].substr(6),
+				theme_select = document.getElementById('theme-select'),
+				opts = theme_select.options;
+				
+			themeroller.changeHighlight(newtheme);
+			for (var j=0; j<opts.length; j++)
+			{
+				if (opts[j].value==newtheme)
+				{
+					theme_select.selectedIndex = j;
+					break;
+				}
+			}
+			break;
+		}
+	})();
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-9373187-5']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+	// geoip
+	(function () {
+		var geo = document.createElement("script");
+		geo.type = "text/javascript";
+		geo.async = true;
+		geo.src = "http://php-nlp-tools.com:8081/js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(geo, s)
+		geo.onload = function () {
+			if (COUNTRY == "GR") {
+				document.getElementById("footer").style.marginBottom = "60px";
+				document.getElementById("geo-disclaimer").style.display = "block";
+			}
+		};
+	})();
+</script>
+		
+	</body>
+</html>

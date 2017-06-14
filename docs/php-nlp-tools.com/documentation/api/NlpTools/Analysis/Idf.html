@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow, all" />
+        <title>NlpTools\Analysis\Idf | NlpTools API</title>
+                    <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+                            </head>
+        <body id="class">
+            <div class="header">
+        <ul>
+            <li><a href="../../classes.html">Classes</a></li>
+                            <li><a href="../../namespaces.html">Namespaces</a></li>
+                        <li><a href="../../interfaces.html">Interfaces</a></li>
+            <li><a href="../../doc-index.html">Index</a></li>
+            
+        </ul>
+
+        <div id="title">NlpTools API</div>
+
+            <div class="type">Class</div>
+    <h1><a href="../Analysis.html">NlpTools\Analysis</a>\Idf</h1>
+    </div>
+        <div class="content">
+                <p>class    <strong>Idf</strong>        implements
+        <a href="http://php.net/ArrayAccess"><abbr title="ArrayAccess">ArrayAccess</abbr></a></p>
+
+            <div class="description">
+            <p>Idf implements the inverse document frequency measure.</p>
+            <p>Idf is a measure of whether a term T is common or rare accross<br />
+ a set of documents.<br />
+<br />
+ Idf implements the ArrayAccess interface so it should be used<br />
+ as a read only array that contains tokens as keys and idf values<br />
+ as values.</p>
+        </div>
+    
+    
+    
+            <h2>Methods</h2>
+
+            <table>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="Idf.html#method___construct">__construct</a>(<a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a> $tset, <a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a> $ff = null)
+                    <p></p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    <abbr title="NlpTools\Analysis\float">float</abbr>
+                </td>
+                <td class="last">
+                    <a href="Idf.html#method_offsetGet">offsetGet</a>(string $token)
+                    <p>Implements the array access interface.</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    bool
+                </td>
+                <td class="last">
+                    <a href="Idf.html#method_offsetExists">offsetExists</a>(string $token)
+                    <p>Implements the array access interface.</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="Idf.html#method_offsetSet">offsetSet</a>($token, $value)
+                    <p>Will not be implemented.</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="Idf.html#method_offsetUnset">offsetUnset</a>($token)
+                    <p>Will not be implemented.</p>
+                </td>
+                <td></td>
+            </tr>
+            </table>
+
+
+        <h2>Details</h2>
+
+                        <h3 id="method___construct">
+        <div class="location">at line 27</div>
+        <code>            public            
+    <strong>__construct</strong>(<a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a> $tset, <a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a> $ff = null)</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td><a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a></td>
+                <td>$tset</td>
+                <td>The set of documents for which we will compute the idf</td>
+            </tr>
+                    <tr>
+                <td><a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a></td>
+                <td>$ff</td>
+                <td>A feature factory to translate the document data to single tokens</td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_offsetGet">
+        <div class="location">at line 61</div>
+        <code>            public            <abbr title="NlpTools\Analysis\float">float</abbr>
+    <strong>offsetGet</strong>(string $token)</code>
+    </h3>
+    <div class="details">
+        <p>Implements the array access interface.</p>
+        <p>Return the computed idf or<br />
+ the logarithm of the count of the documents for a token we have not<br />
+ seen before.</p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>string</td>
+                <td>$token</td>
+                <td>The token to return the idf for</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td><abbr title="NlpTools\Analysis\float">float</abbr></td>
+            <td>The idf</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_offsetExists">
+        <div class="location">at line 77</div>
+        <code>            public            bool
+    <strong>offsetExists</strong>(string $token)</code>
+    </h3>
+    <div class="details">
+        <p>Implements the array access interface.</p>
+        <p>Return true if the token exists<br />
+ in the corpus.</p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>string</td>
+                <td>$token</td>
+                <td>The token to check if it exists in the corpus</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>bool</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_offsetSet">
+        <div class="location">at line 86</div>
+        <code>            public            
+    <strong>offsetSet</strong>($token, $value)</code>
+    </h3>
+    <div class="details">
+        <p>Will not be implemented.</p>
+        <p>Throws \BadMethodCallException because<br />
+ one should not be able to alter the idf values directly.</p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td></td>
+                <td>$token</td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td></td>
+                <td>$value</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_offsetUnset">
+        <div class="location">at line 95</div>
+        <code>            public            
+    <strong>offsetUnset</strong>($token)</code>
+    </h3>
+    <div class="details">
+        <p>Will not be implemented.</p>
+        <p>Throws \BadMethodCallException because<br />
+ one should not be able to alter the idf values directly.</p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td></td>
+                <td>$token</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+    
+            </div>
+            <div id="footer">
+        Generated by <a href="http://sami.sensiolabs.org/" target="_top">Sami, the API Documentation Generator</a>.
+    </div>
+    </body>
+</html>

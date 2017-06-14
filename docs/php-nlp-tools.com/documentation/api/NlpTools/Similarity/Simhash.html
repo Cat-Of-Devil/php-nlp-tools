@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow, all" />
+        <title>NlpTools\Similarity\Simhash | NlpTools API</title>
+                    <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+                            </head>
+        <body id="class">
+            <div class="header">
+        <ul>
+            <li><a href="../../classes.html">Classes</a></li>
+                            <li><a href="../../namespaces.html">Namespaces</a></li>
+                        <li><a href="../../interfaces.html">Interfaces</a></li>
+            <li><a href="../../doc-index.html">Index</a></li>
+            
+        </ul>
+
+        <div id="title">NlpTools API</div>
+
+            <div class="type">Class</div>
+    <h1><a href="../Similarity.html">NlpTools\Similarity</a>\Simhash</h1>
+    </div>
+        <div class="content">
+                <p>class    <strong>Simhash</strong>        implements
+        <a href="SimilarityInterface.html"><abbr title="NlpTools\Similarity\SimilarityInterface">SimilarityInterface</abbr></a>, <a href="DistanceInterface.html"><abbr title="NlpTools\Similarity\DistanceInterface">DistanceInterface</abbr></a></p>
+
+            <div class="description">
+            <p>Simhash is an implementation of the locality sensitive hash function families proposed by Moses Charikar using the Earth Mover&#039;s Distance http://www.cs.princeton.edu/courses/archive/spring04/cos598B/bib/CharikarEstim.pdf</p>
+            <p>A better description of the implementation can be found at<br />
+ http://infolab.stanford.edu/~manku/papers/07www-duplicates.pdf<br />
+<br />
+ The current implementation uses md5 by default to hash the documents<br />
+ features. Weighted features are not supported (unless duplicating a<br />
+ feature is considered adding weight to it).</p>
+        </div>
+    
+    
+    
+            <h2>Methods</h2>
+
+            <table>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="Simhash.html#method___construct">__construct</a>(integer $len, <abbr title="NlpTools\Similarity\callable">callable</abbr> $hash = &#039;self::md5&#039;)
+                    <p></p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    string
+                </td>
+                <td class="last">
+                    <a href="Simhash.html#method_simhash">simhash</a>(array $set)
+                    <p>Compute the locality sensitive hash for this set.</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    int
+                </td>
+                <td class="last">
+                    <a href="Simhash.html#method_dist">dist</a>(array $A, array $B)
+                    <p></p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    <abbr title="NlpTools\Similarity\float">float</abbr>
+                </td>
+                <td class="last">
+                    <a href="Simhash.html#method_similarity">similarity</a>(array $A, array $B)
+                    <p></p>
+                </td>
+                <td></td>
+            </tr>
+            </table>
+
+
+        <h2>Details</h2>
+
+                        <h3 id="method___construct">
+        <div class="location">at line 39</div>
+        <code>            public            
+    <strong>__construct</strong>(integer $len, <abbr title="NlpTools\Similarity\callable">callable</abbr> $hash = &#039;self::md5&#039;)</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>integer</td>
+                <td>$len</td>
+                <td>The length of the simhash in bits</td>
+            </tr>
+                    <tr>
+                <td><abbr title="NlpTools\Similarity\callable">callable</abbr></td>
+                <td>$hash</td>
+                <td>The hash function to compute the hashes of the features</td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_simhash">
+        <div class="location">at line 62</div>
+        <code>            public            string
+    <strong>simhash</strong>(array $set)</code>
+    </h3>
+    <div class="details">
+        <p>Compute the locality sensitive hash for this set.</p>
+        <p>Maintain a vector ($boxes) of length $this-&gt;length initialized to<br />
+ 0. Each member of the set is hashed to a {$this-&gt;length} bit vector.<br />
+ For each of these bits we either increment or decrement the<br />
+ corresponding $boxes dimension depending on the bit being either<br />
+ 1 or 0. Finally the signs of each dimension of the boxes vector<br />
+ is the locality sensitive hash.<br />
+<br />
+ We have departed from the original implementation at the<br />
+ following points:<br />
+  1. Each feature has a weight of 1, but feature duplication is<br />
+     allowed.</p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>array</td>
+                <td>$set</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>string</td>
+            <td>The bits of the hash as a string</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_dist">
+        <div class="location">at line 93</div>
+        <code>            public            int
+    <strong>dist</strong>(array $A, array $B)</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>array</td>
+                <td>$A</td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td>array</td>
+                <td>$B</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>int</td>
+            <td>[0,$this-&gt;length]</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_similarity">
+        <div class="location">at line 114</div>
+        <code>            public            <abbr title="NlpTools\Similarity\float">float</abbr>
+    <strong>similarity</strong>(array $A, array $B)</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>array</td>
+                <td>$A</td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td>array</td>
+                <td>$B</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td><abbr title="NlpTools\Similarity\float">float</abbr></td>
+            <td>[0,1]</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+    
+            </div>
+            <div id="footer">
+        Generated by <a href="http://sami.sensiolabs.org/" target="_top">Sami, the API Documentation Generator</a>.
+    </div>
+    </body>
+</html>

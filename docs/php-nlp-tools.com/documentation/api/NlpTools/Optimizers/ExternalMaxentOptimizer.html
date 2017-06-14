@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow, all" />
+        <title>NlpTools\Optimizers\ExternalMaxentOptimizer | NlpTools API</title>
+                    <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+                            </head>
+        <body id="class">
+            <div class="header">
+        <ul>
+            <li><a href="../../classes.html">Classes</a></li>
+                            <li><a href="../../namespaces.html">Namespaces</a></li>
+                        <li><a href="../../interfaces.html">Interfaces</a></li>
+            <li><a href="../../doc-index.html">Index</a></li>
+            
+        </ul>
+
+        <div id="title">NlpTools API</div>
+
+            <div class="type">Class</div>
+    <h1><a href="../Optimizers.html">NlpTools\Optimizers</a>\ExternalMaxentOptimizer</h1>
+    </div>
+        <div class="content">
+                <p>class    <strong>ExternalMaxentOptimizer</strong>        implements
+        <a href="MaxentOptimizerInterface.html"><abbr title="NlpTools\Optimizers\MaxentOptimizerInterface">MaxentOptimizerInterface</abbr></a></p>
+
+            <div class="description">
+            <p>This class enables the use of a program written in a different language to optimize our model and return the weights for use in php.</p>
+            <p>Mostly common use: Optimize in a fast compiled language (ex.: C) or<br />
+ a language with great libraries (ex.: Matlab)<br />
+<br />
+ Output a json array that contains all the necessary information to<br />
+ train the model and determine the weights that maximize the<br />
+ conditional log likelihood of the training data<br />
+<br />
+ The array has one element for each training document. The element is<br />
+ a map with each possible class as key and an array of features that<br />
+ fire for each class. There is a special key called &#039;__label__&#039; that<br />
+ contains a string value which is the actual class of this document<br />
+<br />
+ Ex.:<br />
+ [<br />
+   {<br />
+     &quot;class1&quot;: [&quot;feature1&quot;,&quot;feature2&quot;,&quot;feature3&quot;],<br />
+     &quot;class2&quot;: [&quot;feature1&quot;,&quot;feature4&quot;,&quot;feature5&quot;],<br />
+     &quot;__label__&quot;: &quot;class1&quot;<br />
+   },<br />
+   {<br />
+     &quot;class1&quot;: [&quot;feature2&quot;,&quot;feature3&quot;],<br />
+     &quot;class2&quot;: [&quot;feature1&quot;,&quot;feature4&quot;,&quot;feature5&quot;],<br />
+     &quot;__label__&quot;: &quot;class1&quot;<br />
+   },<br />
+   {<br />
+     &quot;class1&quot;: [&quot;feature1&quot;,&quot;feature2&quot;,&quot;feature3&quot;],<br />
+     &quot;class2&quot;: [&quot;feature1&quot;],<br />
+     &quot;__label__&quot;: &quot;class2&quot;<br />
+   }<br />
+ ]<br />
+<br />
+ Send this array to an external program that will return a map of<br />
+ floats in json that will contain the weight for each feature.</p>
+        </div>
+    
+    
+    
+            <h2>Methods</h2>
+
+            <table>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="ExternalMaxentOptimizer.html#method___construct">__construct</a>(string $optimizer)
+                    <p></p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    array
+                </td>
+                <td class="last">
+                    <a href="ExternalMaxentOptimizer.html#method_optimize">optimize</a>(array $feature_array)
+                    <p>This function receives an array that contains an array for each document which contains an array of feature identifiers for each class and at the special key &#039;__label__&#039; the actual class of the training document.</p>
+                </td>
+                <td></td>
+            </tr>
+            </table>
+
+
+        <h2>Details</h2>
+
+                        <h3 id="method___construct">
+        <div class="location">at line 51</div>
+        <code>            public            
+    <strong>__construct</strong>(string $optimizer)</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>string</td>
+                <td>$optimizer</td>
+                <td>The path for an external optimizer executable</td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_optimize">
+        <div class="location">at line 63</div>
+        <code>            public            array
+    <strong>optimize</strong>(array $feature_array)</code>
+    </h3>
+    <div class="details">
+        <p>This function receives an array that contains an array for each document which contains an array of feature identifiers for each class and at the special key &#039;__label__&#039; the actual class of the training document.</p>
+        <p>As a result it contains all the information needed to train a<br />
+ set of weights with any target. Ex.: If we were training a maxent<br />
+ model we would try to maximize the CLogLik that can be calculated<br />
+ from this array.</p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>array</td>
+                <td>$feature_array</td>
+                <td>The features that fired for any document for any class see NlpTools\Models\Maxent</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>array</td>
+            <td>The optimized weights</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+    
+            </div>
+            <div id="footer">
+        Generated by <a href="http://sami.sensiolabs.org/" target="_top">Sami, the API Documentation Generator</a>.
+    </div>
+    </body>
+</html>

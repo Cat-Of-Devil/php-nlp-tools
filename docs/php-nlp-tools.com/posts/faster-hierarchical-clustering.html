@@ -1,0 +1,237 @@
+<!Doctype html>
+<html>
+
+		<head>
+		<base href="" >
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
+		
+					<title>O(n<sup>2</sup>logn) hierarchical clustering | NlpTools PHP</title>
+				<link rel="stylesheet" href="../style.css" />
+		<script>
+			var themeroller = (function () {
+				var haveStyle = false,
+					expired = 'Thu, 2 Aug 2001 20:47:11 UTC',
+					unexpired = 'Mon, 2 Aug 2021 20:47:11 UTC',
+					from = '',
+					changeClasses = function (from,theme) {
+						var items = document.getElementsByTagName('pre');
+						for (var i=0;i<items.length;i++)
+						{
+							var cls_re = new RegExp('\\s?\\b'+from+'\\b\\s?|^\s*$');
+							items[i].className = items[i].className.replace(cls_re,' '+theme+' ').trim();
+						}
+					},
+					updateCookie = function (t) {
+						if (t=='')
+							document.cookie = 'theme=; expires='+expired+'; path=/';
+						else
+							document.cookie = 'theme='+t+'; expires='+unexpired+'; path=/';
+						from = t;
+					};
+					
+				return {
+					onSelectChange: function () {
+						var theme = this.options[this.selectedIndex].value;
+						themeroller.changeHighlight(theme);
+					},
+					changeHighlight: function (theme) {
+						
+						if (haveStyle)
+						{
+							changeClasses(from,theme);
+						}
+						else
+						{
+							var l = document.createElement('link');
+							l.rel = 'stylesheet';
+							l.href = 'codecolorer.css';
+							document.head.appendChild(l);
+							haveStyle = true;
+							changeClasses(from,theme);
+						}
+						updateCookie(theme);
+					}
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="container">
+				<h1 class="title"><a href="../index.html">NlpTools</a></h1>
+				<h2 class="subtitle">Natural language processing in php</h2>
+				<b class="clear"></b>
+			</div>
+		</div>
+
+		<div class="container">
+
+			<div class="sidebar">
+	
+		<div class="sidebar-container">
+		<h3>Navigation</h3>
+					<a href="../index.html">Home</a><br/>
+					<a href="../documentation/index.html">Documentation</a><br/>
+					<a href="../blog/index.html">Blog</a><br/>
+					<a href="https://github.com/angeloskath/php-nlp-tools/">Github</a><br/>
+					<a href="mailto:info@php-nlp-tools.com">Contact</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Mini nlp projects</h3>
+					<a href="../blog/category/spam-detection-service/index.html">Spam detection service</a><br/>
+					<a href="../blog/category/sentiment-detection.1.html">Sentiment detection</a><br/>
+					<a href="../blog/category/greek-pos-tagger.1.html">Greek POS Tagger</a><br/>
+					<a href="../blog/category/programming-language-detection/index.html">Programming language detection</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Syntax highlighting</h3>
+		<select id="theme-select" onchange="themeroller.onSelectChange.call(this)">
+			<option value="">Vibrant Ink</option>
+			<option value="twitlight">Twitlight</option>
+			<option value="solarized-dark">Solarized Dark</option>
+			<option value="dawn">Dawn</option>
+			<option value="blackboard">Blackboard</option>
+			<option value="mac-classic">Mac Classic</option>
+			<option value="railscasts">Railscasts</option>
+		</select>
+		<p class="x-small">
+			Style sheet provided by
+			<a href="https://github.com/kpumuk/codecolorer">Codecolorer</a>
+			and tokenizing by <a href="http://qbnz.com/highlighter/geshi-doc.html">GeSHi</a>
+		</p>
+	</div>
+</div>
+			
+			<div class="content">
+				<div class="post">
+					<h2>
+						O(n<sup>2</sup>logn) hierarchical clustering													<span class="date">Jun 7th, 2013</span>
+											</h2>
+										<p><a href="http://en.wikipedia.org/wiki/Hierarchical_clustering">Hierarchical clustering</a> is the process in which given a dissimilarity matrix
+between documents one has to join those that are most similar and update the
+matrix given an update strategy (<a href="http://en.wikipedia.org/wiki/Single-linkage_clustering">single</a>/<a href="http://en.wikipedia.org/wiki/Complete_linkage_clustering">complete link</a>,
+<a href="http://en.wikipedia.org/wiki/Complete_linkage_clustering">group average</a>, etc)</p>
+
+<h3>Naive case</h3>
+
+<p>The above process, in the general case, is of complexity O(n<sup>3</sup>) since we have
+to traverse n<sup>2</sup> elements (in the matrix) and find their minimum and we have to do
+this n times. If one does code it this way, especially in PHP that is a relatively
+slow language, the maximum number of documents that can be clustered in a reasonable
+time (less than a day) is about 1000 (depending heavily on the computer).</p>
+
+<h3>Improving the general case</h3>
+
+<p>One could improve the general case of O(n<sup>3</sup>) simply by noticing that most of
+the time is spent looking for a minimum. If we use a <a href="http://en.wikipedia.org/wiki/Heap_(data_structure)">heap</a> instead of
+a matrix, then finding the minimum is an O(1) operation. Yet inserting and removing from
+the heap (as we updated the matrix previously) is an O(logn) operation and we have to do it
+n times for each merge. Thus the new complexity of the algorithm is now O(n<sup>2</sup>logn)
+which improves substantially the usefulness of the algorithm in php. (<em>for instance if n=1000
+we improve the running time approximately by 100</em>).</p>
+
+<h3>As fast as possible</h3>
+
+<p>More than 40 years ago Mr. Sibson developed the <a href="http://www.cs.gsu.edu/~wkim/index_files/papers/sibson.pdf">SLINK</a> algorithm for single link
+hierarchical clustering, based on a new mathematical representation of a <a href="https://en.wikipedia.org/wiki/Dendrogram">dendrogram</a>
+he devised an algorithm with time complexity O(n<sup>2</sup>). It is easily provable that no
+algorithm can be asymptotically faster than that. The SLINK algorithm, although easy to write
+in code, it deviates quite a lot from intuition in the sense that the algorithm does not
+merge two clusters n times untill all clusters are merged into one but instead it recursively updates
+the dendrogram from having i points to having i+1 points (thus the new dendrogram representation).</p>
+
+<h3>What is NlpTools using</h3>
+
+<p>PHP is a relatively slow language (captain obvious). The fastest algorithm possible should be used
+in order to achieve usable (or good) performance. That being said, NlpTools except for a toolkit
+and library for NLP, it also aims to be a good resource for introduction to machine
+learning and NLP algorithms. Thus, sometimes a simpler solution is chosen than the faster one.</p>
+
+<p>The first implementation of hierarchical clustering in NlpTools will be using a <a href="https://github.com/angeloskath/php-associative-heap">custom made
+heap</a> that makes it easy to understand what is going on in the <em>Hierarchical</em>
+class that implements the <a href="../documentation/api/index.html#NlpTools/Clustering/Clusterer">Clusterer interface</a> and yet provides much better
+performance than the naive implementation.</p>
+
+<h3>What about SLINK and CLINK</h3>
+
+<p>Those algorithms will probably be added in the clustering namespace as two completely new classes
+that provide the same results as using <em>Hierarchical</em> with SingleLink and CompleteLink strategies
+accordingly. Top priority though is to implement yet more merge strategies like Ward and Centroid.</p>
+
+<h3>And a beautiful looking dendrogram?</h3>
+
+<p><img src="../files/clustering/dendrogram_1.png" class="border"/></p>
+
+<p><img src="../files/clustering/hierarchical_1.png" class="border"/></p>
+
+<p>The clustering above is done using single link hierarchical clustering with euclidean distance.
+The images were created using gd in php and the code is included in NlpTools as tests for the
+clustering namespace.</p>					<b class="clear"></b>
+				</div>
+			</div>
+
+		</div>
+		
+		<div class="container" style="text-align: right;" id="footer">
+	<p class="x-small">
+		This website is powered by <a href="http://www.imdb.com/title/tt0198781/" title="I was thinking of putting 'cries of children' but it seemed too evil">the laughter of children</a>
+	</p>
+</div>
+<div style="display: none;" id="geo-disclaimer">
+	Αφού είσαι από <strong>Ελλάδα</strong> και σε ενδιαφέρει η επεξεργασία φυσικής γλώσσας, <a href="../greek-nlp.html">συνέχισε εδώ →</a>
+</div>
+<script>
+	(function () {
+		var co=document.cookie.split(';');
+		for (var i=0;i<co.length;i++)
+		{
+			if (co[i].substr(0,6)!='theme=')
+				continue;
+			
+			var newtheme = co[i].substr(6),
+				theme_select = document.getElementById('theme-select'),
+				opts = theme_select.options;
+				
+			themeroller.changeHighlight(newtheme);
+			for (var j=0; j<opts.length; j++)
+			{
+				if (opts[j].value==newtheme)
+				{
+					theme_select.selectedIndex = j;
+					break;
+				}
+			}
+			break;
+		}
+	})();
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-9373187-5']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+	// geoip
+	(function () {
+		var geo = document.createElement("script");
+		geo.type = "text/javascript";
+		geo.async = true;
+		geo.src = "http://php-nlp-tools.com:8081/js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(geo, s)
+		geo.onload = function () {
+			if (COUNTRY == "GR") {
+				document.getElementById("footer").style.marginBottom = "60px";
+				document.getElementById("geo-disclaimer").style.display = "block";
+			}
+		};
+	})();
+</script>
+		
+	</body>
+</html>

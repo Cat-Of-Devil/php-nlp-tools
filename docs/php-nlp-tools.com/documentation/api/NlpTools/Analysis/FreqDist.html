@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow, all" />
+        <title>NlpTools\Analysis\FreqDist | NlpTools API</title>
+                    <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+                            </head>
+        <body id="class">
+            <div class="header">
+        <ul>
+            <li><a href="../../classes.html">Classes</a></li>
+                            <li><a href="../../namespaces.html">Namespaces</a></li>
+                        <li><a href="../../interfaces.html">Interfaces</a></li>
+            <li><a href="../../doc-index.html">Index</a></li>
+            
+        </ul>
+
+        <div id="title">NlpTools API</div>
+
+            <div class="type">Class</div>
+    <h1><a href="../Analysis.html">NlpTools\Analysis</a>\FreqDist</h1>
+    </div>
+        <div class="content">
+                <p>class    <strong>FreqDist</strong></p>
+
+            <div class="description">
+            <p>Extract the Frequency distribution of keywords</p>
+            <p></p>
+        </div>
+    
+    
+    
+            <h2>Methods</h2>
+
+            <table>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="FreqDist.html#method___construct">__construct</a>(array $tokens)
+                    <p>This sorts the token meta data collection right away so use frequency distribution data can be extracted.</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    int
+                </td>
+                <td class="last">
+                    <a href="FreqDist.html#method_getTotalTokens">getTotalTokens</a>()
+                    <p>Get the total number of tokens in this tokensDocument</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    <abbr title="NlpTools\Analysis\float">float</abbr>
+                </td>
+                <td class="last">
+                    <a href="FreqDist.html#method_getWeightPerToken">getWeightPerToken</a>()
+                    <p>Return the weight of a single token</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    int
+                </td>
+                <td class="last">
+                    <a href="FreqDist.html#method_getTotalUniqueTokens">getTotalUniqueTokens</a>()
+                    <p>Return get the total number of unique tokens</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    array
+                </td>
+                <td class="last">
+                    <a href="FreqDist.html#method_getKeys">getKeys</a>()
+                    <p>Return the sorted keys by frequency desc</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    array
+                </td>
+                <td class="last">
+                    <a href="FreqDist.html#method_getValues">getValues</a>()
+                    <p>Return the sorted values by frequency desc</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    array
+                </td>
+                <td class="last">
+                    <a href="FreqDist.html#method_getKeyValues">getKeyValues</a>()
+                    <p>Return the full key value store</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    array
+                </td>
+                <td class="last">
+                    <a href="FreqDist.html#method_getHapaxes">getHapaxes</a>()
+                    <p>Returns an array of tokens that occurred once</p>
+                </td>
+                <td></td>
+            </tr>
+            </table>
+
+
+        <h2>Details</h2>
+
+                        <h3 id="method___construct">
+        <div class="location">at line 30</div>
+        <code>            public            
+    <strong>__construct</strong>(array $tokens)</code>
+    </h3>
+    <div class="details">
+        <p>This sorts the token meta data collection right away so use frequency distribution data can be extracted.</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>array</td>
+                <td>$tokens</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getTotalTokens">
+        <div class="location">at line 40</div>
+        <code>            public            int
+    <strong>getTotalTokens</strong>()</code>
+    </h3>
+    <div class="details">
+        <p>Get the total number of tokens in this tokensDocument</p>
+        <p></p>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>int</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getWeightPerToken">
+        <div class="location">at line 60</div>
+        <code>            public            <abbr title="NlpTools\Analysis\float">float</abbr>
+    <strong>getWeightPerToken</strong>()</code>
+    </h3>
+    <div class="details">
+        <p>Return the weight of a single token</p>
+        <p></p>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td><abbr title="NlpTools\Analysis\float">float</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getTotalUniqueTokens">
+        <div class="location">at line 69</div>
+        <code>            public            int
+    <strong>getTotalUniqueTokens</strong>()</code>
+    </h3>
+    <div class="details">
+        <p>Return get the total number of unique tokens</p>
+        <p></p>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>int</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getKeys">
+        <div class="location">at line 78</div>
+        <code>            public            array
+    <strong>getKeys</strong>()</code>
+    </h3>
+    <div class="details">
+        <p>Return the sorted keys by frequency desc</p>
+        <p></p>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>array</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getValues">
+        <div class="location">at line 87</div>
+        <code>            public            array
+    <strong>getValues</strong>()</code>
+    </h3>
+    <div class="details">
+        <p>Return the sorted values by frequency desc</p>
+        <p></p>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>array</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getKeyValues">
+        <div class="location">at line 96</div>
+        <code>            public            array
+    <strong>getKeyValues</strong>()</code>
+    </h3>
+    <div class="details">
+        <p>Return the full key value store</p>
+        <p></p>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>array</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getHapaxes">
+        <div class="location">at line 107</div>
+        <code>            public            array
+    <strong>getHapaxes</strong>()</code>
+    </h3>
+    <div class="details">
+        <p>Returns an array of tokens that occurred once</p>
+        <p></p>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>array</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+    
+            </div>
+            <div id="footer">
+        Generated by <a href="http://sami.sensiolabs.org/" target="_top">Sami, the API Documentation Generator</a>.
+    </div>
+    </body>
+</html>

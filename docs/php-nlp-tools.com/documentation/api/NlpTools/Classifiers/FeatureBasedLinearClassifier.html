@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow, all" />
+        <title>NlpTools\Classifiers\FeatureBasedLinearClassifier | NlpTools API</title>
+                    <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+                            </head>
+        <body id="class">
+            <div class="header">
+        <ul>
+            <li><a href="../../classes.html">Classes</a></li>
+                            <li><a href="../../namespaces.html">Namespaces</a></li>
+                        <li><a href="../../interfaces.html">Interfaces</a></li>
+            <li><a href="../../doc-index.html">Index</a></li>
+            
+        </ul>
+
+        <div id="title">NlpTools API</div>
+
+            <div class="type">Class</div>
+    <h1><a href="../Classifiers.html">NlpTools\Classifiers</a>\FeatureBasedLinearClassifier</h1>
+    </div>
+        <div class="content">
+                <p>class    <strong>FeatureBasedLinearClassifier</strong>        implements
+        <a href="ClassifierInterface.html"><abbr title="NlpTools\Classifiers\ClassifierInterface">ClassifierInterface</abbr></a></p>
+
+            <div class="description">
+            <p>Classify using a linear model.</p>
+            <p>A model that assigns a weight l for<br />
+ each feature f.</p>
+        </div>
+    
+    
+    
+            <h2>Methods</h2>
+
+            <table>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="FeatureBasedLinearClassifier.html#method___construct">__construct</a>(<a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a> $ff, <a href="../Models/LinearModel.html"><abbr title="NlpTools\Models\LinearModel">LinearModel</abbr></a> $m)
+                    <p></p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    string
+                </td>
+                <td class="last">
+                    <a href="FeatureBasedLinearClassifier.html#method_classify">classify</a>(array $classes, <a href="../Documents/DocumentInterface.html"><abbr title="NlpTools\Documents\DocumentInterface">DocumentInterface</abbr></a> $d)
+                    <p>Compute the vote for every class.</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    <abbr title="NlpTools\Classifiers\float">float</abbr>
+                </td>
+                <td class="last">
+                    <a href="FeatureBasedLinearClassifier.html#method_getVote">getVote</a>(string $class, <a href="../Documents/DocumentInterface.html"><abbr title="NlpTools\Documents\DocumentInterface">DocumentInterface</abbr></a> $d)
+                    <p>Compute the features that fire for the Document $d.</p>
+                </td>
+                <td></td>
+            </tr>
+            </table>
+
+
+        <h2>Details</h2>
+
+                        <h3 id="method___construct">
+        <div class="location">at line 20</div>
+        <code>            public            
+    <strong>__construct</strong>(<a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a> $ff, <a href="../Models/LinearModel.html"><abbr title="NlpTools\Models\LinearModel">LinearModel</abbr></a> $m)</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td><a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a></td>
+                <td>$ff</td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td><a href="../Models/LinearModel.html"><abbr title="NlpTools\Models\LinearModel">LinearModel</abbr></a></td>
+                <td>$m</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_classify">
+        <div class="location">at line 34</div>
+        <code>            public            string
+    <strong>classify</strong>(array $classes, <a href="../Documents/DocumentInterface.html"><abbr title="NlpTools\Documents\DocumentInterface">DocumentInterface</abbr></a> $d)</code>
+    </h3>
+    <div class="details">
+        <p>Compute the vote for every class.</p>
+        <p>Return the class that<br />
+ receive the maximum vote.</p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>array</td>
+                <td>$classes</td>
+                <td>A set of classes</td>
+            </tr>
+                    <tr>
+                <td><a href="../Documents/DocumentInterface.html"><abbr title="NlpTools\Documents\DocumentInterface">DocumentInterface</abbr></a></td>
+                <td>$d</td>
+                <td>A Document</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>string</td>
+            <td>A class</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getVote">
+        <div class="location">at line 57</div>
+        <code>            public            <abbr title="NlpTools\Classifiers\float">float</abbr>
+    <strong>getVote</strong>(string $class, <a href="../Documents/DocumentInterface.html"><abbr title="NlpTools\Documents\DocumentInterface">DocumentInterface</abbr></a> $d)</code>
+    </h3>
+    <div class="details">
+        <p>Compute the features that fire for the Document $d.</p>
+        <p>The sum of<br />
+ the weights of the features is the vote.</p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>string</td>
+                <td>$class</td>
+                <td>The vote for class $class</td>
+            </tr>
+                    <tr>
+                <td><a href="../Documents/DocumentInterface.html"><abbr title="NlpTools\Documents\DocumentInterface">DocumentInterface</abbr></a></td>
+                <td>$d</td>
+                <td>The vote for Document $d</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td><abbr title="NlpTools\Classifiers\float">float</abbr></td>
+            <td>The vote of the model for class $class and Document $d</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+    
+            </div>
+            <div id="footer">
+        Generated by <a href="http://sami.sensiolabs.org/" target="_top">Sami, the API Documentation Generator</a>.
+    </div>
+    </body>
+</html>

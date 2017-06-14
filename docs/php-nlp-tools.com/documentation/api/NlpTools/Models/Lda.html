@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow, all" />
+        <title>NlpTools\Models\Lda | NlpTools API</title>
+                    <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+                            </head>
+        <body id="class">
+            <div class="header">
+        <ul>
+            <li><a href="../../classes.html">Classes</a></li>
+                            <li><a href="../../namespaces.html">Namespaces</a></li>
+                        <li><a href="../../interfaces.html">Interfaces</a></li>
+            <li><a href="../../doc-index.html">Index</a></li>
+            
+        </ul>
+
+        <div id="title">NlpTools API</div>
+
+            <div class="type">Class</div>
+    <h1><a href="../Models.html">NlpTools\Models</a>\Lda</h1>
+    </div>
+        <div class="content">
+                <p>class    <strong>Lda</strong></p>
+
+            <div class="description">
+            <p>Topic discovery with latent dirchlet allocation using gibbs sampling.</p>
+            <p>The implementation is based on the paper by Griffiths and Steyvers<br />
+ that can be found http://www.ncbi.nlm.nih.gov/pmc/articles/PMC387300/.<br />
+<br />
+ It is also heavily influenced (especially on the implementation and<br />
+ debugging of the online gibbs sampler) by the python implementation<br />
+ by Mathieu Blondel at https://gist.github.com/mblondel/542786</p>
+        </div>
+    
+    
+    
+            <h2>Methods</h2>
+
+            <table>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="Lda.html#method___construct">__construct</a>(<a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a> $ff, integer $ntopics, <abbr title="NlpTools\Models\float">float</abbr> $a = 1, <abbr title="NlpTools\Models\float">float</abbr> $b = 1)
+                    <p></p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="Lda.html#method_generateDocs">generateDocs</a>(<a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a> $tset)
+                    <p>Generate an array suitable for use with Lda::initialize and Lda::gibbsSample from a training set.</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="Lda.html#method_initialize">initialize</a>(array $docs)
+                    <p>Count initially the co-occurences of documents,topics and topics,words and cache them to run Gibbs sampling faster</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="Lda.html#method_train">train</a>(<a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a> $tset, <abbr title="NlpTools\Models\$it">$it</abbr> $it)
+                    <p>Run the gibbs sampler $it times.</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="Lda.html#method_gibbsSample">gibbsSample</a>(array $docs)
+                    <p>Generate one gibbs sample.</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    array
+                </td>
+                <td class="last">
+                    <a href="Lda.html#method_getWordsPerTopicsProbabilities">getWordsPerTopicsProbabilities</a>(<abbr title="NlpTools\Models\$limit_words">$limit_words</abbr> $limit_words = -1)
+                    <p>Get the probability of a word given a topic (phi according to Griffiths and Steyvers)</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="Lda.html#method_getPhi">getPhi</a>($limit_words = -1)
+                    <p>Shortcut to getWordsPerTopicsProbabilities</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    array
+                </td>
+                <td class="last">
+                    <a href="Lda.html#method_getDocumentsPerTopicsProbabilities">getDocumentsPerTopicsProbabilities</a>(<abbr title="NlpTools\Models\$limit_docs">$limit_docs</abbr> $limit_docs = -1)
+                    <p>Get the probability of a document given a topic (theta according to Griffiths and Steyvers)</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="Lda.html#method_getTheta">getTheta</a>($limit_docs = -1)
+                    <p>Shortcut to getDocumentsPerTopicsProbabilities</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="Lda.html#method_getLogLikelihood">getLogLikelihood</a>()
+                    <p>Log likelihood of the model having generated the data as implemented by M.</p>
+                </td>
+                <td></td>
+            </tr>
+            </table>
+
+
+        <h2>Details</h2>
+
+                        <h3 id="method___construct">
+        <div class="location">at line 45</div>
+        <code>            public            
+    <strong>__construct</strong>(<a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a> $ff, integer $ntopics, <abbr title="NlpTools\Models\float">float</abbr> $a = 1, <abbr title="NlpTools\Models\float">float</abbr> $b = 1)</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td><a href="../FeatureFactories/FeatureFactoryInterface.html"><abbr title="NlpTools\FeatureFactories\FeatureFactoryInterface">FeatureFactoryInterface</abbr></a></td>
+                <td>$ff</td>
+                <td>The feature factory will be applied to each document and the resulting feature array will be considered as a document for LDA</td>
+            </tr>
+                    <tr>
+                <td>integer</td>
+                <td>$ntopics</td>
+                <td>The number of topics assumed by the model</td>
+            </tr>
+                    <tr>
+                <td><abbr title="NlpTools\Models\float">float</abbr></td>
+                <td>$a</td>
+                <td>The dirichlet prior assumed for the per document topic distribution</td>
+            </tr>
+                    <tr>
+                <td><abbr title="NlpTools\Models\float">float</abbr></td>
+                <td>$b</td>
+                <td>The dirichlet prior assumed for the per word topic distribution</td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_generateDocs">
+        <div class="location">at line 60</div>
+        <code>            public            
+    <strong>generateDocs</strong>(<a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a> $tset)</code>
+    </h3>
+    <div class="details">
+        <p>Generate an array suitable for use with Lda::initialize and Lda::gibbsSample from a training set.</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td><a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a></td>
+                <td>$tset</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_initialize">
+        <div class="location">at line 75</div>
+        <code>            public            
+    <strong>initialize</strong>(array $docs)</code>
+    </h3>
+    <div class="details">
+        <p>Count initially the co-occurences of documents,topics and topics,words and cache them to run Gibbs sampling faster</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>array</td>
+                <td>$docs</td>
+                <td>The docs that we will use to generate the sample</td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_train">
+        <div class="location">at line 135</div>
+        <code>            public            
+    <strong>train</strong>(<a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a> $tset, <abbr title="NlpTools\Models\$it">$it</abbr> $it)</code>
+    </h3>
+    <div class="details">
+        <p>Run the gibbs sampler $it times.</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td><a href="../Documents/TrainingSet.html"><abbr title="NlpTools\Documents\TrainingSet">TrainingSet</abbr></a></td>
+                <td>$tset</td>
+                <td>The docs to run lda on</td>
+            </tr>
+                    <tr>
+                <td><abbr title="NlpTools\Models\$it">$it</abbr></td>
+                <td>$it</td>
+                <td>The number of iterations to run</td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_gibbsSample">
+        <div class="location">at line 153</div>
+        <code>            public            
+    <strong>gibbsSample</strong>(array $docs)</code>
+    </h3>
+    <div class="details">
+        <p>Generate one gibbs sample.</p>
+        <p>The docs must have been passed to initialize previous to calling<br />
+ this function.</p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>array</td>
+                <td>$docs</td>
+                <td>The docs that we will use to generate the sample</td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getWordsPerTopicsProbabilities">
+        <div class="location">at line 192</div>
+        <code>            public            array
+    <strong>getWordsPerTopicsProbabilities</strong>(<abbr title="NlpTools\Models\$limit_words">$limit_words</abbr> $limit_words = -1)</code>
+    </h3>
+    <div class="details">
+        <p>Get the probability of a word given a topic (phi according to Griffiths and Steyvers)</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td><abbr title="NlpTools\Models\$limit_words">$limit_words</abbr></td>
+                <td>$limit_words</td>
+                <td>Limit the results to the top n words</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>array</td>
+            <td>A two dimensional array that contains the probabilities for each topic</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getPhi">
+        <div class="location">at line 219</div>
+        <code>            public            
+    <strong>getPhi</strong>($limit_words = -1)</code>
+    </h3>
+    <div class="details">
+        <p>Shortcut to getWordsPerTopicsProbabilities</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td></td>
+                <td>$limit_words</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getDocumentsPerTopicsProbabilities">
+        <div class="location">at line 231</div>
+        <code>            public            array
+    <strong>getDocumentsPerTopicsProbabilities</strong>(<abbr title="NlpTools\Models\$limit_docs">$limit_docs</abbr> $limit_docs = -1)</code>
+    </h3>
+    <div class="details">
+        <p>Get the probability of a document given a topic (theta according to Griffiths and Steyvers)</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td><abbr title="NlpTools\Models\$limit_docs">$limit_docs</abbr></td>
+                <td>$limit_docs</td>
+                <td>Limit the results to the top n docs</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>array</td>
+            <td>A two dimensional array that contains the probabilities for each document</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getTheta">
+        <div class="location">at line 262</div>
+        <code>            public            
+    <strong>getTheta</strong>($limit_docs = -1)</code>
+    </h3>
+    <div class="details">
+        <p>Shortcut to getDocumentsPerTopicsProbabilities</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td></td>
+                <td>$limit_docs</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getLogLikelihood">
+        <div class="location">at line 271</div>
+        <code>            public            
+    <strong>getLogLikelihood</strong>()</code>
+    </h3>
+    <div class="details">
+        <p>Log likelihood of the model having generated the data as implemented by M.</p>
+        <p>Blondel</p>
+        <div class="tags">
+            
+            
+            
+                    </div>
+    </div>
+
+    
+            </div>
+            <div id="footer">
+        Generated by <a href="http://sami.sensiolabs.org/" target="_top">Sami, the API Documentation Generator</a>.
+    </div>
+    </body>
+</html>

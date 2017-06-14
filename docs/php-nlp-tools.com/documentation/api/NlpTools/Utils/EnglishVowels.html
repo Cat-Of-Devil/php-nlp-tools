@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow, all" />
+        <title>NlpTools\Utils\EnglishVowels | NlpTools API</title>
+                    <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+                            </head>
+        <body id="class">
+            <div class="header">
+        <ul>
+            <li><a href="../../classes.html">Classes</a></li>
+                            <li><a href="../../namespaces.html">Namespaces</a></li>
+                        <li><a href="../../interfaces.html">Interfaces</a></li>
+            <li><a href="../../doc-index.html">Index</a></li>
+            
+        </ul>
+
+        <div id="title">NlpTools API</div>
+
+            <div class="type">Class</div>
+    <h1><a href="../Utils.html">NlpTools\Utils</a>\EnglishVowels</h1>
+    </div>
+        <div class="content">
+                <p>class    <strong>EnglishVowels</strong>        extends <a href="VowelsAbstractFactory.html"><abbr title="NlpTools\Utils\VowelsAbstractFactory">VowelsAbstractFactory</abbr></a></p>
+
+            <div class="description">
+            <p>Helper Vowel class, determines if the character at a given index is a vowel</p>
+            <p></p>
+        </div>
+    
+    
+    
+            <h2>Methods</h2>
+
+            <table>
+                    <tr>
+                <td class="type">
+                    static&nbsp;<abbr title="NlpTools\Utils\VowelAbstractFactory">VowelAbstractFactory</abbr>
+                </td>
+                <td class="last">
+                    <a href="EnglishVowels.html#method_factory">factory</a>(string $language = &#039;English&#039;)
+                    <p>Return the correct language vowel checker</p>
+                </td>
+                <td><small>from&nbsp;<a href="VowelsAbstractFactory.html#method_factory"><abbr title="NlpTools\Utils\VowelsAbstractFactory">VowelsAbstractFactory</abbr></a></small></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    boolean
+                </td>
+                <td class="last">
+                    <a href="EnglishVowels.html#method_isVowel">isVowel</a>(string $word, int $index)
+                    <p>Returns true if the letter at the given index is a vowel, works with y</p>
+                </td>
+                <td></td>
+            </tr>
+            </table>
+
+
+        <h2>Details</h2>
+
+                        <h3 id="method_factory">
+        <div class="location">in <a href="VowelsAbstractFactory.html#method_factory"><abbr title="NlpTools\Utils\VowelsAbstractFactory">VowelsAbstractFactory</abbr></a> at line 21</div>
+        <code>        static    public            <abbr title="NlpTools\Utils\VowelAbstractFactory">VowelAbstractFactory</abbr>
+    <strong>factory</strong>(string $language = &#039;English&#039;)</code>
+    </h3>
+    <div class="details">
+        <p>Return the correct language vowel checker</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>string</td>
+                <td>$language</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td><abbr title="NlpTools\Utils\VowelAbstractFactory">VowelAbstractFactory</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table>
+                    <tr>
+                <td><a href="http://php.net/Exception"><abbr title="Exception">Exception</abbr></a></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                    </div>
+    </div>
+
+                <h3 id="method_isVowel">
+        <div class="location">at line 16</div>
+        <code>            public            boolean
+    <strong>isVowel</strong>(string $word, int $index)</code>
+    </h3>
+    <div class="details">
+        <p>Returns true if the letter at the given index is a vowel, works with y</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>string</td>
+                <td>$word</td>
+                <td>the word to use</td>
+            </tr>
+                    <tr>
+                <td>int</td>
+                <td>$index</td>
+                <td>the index in the string to inspect</td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>boolean</td>
+            <td>True letter at the provided index is a vowel</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+    
+            </div>
+            <div id="footer">
+        Generated by <a href="http://sami.sensiolabs.org/" target="_top">Sami, the API Documentation Generator</a>.
+    </div>
+    </body>
+</html>

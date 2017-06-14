@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow, all" />
+        <title>NlpTools\Documents\WordDocument | NlpTools API</title>
+                    <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+                            </head>
+        <body id="class">
+            <div class="header">
+        <ul>
+            <li><a href="../../classes.html">Classes</a></li>
+                            <li><a href="../../namespaces.html">Namespaces</a></li>
+                        <li><a href="../../interfaces.html">Interfaces</a></li>
+            <li><a href="../../doc-index.html">Index</a></li>
+            
+        </ul>
+
+        <div id="title">NlpTools API</div>
+
+            <div class="type">Class</div>
+    <h1><a href="../Documents.html">NlpTools\Documents</a>\WordDocument</h1>
+    </div>
+        <div class="content">
+                <p>class    <strong>WordDocument</strong>        implements
+        <a href="DocumentInterface.html"><abbr title="NlpTools\Documents\DocumentInterface">DocumentInterface</abbr></a></p>
+
+            <div class="description">
+            <p>A Document that represents a single word but with a context of a larger document.</p>
+            <p>Useful for Named Entity Recognition</p>
+        </div>
+    
+    
+    
+            <h2>Methods</h2>
+
+            <table>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="WordDocument.html#method___construct">__construct</a>(array $tokens, $index, $context)
+                    <p></p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    array
+                </td>
+                <td class="last">
+                    <a href="WordDocument.html#method_getDocumentData">getDocumentData</a>()
+                    <p>Return the data of what is being represented.</p>
+                </td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="WordDocument.html#method_applyTransformation">applyTransformation</a>(<a href="../Utils/TransformationInterface.html"><abbr title="NlpTools\Utils\TransformationInterface">TransformationInterface</abbr></a> $transform)
+                    <p>Apply the transformation to the data of this document.</p>
+                </td>
+                <td></td>
+            </tr>
+            </table>
+
+
+        <h2>Details</h2>
+
+                        <h3 id="method___construct">
+        <div class="location">at line 16</div>
+        <code>            public            
+    <strong>__construct</strong>(array $tokens, $index, $context)</code>
+    </h3>
+    <div class="details">
+        <p></p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td>array</td>
+                <td>$tokens</td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td></td>
+                <td>$index</td>
+                <td></td>
+            </tr>
+                    <tr>
+                <td></td>
+                <td>$context</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getDocumentData">
+        <div class="location">at line 39</div>
+        <code>            public            array
+    <strong>getDocumentData</strong>()</code>
+    </h3>
+    <div class="details">
+        <p>Return the data of what is being represented.</p>
+        <p>If it were a word<br />
+ we could return a word. If it were a blog post we could return<br />
+ an array(Title,Body,array(Comments)).</p>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>array</td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_applyTransformation">
+        <div class="location">at line 51</div>
+        <code>            public            
+    <strong>applyTransformation</strong>(<a href="../Utils/TransformationInterface.html"><abbr title="NlpTools\Utils\TransformationInterface">TransformationInterface</abbr></a> $transform)</code>
+    </h3>
+    <div class="details">
+        <p>Apply the transformation to the data of this document.</p>
+        <p>How the transformation is applied (per token, per token sequence, etc)<br />
+ is decided by the implementing classes.</p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td><a href="../Utils/TransformationInterface.html"><abbr title="NlpTools\Utils\TransformationInterface">TransformationInterface</abbr></a></td>
+                <td>$transform</td>
+                <td>The transformation to be applied</td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+    
+            </div>
+            <div id="footer">
+        Generated by <a href="http://sami.sensiolabs.org/" target="_top">Sami, the API Documentation Generator</a>.
+    </div>
+    </body>
+</html>

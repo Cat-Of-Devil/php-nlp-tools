@@ -1,0 +1,267 @@
+<!Doctype html>
+<html>
+
+		<head>
+		<base href="" >
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
+		
+					<title>Transformations | NlpTools PHP</title>
+				<link rel="stylesheet" href="../style.css" />
+		<script>
+			var themeroller = (function () {
+				var haveStyle = false,
+					expired = 'Thu, 2 Aug 2001 20:47:11 UTC',
+					unexpired = 'Mon, 2 Aug 2021 20:47:11 UTC',
+					from = '',
+					changeClasses = function (from,theme) {
+						var items = document.getElementsByTagName('pre');
+						for (var i=0;i<items.length;i++)
+						{
+							var cls_re = new RegExp('\\s?\\b'+from+'\\b\\s?|^\s*$');
+							items[i].className = items[i].className.replace(cls_re,' '+theme+' ').trim();
+						}
+					},
+					updateCookie = function (t) {
+						if (t=='')
+							document.cookie = 'theme=; expires='+expired+'; path=/';
+						else
+							document.cookie = 'theme='+t+'; expires='+unexpired+'; path=/';
+						from = t;
+					};
+					
+				return {
+					onSelectChange: function () {
+						var theme = this.options[this.selectedIndex].value;
+						themeroller.changeHighlight(theme);
+					},
+					changeHighlight: function (theme) {
+						
+						if (haveStyle)
+						{
+							changeClasses(from,theme);
+						}
+						else
+						{
+							var l = document.createElement('link');
+							l.rel = 'stylesheet';
+							l.href = 'codecolorer.css';
+							document.head.appendChild(l);
+							haveStyle = true;
+							changeClasses(from,theme);
+						}
+						updateCookie(theme);
+					}
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="container">
+				<h1 class="title"><a href="../index.html">NlpTools</a></h1>
+				<h2 class="subtitle">Natural language processing in php</h2>
+				<b class="clear"></b>
+			</div>
+		</div>
+
+		<div class="container">
+
+			<div class="sidebar">
+	
+		<div class="sidebar-container">
+		<h3>Api Docs</h3>
+					<a href="api/index.html">Api Documentation</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Documentation</h3>
+					<a href="index.html">Get Started</a><br/>
+					<a href="tokenizers.html">Tokenizers</a><br/>
+					<a href="documents.html">Documents</a><br/>
+					<a href="feature-factories.html">Feature Factories</a><br/>
+					<a href="classifiers.html">Classifiers</a><br/>
+					<a href="bayesian-model.html">Bayesian Model</a><br/>
+					<a href="maximum-entropy-model.html">Maximum Entropy Model</a><br/>
+					<a href="similarity.html">Similarity</a><br/>
+					<a href="clustering.html">Clustering</a><br/>
+					<a href="transformations.html">Transformations</a><br/>
+					<a href="other.html">Other</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Navigation</h3>
+					<a href="../index.html">Home</a><br/>
+					<a href="index.html">Documentation</a><br/>
+					<a href="../blog/index.html">Blog</a><br/>
+					<a href="https://github.com/angeloskath/php-nlp-tools/">Github</a><br/>
+					<a href="mailto:info@php-nlp-tools.com">Contact</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Mini nlp projects</h3>
+					<a href="../blog/category/spam-detection-service/index.html">Spam detection service</a><br/>
+					<a href="../blog/category/sentiment-detection.1.html">Sentiment detection</a><br/>
+					<a href="../blog/category/greek-pos-tagger.1.html">Greek POS Tagger</a><br/>
+					<a href="../blog/category/programming-language-detection/index.html">Programming language detection</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Syntax highlighting</h3>
+		<select id="theme-select" onchange="themeroller.onSelectChange.call(this)">
+			<option value="">Vibrant Ink</option>
+			<option value="twitlight">Twitlight</option>
+			<option value="solarized-dark">Solarized Dark</option>
+			<option value="dawn">Dawn</option>
+			<option value="blackboard">Blackboard</option>
+			<option value="mac-classic">Mac Classic</option>
+			<option value="railscasts">Railscasts</option>
+		</select>
+		<p class="x-small">
+			Style sheet provided by
+			<a href="https://github.com/kpumuk/codecolorer">Codecolorer</a>
+			and tokenizing by <a href="http://qbnz.com/highlighter/geshi-doc.html">GeSHi</a>
+		</p>
+	</div>
+</div>
+			
+			<div class="content">
+				<div class="post">
+					<h2>
+						Transformations											</h2>
+										<p>In any machine learning task, including natural language processing, a big
+amount of preprocessing work is required as well as feature engineering.</p>
+
+<p>NlpTools has <a href="feature-factories.html">Feature Factories</a> for feature
+engineering and lately it has added a TransformationInterface for general
+preprocessing work.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">interface</span> TransformationInterface</div></li><li class="li1"><div class="de1"><span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="co4">/**</span></div></li><li class="li1"><div class="de1"><span class="co4">     * Return the value transformed.</span></div></li><li class="li1"><div class="de1"><span class="co4">     * @param  mixed $value The value to transform</span></div></li><li class="li1"><div class="de1"><span class="co4">     * @return mixed</span></div></li><li class="li1"><div class="de1"><span class="co4">     */</span></div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> transform<span class="br0">(</span><span class="re0">$value</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>Again the interface is very generic that gives to the library a lot of
+flexibility. Below I will list several classes that implement the
+aforementioned interface and can be used with the <a href="documents.html">documents</a>
+for easy preprocessing.</p>
+
+<h3><a href="api/index.html#NlpTools\Stemmers">Stemmers</a></h3>
+
+<blockquote>
+  <p>In linguistic morphology and information retrieval, stemming is the process for
+  reducing inflected (or sometimes derived) words to their stem, base or root
+  form—generally a written word form.
+  <cite>Wikipedia</cite></p>
+</blockquote>
+
+<p>Stemmers can be used either via the TransformationInterface above or standalone
+via the stem function.</p>
+
+<p>Available stemmers in NlpTools</p>
+
+<ul><li><a href="api/index.html#NlpTools\Stemmers\PorterStemmer">PorterStemmer</a></li>
+<li><a href="api/index.html#NlpTools\Stemmers\LancasterStemmer">LancasterStemmer</a></li>
+<li><a href="api/index.html#NlpTools\Stemmers\RegexStemmer">RegexStemmer</a></li>
+<li><a href="api/index.html#NlpTools\Stemmers\GreekStemmer">GreekStemmer</a></li>
+</ul><pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Stemmers\PorterStemmer<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Documents\TokensDocument<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$s</span> <span class="sy0">=</span> <span class="st0">"People are strange when you 're a stranger</span></div></li><li class="li1"><div class="de1"><span class="st0">      faces look ugly when you 're alone"</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$stemmer</span> <span class="sy0">=</span> <span class="kw2">new</span> PorterStemmer<span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1">// standalone usage</span></div></li><li class="li1"><div class="de1"><a href="http://www.php.net/print_r"><span class="kw3">print_r</span></a><span class="br0">(</span><span class="re0">$stemmer</span><span class="sy0">-&gt;</span><span class="me1">stemAll</span><span class="br0">(</span><a href="http://www.php.net/explode"><span class="kw3">explode</span></a><span class="br0">(</span><span class="st0">" "</span><span class="sy0">,</span> <span class="re0">$s</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1">// usage via TransformationInterface</span></div></li><li class="li1"><div class="de1"><span class="re0">$d</span> <span class="sy0">=</span> <span class="kw2">new</span> TokensDocument<span class="br0">(</span><a href="http://www.php.net/explode"><span class="kw3">explode</span></a><span class="br0">(</span><span class="st0">" "</span><span class="sy0">,</span> <span class="re0">$s</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$d</span><span class="sy0">-&gt;</span><span class="me1">applyTransformation</span><span class="br0">(</span><span class="re0">$stemmer</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><a href="http://www.php.net/print_r"><span class="kw3">print_r</span></a><span class="br0">(</span><span class="re0">$d</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h3><a href="api/index.html#NlpTools\Utils\StopWords">Stop words</a></h3>
+
+<p>Words that are filtered out because they do not add any value to the meaning of
+the text.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Utils\StopWords<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Documents\TokensDocument<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$s</span> <span class="sy0">=</span> <span class="st0">"People are strange when you 're a stranger</span></div></li><li class="li1"><div class="de1"><span class="st0">      faces look ugly when you 're alone"</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$stop</span> <span class="sy0">=</span> <span class="kw2">new</span> StopWords<span class="br0">(</span><a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">    <span class="st0">"are"</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <span class="st0">"you"</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <span class="st0">"'re"</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <span class="st0">"a"</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$d</span> <span class="sy0">=</span> <span class="kw2">new</span> TokensDocument<span class="br0">(</span><a href="http://www.php.net/explode"><span class="kw3">explode</span></a><span class="br0">(</span><span class="st0">" "</span><span class="sy0">,</span> <span class="re0">$s</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$d</span><span class="sy0">-&gt;</span><span class="me1">applyTransformation</span><span class="br0">(</span><span class="re0">$stop</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><a href="http://www.php.net/print_r"><span class="kw3">print_r</span></a><span class="br0">(</span><span class="re0">$d</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h3><a href="api/index.html#NlpTools\Utils\Normalizers">Normalizers</a></h3>
+
+<p>A Normalizer's purpose is to transform any word from any one of the possible
+writings to a single writing consistently. Most stemming algorithms expect
+normalized text anyway.</p>
+
+<p>The most common normalization would be to transform the words to lower case.
+There are languages though that this is not enough since there may be other
+diacritics that need to be removed.</p>
+
+<p>Available normalizers exist for the following languages</p>
+
+<ul><li>English</li>
+<li>Greek</li>
+</ul><pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Utils\Normalizers\Normalizer<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Documents\TokensDocument<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$s</span> <span class="sy0">=</span> <span class="st0">"People Are Strange WhEn you 're A Stranger</span></div></li><li class="li1"><div class="de1"><span class="st0">      faces look Ugly when you 're Alone"</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$norm</span> <span class="sy0">=</span> Normalizer<span class="sy0">::</span><span class="me2">factory</span><span class="br0">(</span><span class="st0">"English"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1">// standalone usage</span></div></li><li class="li1"><div class="de1"><a href="http://www.php.net/print_r"><span class="kw3">print_r</span></a><span class="br0">(</span><span class="re0">$norm</span><span class="sy0">-&gt;</span><span class="me1">normalizeAll</span><span class="br0">(</span><a href="http://www.php.net/explode"><span class="kw3">explode</span></a><span class="br0">(</span><span class="st0">" "</span><span class="sy0">,</span> <span class="re0">$s</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co1">// usage via TransformationInterface</span></div></li><li class="li1"><div class="de1"><span class="re0">$d</span> <span class="sy0">=</span> <span class="kw2">new</span> TokensDocument<span class="br0">(</span><a href="http://www.php.net/explode"><span class="kw3">explode</span></a><span class="br0">(</span><span class="st0">" "</span><span class="sy0">,</span> <span class="re0">$s</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$d</span><span class="sy0">-&gt;</span><span class="me1">applyTransformation</span><span class="br0">(</span><span class="re0">$norm</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><a href="http://www.php.net/print_r"><span class="kw3">print_r</span></a><span class="br0">(</span><span class="re0">$d</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h3><a href="api/index.html#NlpTools\Utils\ClassifierBasedTransformation">Classifier Based Transformation</a></h3>
+
+<p>This transformation classifies the input passed, and then applies a different set of
+transformations depending on the class of the input.</p>
+
+<p>A simple use could be to create a multilingual transformation pipeline that
+applies different set of preprocessors (different stop words, stemmers, etc)
+depending on the language of the input document.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Classifiers\ClassifierInterface<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Utils\ClassifierBasedTransformation<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Stemmers<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Utils\Normalizers\Normalizer<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Utils\StopWords<span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw2">use</span> NlpTools\Documents\TokensDocument<span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="kw2">class</span> LanguageDetector <span class="kw2">extends</span> ClassifierInterface</div></li><li class="li1"><div class="de1"><span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="sy0">...</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"><span class="re0">$lang_detector</span> <span class="sy0">=</span> <span class="kw2">new</span> LanguageDetector<span class="br0">(</span><span class="sy0">...</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$greek</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">    Normalizer<span class="sy0">::</span><span class="me2">factory</span><span class="br0">(</span><span class="st0">"Greek"</span><span class="br0">)</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> StopWords<span class="br0">(</span></div></li><li class="li1"><div class="de1">        <a href="http://www.php.net/explode"><span class="kw3">explode</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">            <span class="st0">"<span class="es1">\n</span>"</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">            <a href="http://www.php.net/file_get_contents"><span class="kw3">file_get_contents</span></a><span class="br0">(</span><span class="st0">"greek_stop_words"</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">        <span class="br0">)</span></div></li><li class="li1"><div class="de1">    <span class="br0">)</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> Stemmers\GreekStemmer<span class="br0">(</span><span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$english</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">    Normalizer<span class="sy0">::</span><span class="me2">factory</span><span class="br0">(</span><span class="st0">"English"</span><span class="br0">)</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> StopWords<span class="br0">(</span></div></li><li class="li1"><div class="de1">        <a href="http://www.php.net/explode"><span class="kw3">explode</span></a><span class="br0">(</span></div></li><li class="li1"><div class="de1">            <span class="st0">"<span class="es1">\n</span>"</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">            <a href="http://www.php.net/file_get_contents"><span class="kw3">file_get_contents</span></a><span class="br0">(</span><span class="st0">"english_stop_words"</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">        <span class="br0">)</span></div></li><li class="li1"><div class="de1">    <span class="br0">)</span><span class="sy0">,</span></div></li><li class="li1"><div class="de1">    <span class="kw2">new</span> Stemmers\PorterStemmer<span class="br0">(</span><span class="br0">)</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$transform</span> <span class="sy0">=</span> <span class="kw2">new</span> ClassifierBasedTransformation<span class="br0">(</span><span class="re0">$lang_detector</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$transform</span><span class="sy0">-&gt;</span><span class="me1">register</span><span class="br0">(</span><span class="st0">"English"</span><span class="sy0">,</span> <span class="re0">$english</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$transform</span><span class="sy0">-&gt;</span><span class="me1">register</span><span class="br0">(</span><span class="st0">"Greek"</span><span class="sy0">,</span> <span class="re0">$greek</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="re0">$s</span> <span class="sy0">=</span> <span class="st0">"This text contains both Ελληνικά and English"</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$d</span> <span class="sy0">=</span> <span class="kw2">new</span> TokensDocument<span class="br0">(</span><a href="http://www.php.net/explode"><span class="kw3">explode</span></a><span class="br0">(</span><span class="st0">" "</span><span class="sy0">,</span> <span class="re0">$s</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$d</span><span class="sy0">-&gt;</span><span class="me1">applyTransformation</span><span class="br0">(</span><span class="re0">$transform</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><a href="http://www.php.net/print_r"><span class="kw3">print_r</span></a><span class="br0">(</span><span class="re0">$d</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<div style="text-align: center;">
+
+<p><a href="clustering.html">« Clustering</a></p>
+
+</div>					<b class="clear"></b>
+				</div>
+			</div>
+
+		</div>
+		
+		<div class="container" style="text-align: right;" id="footer">
+	<p class="x-small">
+		This website is powered by <a href="http://www.imdb.com/title/tt0198781/" title="I was thinking of putting 'cries of children' but it seemed too evil">the laughter of children</a>
+	</p>
+</div>
+<div style="display: none;" id="geo-disclaimer">
+	Αφού είσαι από <strong>Ελλάδα</strong> και σε ενδιαφέρει η επεξεργασία φυσικής γλώσσας, <a href="../greek-nlp.html">συνέχισε εδώ →</a>
+</div>
+<script>
+	(function () {
+		var co=document.cookie.split(';');
+		for (var i=0;i<co.length;i++)
+		{
+			if (co[i].substr(0,6)!='theme=')
+				continue;
+			
+			var newtheme = co[i].substr(6),
+				theme_select = document.getElementById('theme-select'),
+				opts = theme_select.options;
+				
+			themeroller.changeHighlight(newtheme);
+			for (var j=0; j<opts.length; j++)
+			{
+				if (opts[j].value==newtheme)
+				{
+					theme_select.selectedIndex = j;
+					break;
+				}
+			}
+			break;
+		}
+	})();
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-9373187-5']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+	// geoip
+	(function () {
+		var geo = document.createElement("script");
+		geo.type = "text/javascript";
+		geo.async = true;
+		geo.src = "http://php-nlp-tools.com:8081/js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(geo, s)
+		geo.onload = function () {
+			if (COUNTRY == "GR") {
+				document.getElementById("footer").style.marginBottom = "60px";
+				document.getElementById("geo-disclaimer").style.display = "block";
+			}
+		};
+	})();
+</script>
+		
+	</body>
+</html>

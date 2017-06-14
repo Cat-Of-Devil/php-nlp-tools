@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="index, follow, all" />
+        <title>NlpTools\Clustering\MergeStrategies\SingleLink | NlpTools API</title>
+                    <link rel="stylesheet" type="text/css" href="../../../stylesheet.css">
+                            </head>
+        <body id="class">
+            <div class="header">
+        <ul>
+            <li><a href="../../../classes.html">Classes</a></li>
+                            <li><a href="../../../namespaces.html">Namespaces</a></li>
+                        <li><a href="../../../interfaces.html">Interfaces</a></li>
+            <li><a href="../../../doc-index.html">Index</a></li>
+            
+        </ul>
+
+        <div id="title">NlpTools API</div>
+
+            <div class="type">Class</div>
+    <h1><a href="../MergeStrategies.html">NlpTools\Clustering\MergeStrategies</a>\SingleLink</h1>
+    </div>
+        <div class="content">
+                <p>class    <strong>SingleLink</strong>        extends <a href="HeapLinkage.html"><abbr title="NlpTools\Clustering\MergeStrategies\HeapLinkage">HeapLinkage</abbr></a></p>
+
+            <div class="description">
+            <p>In single linkage clustering the new distance of the merged cluster with cluster i is the smallest distance of either cluster x to i or y to i.</p>
+            <p>Example:<br />
+<br />
+ Suppose we have the following four clusters<br />
+<br />
+ a = [ (0,0) ]<br />
+ b = [ (5,2) ]<br />
+ c = [ (0,5) ]<br />
+ d = [ (0,2) ]<br />
+<br />
+ with the following pairwise distance matrix<br />
+<br />
+       a     b     c     d<br />
+   +-----+-----+-----+-----+<br />
+ a |   0 | 5.3 |   5 |   2 |<br />
+   +-----+-----+-----+-----+<br />
+ b | 5.3 |   0 | 5.8 |   5 |<br />
+   +-----+-----+-----+-----+<br />
+ c |   5 | 5.8 |   0 |   3 |<br />
+   +-----+-----+-----+-----+<br />
+ d |   2 |   5 |   3 |   0 |<br />
+   +-----+-----+-----+-----+<br />
+<br />
+ if we merge clusters a,d (which are the closest) then we need to update the<br />
+ matrix to represent the new distances. For every other cluster (b and c) the<br />
+ new distance has to be calculated and it is going to be the minimum between<br />
+ the distances of the two clusters to be merged.<br />
+<br />
+               a,d             b             c<br />
+     +-------------+-------------+-------------+<br />
+ a,d |           0 | min(5.3, 2) |   min(5, 3) |<br />
+     +-------------+-------------+-------------+<br />
+   b | min(5.3, 2) |           0 |         5.8 |<br />
+     +-------------+-------------+-------------+<br />
+   c |   min(5, 3) |         5.8 |           0 |<br />
+     +-------------+-------------+-------------+</p>
+        </div>
+    
+    
+    
+            <h2>Methods</h2>
+
+            <table>
+                    <tr>
+                <td class="type">
+                    
+                </td>
+                <td class="last">
+                    <a href="SingleLink.html#method_initializeStrategy">initializeStrategy</a>(<a href="../../Similarity/DistanceInterface.html"><abbr title="NlpTools\Similarity\DistanceInterface">DistanceInterface</abbr></a> $d, array $docs)
+                    <p>Initialize the distance matrix and any other data structure needed to calculate the merges later.</p>
+                </td>
+                <td><small>from&nbsp;<a href="HeapLinkage.html#method_initializeStrategy"><abbr title="NlpTools\Clustering\MergeStrategies\HeapLinkage">HeapLinkage</abbr></a></small></td>
+            </tr>
+                    <tr>
+                <td class="type">
+                    array
+                </td>
+                <td class="last">
+                    <a href="SingleLink.html#method_getNextMerge">getNextMerge</a>()
+                    <p>Return the pair of clusters x,y to be merged.</p>
+                </td>
+                <td><small>from&nbsp;<a href="HeapLinkage.html#method_getNextMerge"><abbr title="NlpTools\Clustering\MergeStrategies\HeapLinkage">HeapLinkage</abbr></a></small></td>
+            </tr>
+            </table>
+
+
+        <h2>Details</h2>
+
+                        <h3 id="method_initializeStrategy">
+        <div class="location">in <a href="HeapLinkage.html#method_initializeStrategy"><abbr title="NlpTools\Clustering\MergeStrategies\HeapLinkage">HeapLinkage</abbr></a> at line 44</div>
+        <code>            public            
+    <strong>initializeStrategy</strong>(<a href="../../Similarity/DistanceInterface.html"><abbr title="NlpTools\Similarity\DistanceInterface">DistanceInterface</abbr></a> $d, array $docs)</code>
+    </h3>
+    <div class="details">
+        <p>Initialize the distance matrix and any other data structure needed to calculate the merges later.</p>
+        <p></p>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table>
+                    <tr>
+                <td><a href="../../Similarity/DistanceInterface.html"><abbr title="NlpTools\Similarity\DistanceInterface">DistanceInterface</abbr></a></td>
+                <td>$d</td>
+                <td>The distance metric used to calculate the distance matrix</td>
+            </tr>
+                    <tr>
+                <td>array</td>
+                <td>$docs</td>
+                <td>The docs to be clustered</td>
+            </tr>
+            </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+                <h3 id="method_getNextMerge">
+        <div class="location">in <a href="HeapLinkage.html#method_getNextMerge"><abbr title="NlpTools\Clustering\MergeStrategies\HeapLinkage">HeapLinkage</abbr></a> at line 78</div>
+        <code>            public            array
+    <strong>getNextMerge</strong>()</code>
+    </h3>
+    <div class="details">
+        <p>Return the pair of clusters x,y to be merged.</p>
+        <p>1. Extract the pair with the smallest distance<br />
+  2. Recalculate the distance of the merged cluster with every other cluster<br />
+  3. Merge the clusters (by labeling one as removed)<br />
+  4. Reheap</p>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table>
+        <tr>
+            <td>array</td>
+            <td>The pair (x,y) to be merged</td>
+        </tr>
+    </table>
+
+            
+            
+                    </div>
+    </div>
+
+    
+            </div>
+            <div id="footer">
+        Generated by <a href="http://sami.sensiolabs.org/" target="_top">Sami, the API Documentation Generator</a>.
+    </div>
+    </body>
+</html>

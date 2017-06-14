@@ -1,0 +1,271 @@
+<!Doctype html>
+<html>
+
+		<head>
+		<base href="" >
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
+		
+					<title>Source classifier in PHP | NlpTools PHP</title>
+				<link rel="stylesheet" href="../style.css" />
+		<script>
+			var themeroller = (function () {
+				var haveStyle = false,
+					expired = 'Thu, 2 Aug 2001 20:47:11 UTC',
+					unexpired = 'Mon, 2 Aug 2021 20:47:11 UTC',
+					from = '',
+					changeClasses = function (from,theme) {
+						var items = document.getElementsByTagName('pre');
+						for (var i=0;i<items.length;i++)
+						{
+							var cls_re = new RegExp('\\s?\\b'+from+'\\b\\s?|^\s*$');
+							items[i].className = items[i].className.replace(cls_re,' '+theme+' ').trim();
+						}
+					},
+					updateCookie = function (t) {
+						if (t=='')
+							document.cookie = 'theme=; expires='+expired+'; path=/';
+						else
+							document.cookie = 'theme='+t+'; expires='+unexpired+'; path=/';
+						from = t;
+					};
+					
+				return {
+					onSelectChange: function () {
+						var theme = this.options[this.selectedIndex].value;
+						themeroller.changeHighlight(theme);
+					},
+					changeHighlight: function (theme) {
+						
+						if (haveStyle)
+						{
+							changeClasses(from,theme);
+						}
+						else
+						{
+							var l = document.createElement('link');
+							l.rel = 'stylesheet';
+							l.href = 'codecolorer.css';
+							document.head.appendChild(l);
+							haveStyle = true;
+							changeClasses(from,theme);
+						}
+						updateCookie(theme);
+					}
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="container">
+				<h1 class="title"><a href="../index.html">NlpTools</a></h1>
+				<h2 class="subtitle">Natural language processing in php</h2>
+				<b class="clear"></b>
+			</div>
+		</div>
+
+		<div class="container">
+
+			<div class="sidebar">
+	
+		<div class="sidebar-container">
+		<h3>Navigation</h3>
+					<a href="../index.html">Home</a><br/>
+					<a href="../documentation/index.html">Documentation</a><br/>
+					<a href="../blog/index.html">Blog</a><br/>
+					<a href="https://github.com/angeloskath/php-nlp-tools/">Github</a><br/>
+					<a href="mailto:info@php-nlp-tools.com">Contact</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Mini nlp projects</h3>
+					<a href="../blog/category/spam-detection-service/index.html">Spam detection service</a><br/>
+					<a href="../blog/category/sentiment-detection.1.html">Sentiment detection</a><br/>
+					<a href="../blog/category/greek-pos-tagger.1.html">Greek POS Tagger</a><br/>
+					<a href="../blog/category/programming-language-detection/index.html">Programming language detection</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Syntax highlighting</h3>
+		<select id="theme-select" onchange="themeroller.onSelectChange.call(this)">
+			<option value="">Vibrant Ink</option>
+			<option value="twitlight">Twitlight</option>
+			<option value="solarized-dark">Solarized Dark</option>
+			<option value="dawn">Dawn</option>
+			<option value="blackboard">Blackboard</option>
+			<option value="mac-classic">Mac Classic</option>
+			<option value="railscasts">Railscasts</option>
+		</select>
+		<p class="x-small">
+			Style sheet provided by
+			<a href="https://github.com/kpumuk/codecolorer">Codecolorer</a>
+			and tokenizing by <a href="http://qbnz.com/highlighter/geshi-doc.html">GeSHi</a>
+		</p>
+	</div>
+</div>
+			
+			<div class="content">
+				<div class="post">
+					<h2>
+						Source classifier in PHP													<span class="date">Nov 13th, 2013</span>
+											</h2>
+										<p class="meta">
+						Project: <a href="../blog/category/programming-language-detection/index.html">Programming language detection</a>
+					</p>
+										<p>Recently I had the need to identify the programming language of several snippets of
+code without relying on the file extension. I originally thought that it would be trivial
+to find code that does exactly that but as it turns out I have only found one
+<a href="https://github.com/chrislo/sourceclassifier">implementation in Ruby</a>. Thus, I decided to write my own <a href="https://github.com/angeloskath/php-sourceclassifier">source classifier
+in php</a>.</p>
+
+<h3>Finding a dataset</h3>
+
+<p>The hardest part was to find and download a dataset for use with the classifier. I decided
+to download sources from Google code jam 2013 solutions. This decision was made for the following
+two simple reasons, firstly I would use the model to classify similar types of source code
+(small solutions to programming problems) and secondly it provides easy access to many different
+programming languages.</p>
+
+<p>The quality of the produced classifier heavily depends on the dataset so one could improve
+the performance of the provided model by training on a different dataset.</p>
+
+<h3>Classification model and Features</h3>
+
+<p>Since it seemed to work well for <a href="https://github.com/chrislo">Mr Chris Lowis</a> I decided to use the same
+simple Naive Bayes model. The sources are read as is, they are <strong>not</strong> normalized. I use
+the <a href="../documentation/tokenizers.html">WhitespaceAndPunctuationTokenizer</a> to split the sources
+into tokens.</p>
+
+<p>The feature factory is a simple frequency feature factory that cuts off the maximum frequency
+at 4 occurences.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="kw2">class</span> CodeFeatures implements FeatureFactoryInterface</div></li><li class="li1"><div class="de1"><span class="br0">{</span></div></li><li class="li1"><div class="de1">    <span class="kw2">public</span> <span class="kw2">function</span> getFeatureArray<span class="br0">(</span><span class="re0">$class</span><span class="sy0">,</span> DocumentInterface <span class="re0">$doc</span><span class="br0">)</span></div></li><li class="li1"><div class="de1">    <span class="br0">{</span></div></li><li class="li1"><div class="de1">        <span class="re0">$tokens</span> <span class="sy0">=</span> <span class="re0">$doc</span><span class="sy0">-&gt;</span><span class="me1">getDocumentData</span><span class="br0">(</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="re0">$tokens</span> <span class="sy0">=</span> <a href="http://www.php.net/array_count_values"><span class="kw3">array_count_values</span></a><span class="br0">(</span><span class="re0">$tokens</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">        <span class="kw1">foreach</span> <span class="br0">(</span><span class="re0">$tokens</span> <span class="kw1">as</span> <span class="re0">$tok</span><span class="sy0">=&gt;&amp;</span><span class="re0">$v</span><span class="br0">)</span> <span class="br0">{</span></div></li><li class="li1"><div class="de1">            <span class="re0">$v</span> <span class="sy0">=</span> <a href="http://www.php.net/min"><span class="kw3">min</span></a><span class="br0">(</span><span class="re0">$v</span><span class="sy0">,</span> <span class="nu0">4</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">        <span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1">        <span class="kw1">return</span> <span class="re0">$tokens</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1">    <span class="br0">}</span></div></li><li class="li1"><div class="de1"><span class="br0">}</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<h3>Using the LanguageDetector</h3>
+
+<p>I have wrapped the <a href="../documentation/classifiers.html">MultinomialNBClassifier</a> in a class
+to ease its use, its training and its serialization.</p>
+
+<pre class="php"><ol><li class="li1"><div class="de1"><span class="re0">$detector</span> <span class="sy0">=</span> LanguageDetector<span class="sy0">::</span><span class="me2">loadFromFile</span><span class="br0">(</span><span class="st0">"/path/to/model"</span><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="re0">$lang</span> <span class="sy0">=</span> <span class="re0">$detector</span><span class="sy0">-&gt;</span><span class="me1">classify</span><span class="br0">(</span><span class="co3">&lt;&lt;&lt;CODE</span></div></li><li class="li1"><div class="de1"><span class="co3">#include &lt;stdio.h&gt;</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co3">int main() {</span></div></li><li class="li1"><div class="de1"><span class="co3">    printf("Hello world!");</span></div></li><li class="li1"><div class="de1"><span class="co3">}</span></div></li><li class="li1"><div class="de1"><span class="co3">CODE</span></div></li><li class="li1"><div class="de1"><span class="br0">)</span><span class="sy0">;</span></div></li><li class="li1"><div class="de1"><span class="kw1">echo</span> <span class="re0">$lang</span><span class="sy0">,</span> PHP_EOL<span class="sy0">;</span> <span class="co1">// C</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>In the <a href="https://github.com/angeloskath/php-sourceclassifier">github repository</a> there is already a pretrained model that
+classifies among the following languages (the popular ones according to Google code jam):</p>
+
+<ul><li>C</li>
+<li>C#</li>
+<li>C++</li>
+<li>Clojure</li>
+<li>Go</li>
+<li>Haskell</li>
+<li>Java</li>
+<li>Javascript</li>
+<li>MATLAB</li>
+<li>Pascal</li>
+<li>Perl</li>
+<li>PHP</li>
+<li>Python</li>
+<li>Ruby</li>
+<li>Scala</li>
+<li>Visual Basic</li>
+</ul><h3>Train on your own files</h3>
+
+<p>In the repo there is also a bin directory that provides a <em>lang-detect</em> script. It is a simple
+script that allows training of new models on new datasets, evaluation of models and using a model
+to classify a file as a source code.</p>
+
+<p>Examples:</p>
+
+<pre class="bash"><ol><li class="li1"><div class="de1"><span class="co0"># retrain the provided model</span></div></li><li class="li1"><div class="de1">bin<span class="sy0">/</span>lang-detect train <span class="st0">"data/train"</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co0"># evaluate the trained model</span></div></li><li class="li1"><div class="de1">bin<span class="sy0">/</span>lang-detect evaluate <span class="st0">"data/test"</span> <span class="co0"># should print 0.98</span></div></li><li class="li1"><div class="de1"> </div></li><li class="li1"><div class="de1"><span class="co0"># classify some code</span></div></li><li class="li1"><div class="de1">bin<span class="sy0">/</span>lang-detect classify <span class="st0">"some/path/code.cpp"</span></div></li><li class="li1"><div class="de1"> </div></li></ol></pre>
+
+<p>The structure of the directories for training and evaluating should be one subdirectory
+per class and each subdirectory should contain one file per document (one source file).
+You can see an example of the above structure in the data/train and data/test directories.</p>
+
+<h3>Future work</h3>
+
+<p>Since it is a much less interesting and unimportant problem than the ones I usually like to
+battle with in my free time I have left a lot of concepts unexplored and went for the fastest
+half good solution (although it turned out better than half good).</p>
+
+<p>One should be able to get much better results by changing both the feature factory and the tokenizer.</p>
+
+<h4>Tokenizer</h4>
+
+<p>The tokenizer should probably be able to understand different types of strings and ignore them or mark
+them as "string". Maybe the same should apply to comments as well. Operators, parentheses and brackets
+should be parsed as separate tokens but not every single punctuation character. Some could be grouped
+like -&gt; or =&gt;.</p>
+
+<h4>Feature factory</h4>
+
+<p>As far as the feature factory is concerned, document frequency dictionaries could be used to emphasize
+to the keywords per class and differentiate them from the identifiers. Words at the beginning and ending
+of the document should be weighted differently as they are intuitively more important in
+differentiating the programming languages (imports, opening/closing tags, etc). Finally statistics about
+the identifiers could be collected, for instance whether camel casing or underscores are preferred.</p>					<b class="clear"></b>
+				</div>
+			</div>
+
+		</div>
+		
+		<div class="container" style="text-align: right;" id="footer">
+	<p class="x-small">
+		This website is powered by <a href="http://www.imdb.com/title/tt0198781/" title="I was thinking of putting 'cries of children' but it seemed too evil">the laughter of children</a>
+	</p>
+</div>
+<div style="display: none;" id="geo-disclaimer">
+	Αφού είσαι από <strong>Ελλάδα</strong> και σε ενδιαφέρει η επεξεργασία φυσικής γλώσσας, <a href="../greek-nlp.html">συνέχισε εδώ →</a>
+</div>
+<script>
+	(function () {
+		var co=document.cookie.split(';');
+		for (var i=0;i<co.length;i++)
+		{
+			if (co[i].substr(0,6)!='theme=')
+				continue;
+			
+			var newtheme = co[i].substr(6),
+				theme_select = document.getElementById('theme-select'),
+				opts = theme_select.options;
+				
+			themeroller.changeHighlight(newtheme);
+			for (var j=0; j<opts.length; j++)
+			{
+				if (opts[j].value==newtheme)
+				{
+					theme_select.selectedIndex = j;
+					break;
+				}
+			}
+			break;
+		}
+	})();
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-9373187-5']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+	// geoip
+	(function () {
+		var geo = document.createElement("script");
+		geo.type = "text/javascript";
+		geo.async = true;
+		geo.src = "http://php-nlp-tools.com:8081/js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(geo, s)
+		geo.onload = function () {
+			if (COUNTRY == "GR") {
+				document.getElementById("footer").style.marginBottom = "60px";
+				document.getElementById("geo-disclaimer").style.display = "block";
+			}
+		};
+	})();
+</script>
+		
+	</body>
+</html>

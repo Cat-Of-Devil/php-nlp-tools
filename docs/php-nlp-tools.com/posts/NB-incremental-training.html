@@ -1,0 +1,260 @@
+<!Doctype html>
+<html>
+
+		<head>
+		<base href="" >
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
+		
+					<title>Spam detection as a service | NlpTools PHP</title>
+				<link rel="stylesheet" href="../style.css" />
+		<script>
+			var themeroller = (function () {
+				var haveStyle = false,
+					expired = 'Thu, 2 Aug 2001 20:47:11 UTC',
+					unexpired = 'Mon, 2 Aug 2021 20:47:11 UTC',
+					from = '',
+					changeClasses = function (from,theme) {
+						var items = document.getElementsByTagName('pre');
+						for (var i=0;i<items.length;i++)
+						{
+							var cls_re = new RegExp('\\s?\\b'+from+'\\b\\s?|^\s*$');
+							items[i].className = items[i].className.replace(cls_re,' '+theme+' ').trim();
+						}
+					},
+					updateCookie = function (t) {
+						if (t=='')
+							document.cookie = 'theme=; expires='+expired+'; path=/';
+						else
+							document.cookie = 'theme='+t+'; expires='+unexpired+'; path=/';
+						from = t;
+					};
+					
+				return {
+					onSelectChange: function () {
+						var theme = this.options[this.selectedIndex].value;
+						themeroller.changeHighlight(theme);
+					},
+					changeHighlight: function (theme) {
+						
+						if (haveStyle)
+						{
+							changeClasses(from,theme);
+						}
+						else
+						{
+							var l = document.createElement('link');
+							l.rel = 'stylesheet';
+							l.href = 'codecolorer.css';
+							document.head.appendChild(l);
+							haveStyle = true;
+							changeClasses(from,theme);
+						}
+						updateCookie(theme);
+					}
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="container">
+				<h1 class="title"><a href="../index.html">NlpTools</a></h1>
+				<h2 class="subtitle">Natural language processing in php</h2>
+				<b class="clear"></b>
+			</div>
+		</div>
+
+		<div class="container">
+
+			<div class="sidebar">
+	
+		<div class="sidebar-container">
+		<h3>Navigation</h3>
+					<a href="../index.html">Home</a><br/>
+					<a href="../documentation/index.html">Documentation</a><br/>
+					<a href="../blog/index.html">Blog</a><br/>
+					<a href="https://github.com/angeloskath/php-nlp-tools/">Github</a><br/>
+					<a href="mailto:info@php-nlp-tools.com">Contact</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Mini nlp projects</h3>
+					<a href="../blog/category/spam-detection-service/index.html">Spam detection service</a><br/>
+					<a href="../blog/category/sentiment-detection.1.html">Sentiment detection</a><br/>
+					<a href="../blog/category/greek-pos-tagger.1.html">Greek POS Tagger</a><br/>
+					<a href="../blog/category/programming-language-detection/index.html">Programming language detection</a><br/>
+			</div>
+		<div class="sidebar-container">
+		<h3>Syntax highlighting</h3>
+		<select id="theme-select" onchange="themeroller.onSelectChange.call(this)">
+			<option value="">Vibrant Ink</option>
+			<option value="twitlight">Twitlight</option>
+			<option value="solarized-dark">Solarized Dark</option>
+			<option value="dawn">Dawn</option>
+			<option value="blackboard">Blackboard</option>
+			<option value="mac-classic">Mac Classic</option>
+			<option value="railscasts">Railscasts</option>
+		</select>
+		<p class="x-small">
+			Style sheet provided by
+			<a href="https://github.com/kpumuk/codecolorer">Codecolorer</a>
+			and tokenizing by <a href="http://qbnz.com/highlighter/geshi-doc.html">GeSHi</a>
+		</p>
+	</div>
+</div>
+			
+			<div class="content">
+				<div class="post">
+					<h2>
+						Spam detection as a service													<span class="date">Mar 7th, 2013</span>
+											</h2>
+										<p class="meta">
+						Project: <a href="../blog/category/spam-detection-service/index.html">Spam detection service</a>
+					</p>
+										<p>For the first mini nlp project we will create a spam detection service for
+use with email systems and probably any system. Our purpose is to create
+an HTTP endpoint (REST service) that will be managing models (create /
+train / classify / delete). The classifier will be a binary classifier
+with the class names being SPAM and <a href="http://wiki.apache.org/spamassassin/Ham">HAM</a>
+for spam and not spam accordingly.</p>
+
+<p>The purpose of the service we will create is not to make well known
+anti-spam services obsolete, it is to create a good starting ground for
+using NlpTools for Bayesian classification and for creating a custom
+classifier that given a specific context (and extra work by you) could
+even outperform well known solutions.</p>
+
+<h3>Classification model to use</h3>
+
+<p>At the time of writing, NlpTools only supports two models <strong>Naive Bayes</strong>
+and <strong>Maximum Entropy</strong> (conditional exponential model). Although Maximum
+Entropy models are known to perform better at most NLP tasks I will be
+using NaiveBayes for the following reasons:</p>
+
+<ol><li>NB is a lot less computationally intensive to train than MaxEnt</li>
+<li>Because of reason 1 we can use pure php and still create a usable for real world scenarios service</li>
+<li>We can incrementally train a NB model without keeping all the previous documents (we will be keeping a training context)</li>
+</ol><h3>Service overview</h3>
+
+<p>We want to be able to perform the following functions</p>
+
+<ol><li>Create a model</li>
+<li>Train a model on a set of emails (report emails as spam)</li>
+<li>Classify a set of emails</li>
+<li>Delete a model</li>
+</ol><p>This means we will at least have 4 endpoints at our RESTful service. Let's
+also use JSON as the only transport format so as to not complicate things.</p>
+
+<h3>Tools</h3>
+
+<p>We will now setup our environment. Besides the obvious, NlpTools, we will
+also be using <a href="http://silex.sensiolabs.org/">Silex</a> to help us out with building
+our service. We will be installing both using <a href="http://getcomposer.org/doc/00-intro.md">composer</a>.
+Create a directory to hold the project (ex.: spam-service), then create a <em>composer.json</em> .</p>
+
+<pre><code>{
+    "require": {
+        "silex/silex": "1.0.*@dev",
+        "nlp-tools/nlp-tools": "1.0.*@dev"
+    },
+    "autoload": {
+        "psr-0": {"": "web/"}
+    }
+}
+</code></pre>
+
+<p>It is also obvious from the above composer.json file that we will be
+coding in the <em>web</em> directory and that our code namimg conventions will
+comply to the psr-0 standard. Now run composer to install silex and
+NlpTools and their dependencies. If you don't have composer run the following.</p>
+
+<pre><code>$ curl -s http://getcomposer.org/installer | php
+$ composer.phar install
+</code></pre>
+
+<p>Finally, for the first part we need to setup a webserver that will serve
+our spam service. <a href="http://silex.sensiolabs.org/doc/web_servers.html">Silex documentation</a>
+has plenty of information to setup silex to play with any webserver. I
+will add the config file I am using for nginx.</p>
+
+<pre><code>server {
+    listen localhost:80;
+    server_name 127.0.0.1;
+
+    location / {
+        # example: unix:/var/run/php-fpm/www.sock
+        fastcgi_pass unix:/path/to/spam-service/spam-service.sock;
+        include fastcgi_params;
+        # replace /path/to/spam-service with whatever directory you
+        # created to put the project in
+        fastcgi_param SCRIPT_FILENAME /path/to/spam-service/web/index.php;
+    }
+}
+</code></pre>					<b class="clear"></b>
+				</div>
+			</div>
+
+		</div>
+		
+		<div class="container" style="text-align: right;" id="footer">
+	<p class="x-small">
+		This website is powered by <a href="http://www.imdb.com/title/tt0198781/" title="I was thinking of putting 'cries of children' but it seemed too evil">the laughter of children</a>
+	</p>
+</div>
+<div style="display: none;" id="geo-disclaimer">
+	Αφού είσαι από <strong>Ελλάδα</strong> και σε ενδιαφέρει η επεξεργασία φυσικής γλώσσας, <a href="../greek-nlp.html">συνέχισε εδώ →</a>
+</div>
+<script>
+	(function () {
+		var co=document.cookie.split(';');
+		for (var i=0;i<co.length;i++)
+		{
+			if (co[i].substr(0,6)!='theme=')
+				continue;
+			
+			var newtheme = co[i].substr(6),
+				theme_select = document.getElementById('theme-select'),
+				opts = theme_select.options;
+				
+			themeroller.changeHighlight(newtheme);
+			for (var j=0; j<opts.length; j++)
+			{
+				if (opts[j].value==newtheme)
+				{
+					theme_select.selectedIndex = j;
+					break;
+				}
+			}
+			break;
+		}
+	})();
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-9373187-5']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+	// geoip
+	(function () {
+		var geo = document.createElement("script");
+		geo.type = "text/javascript";
+		geo.async = true;
+		geo.src = "http://php-nlp-tools.com:8081/js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(geo, s)
+		geo.onload = function () {
+			if (COUNTRY == "GR") {
+				document.getElementById("footer").style.marginBottom = "60px";
+				document.getElementById("geo-disclaimer").style.display = "block";
+			}
+		};
+	})();
+</script>
+		
+	</body>
+</html>
