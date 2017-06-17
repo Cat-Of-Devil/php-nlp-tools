@@ -9,6 +9,7 @@ use \NlpTools\Similarity\Simhash;
  
 $s1 = "Please allow me to introduce myself
         I'm a man of wealth and tase";
+		
 $s2 = "Hello, I love you, won't you tell me your name
         Hello, I love you, let me jump in your game";
  
@@ -40,6 +41,7 @@ printf (
         $setA,
         $setB
     ),
+	
     $simhash->simhash($setA),
     $simhash->simhash($setB)
 );
